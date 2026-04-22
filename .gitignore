@@ -1,0 +1,37 @@
+# KiCad
+*.bak
+*-bak/
+*-backups/
+_autosave-*
+fp-info-cache
+*.lck
+*.kicad_prl
+*.kicad_pcb-bak
+*.kicad_sch-bak
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python (utility scripts)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Slicer output (keep STL / STEP / 3MF sources; skip per-machine outputs)
+*.gcode
+
+# Local assistant / context (not for public repo)
+.claude/
+CLAUDE.md
+AGENTS.md

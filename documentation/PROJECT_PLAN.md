@@ -1,0 +1,220 @@
+# Marathon - Project Plan
+
+## Context
+
+Marathon is a DIY retro gaming handheld built around a Raspberry Pi Zero 2 W. The design prioritizes battery life by integrating all ICs (power management, DAC, amplifier) as bare chips on a custom PCB, dedicating maximum internal volume to a high-capacity LiPo cell.
+
+This is a multi-phase hardware project spanning: component identification, schematic capture, PCB layout, case design, firmware/software setup, and final assembly.
+
+---
+
+## Architecture
+
+| Subsystem | Component | Notes |
+|-----------|-----------|-------|
+| **Compute** | Raspberry Pi Zero 2 W | Quad-core, WiFi, Bluetooth 4.2. Solders direct to 40-pin pads on the final PCB (no headers) |
+| **Display** | ILI9341 3.2" SPI LCD | 18-pin FPC ribbon soldered direct to PCB |
+| **Audio DAC** | PCM5102A (bare IC) | I2S input from Pi, line-level output to amplifier |
+| **Audio Amp** | PAM8403 (bare IC) | Class-D stereo, drives two speakers |
+| **Power** | IP5306 (bare IC) | Charging + 3.7V-to-5V boost + load sharing + battery protection, all in one chip |
+| **Battery** | 3.7V LiPo, 2000-3000mAh target | Thin cell (≤6mm), size TBD after PCB layout |
+| **Audio Out** | 2x speakers + mute switch | SPDT switch cuts amp power. Bluetooth available for private listening |
+| **Buttons** | Silicone membranes + tactile switches | Direct GPIO, no expander IC |
+| **Case** | Custom 3D print | Design in progress; will co-evolve with PCB layout |
+
+---
+
+## Design Decisions
+
+### 1. Integrated PCB Design
+All ICs (IP5306, PCM5102A, PAM8403) are placed directly on a custom PCB as bare chips, to be soldered by JLCPCB's assembly service when the final board is fabricated. This:
+- Reclaims ~15-20cm² of surface area (more room for battery)
+- Eliminates fragile board-to-board solder connections
+- Results in a cleaner, more reliable build
+- Only requires hand-soldering for: Pi Zero, display ribbon, battery, speakers, buttons/switches
+
+### 2. Power Management (IP5306)
+Single chip handles ALL power needs:
+- LiPo charging from USB-C
+- 3.7V to 5V boost conversion
+- Load sharing (play while charging)
+- Battery protection (low voltage cutoff)
+- Battery level indication (4 LEDs or digital readout)
+
+### 3. Battery Life (High Priority)
+Target: 2000-3000mAh, 4-6+ hours of gameplay. The "Marathon" name comes from this goal.
+Strategy: keep battery thin (≤6mm), maximize footprint area using space reclaimed from the integrated PCB layout. Final cell size TBD after PCB layout.
+
+### 4. Display
+Prototype uses a TN-panel ILI9341 3.2" SPI LCD. An IPS variant with the same ILI9341 controller and 18-pin FPC pinout exists as a drop-in upgrade and will be evaluated during final build if TN viewing angles prove inadequate in the case.
+
+### 5. Simplified Audio
+- **No headphone jack** -- Bluetooth 4.2 on Pi Zero 2W for private listening
+- **Speakers** -- zero-latency audio for gameplay
+- **Mute switch** -- SPDT switch cuts power to PAM8403 (0% or 100%)
+- **Fine volume control** -- software via RetroPie
+- Audio chain: Pi (I2S) -> PCM5102A (DAC) -> PAM8403 (amp) -> Speakers
+
+### 6. USB-C
+Proper 5.1k CC pulldown resistors for spec compliance. Works with all USB-C cables, not just A-to-C.
+
+---
+
+## Project Phases
+
+### Phase 1: Component Identification & Research
+**Goal**: Identify every IC, connector, and component needed
+**Status**: MOSTLY COMPLETE
+
+Resolved:
+- [x] Install KiCad (Flatpak, v9.0.7)
+- [x] Confirm all buttons are direct GPIO (no I2C expander)
+- [x] Choose power management solution (IP5306)
+- [x] Decide on audio architecture (no headphone jack, speakers + mute switch)
+- [x] Confirm PAM8403 as amplifier
+- [x] Confirm PCM5102A as DAC
+- [x] Create full GPIO pin mapping (see PIN_MAPPING.md)
+- [x] Create Bill of Materials (see `bom/`)
+- [x] Identify exact ILI9341 display module -- 3.2" bare 18-pin FPC screen, same listing for prototype (with adapter board) and final build (bare). [AliExpress](https://www.aliexpress.com/item/1005003005329598.html)
+- [x] Identify speaker specs -- 8 ohm, 1W, ~10-15mm pre-wired. Commodity part, exact size matched to case cutouts later.
+- [x] Source prototype modules -- ordered 2026-03-22 from Amazon (IP5306, battery) + AliExpress (PCM5102A, PAM8403, display, speakers)
+- [x] Confirm I2S pin assignments -- BCK=GPIO18, LRCK=GPIO19, DIN=GPIO21. Verified via `dtoverlay=hifiberry-dac` during prototype testing (2026-04-03).
+- [x] Confirm button driver approach -- mk_arcade_joystick_rpi kernel module (NOT retrogame). Verified during prototype testing (2026-04-04).
+
+Remaining:
+- [ ] Identify silicone button pad dimensions and mounting style -- **IN PROGRESS**. Design uses 2x identical cross-shaped pads (D-pad and ABXY). Exploring generic cross pads, GBC/SNES/DS repurposed pads. Need to buy pads then design PCB contact spacing to match.
+- [ ] Identify tactile switch specs (for shoulders, start, select)
+- [ ] Finalize battery cell dimensions (after PCB layout)
+
+### Phase 2: Breadboard Prototype
+**Goal**: Verify all subsystems work together before designing PCB
+**Status**: COMPLETE (2026-04-04)
+
+- [x] Order prototype components (ordered 2026-03-22):
+  - Amazon: IP5306 boards (10-pack, $10), 500mAh LiPo battery ($7.09)
+  - AliExpress: PCM5102A DAC (x2, ~$2), PAM8403 amp (5-pack, ~$3.55), ILI9341 3.2" SPI display ($7.60), speakers ($2.87)
+  - Using generic tactile buttons + owned SS12F15-G5 SPDT switches for prototype
+- [x] Flash RetroPie to SD card (reused GamePi20 image, Raspbian Buster based)
+- [x] Wire up power subsystem (IP5306 + battery → 5V rail) — verified 5.1V output
+- [x] Boot Pi Zero from IP5306 power — confirmed, IP5306 auto-starts under load
+- [x] Wire up Pi Zero to display (SPI) — ILI9341 breakout, fbcp-ili9341 compiled and working
+- [ ] Tune display resolution — currently 640x480 scaled to 320x240, looks blurry. Set HDMI output to native 320x240 for pixel-perfect rendering.
+- [x] Wire up audio chain (I2S → DAC → amp → speakers) — PCM5102A and PAM8403 soldered together, audio confirmed working
+- [x] Wire up buttons to GPIO — tested LEFT (GPIO4) and RIGHT (GPIO17), confirmed working in EmulationStation
+- [x] Verify play-while-charging works — confirmed, IP5306 passes through wall power while charging battery
+- [x] Document any issues or changes needed
+
+### Phase 2 Notes
+- IP5306 board has no USB port; USB-C cable soldered directly to VIN/GND pads
+- 500mAh LiPo soldered directly to BAT/GND pads
+- IP5306 auto-shuts down with no load; stays on once Pi is drawing current. Also shuts down when battery is dead. Wall charger works better than MacBook USB for charging.
+- Raspbian Buster repos are archived; had to point apt at legacy.raspbian.org
+- fbcp-ili9341 build flags: `-DILI9341=ON -DGPIO_TFT_DATA_CONTROL=24 -DGPIO_TFT_RESET_PIN=25 -DSPI_BUS_CLOCK_DIVISOR=6 -DSTATISTICS=0`
+- Display rotation: no rotation flag needed (0 degrees) with pins on left side of screen
+- GamePi20 image had `dtoverlay=audremap,pins_18_19` -- this is NOT the right overlay for PCM5102A. Replaced with `dtoverlay=hifiberry-dac` which enables I2S on GPIO18/19/21.
+- Also disabled `dtparam=audio=on` (commented out) to prevent conflicts with I2S
+- PCM5102A config pins: FLT, DMP, FMT, SCL all to GND; XMT to 5V (unmute)
+- PCM5102A L/R audio outputs soldered directly to PAM8403 L/G/R inputs
+- **Button driver: mk_arcade_joystick_rpi kernel module (NOT retrogame).** Retrogame creates a virtual keyboard that EmulationStation on this Buster image won't recognize. The mk_arcade_joystick_rpi module (from the GamePi20 image) creates a joystick device that ES natively supports.
+- mk_arcade_joystick_rpi config: `map=5 gpio=12,20,4,17,26,16,23,14,6,22,27,5` (custom GPIO mode, pin order: UP,DOWN,LEFT,RIGHT,START,SELECT,A,B,X,Y,L,R)
+- Modprobe config at `/etc/modprobe.d/joystick.conf`, module loaded via `/etc/modules`
+- ES input config at `~/.emulationstation/es_input.cfg` (symlinked to `/opt/retropie/configs/all/emulationstation/es_input.cfg`)
+
+### Phase 3: Schematic Capture (KiCad)
+**Goal**: Create a complete, verified schematic
+
+- [ ] Create schematic with these subsystems:
+  - Pi Zero 2W header + mounting pads
+  - ILI9341 display interface (SPI + backlight with R1)
+  - PCM5102A DAC (I2S, bare IC + supporting components)
+  - PAM8403 amplifier (bare IC + supporting components)
+  - IP5306 power management (bare IC + inductor + caps + resistors)
+  - USB-C connector with CC resistors
+  - Battery connector
+  - Button pads (direct GPIO, silicone membranes)
+  - Tactile switches (start, select, shoulders, system)
+  - SPDT mute switch (cuts PAM8403 power)
+  - Speaker pads
+  - Power distribution (3.3V from Pi, 5V from IP5306)
+- [ ] Cross-reference against PIN_MAPPING.md
+- [ ] Add test points for debugging
+- [ ] Run ERC (Electrical Rules Check)
+
+### Phase 4: PCB Layout (KiCad)
+**Goal**: Design a PCB for a compact handheld form factor. Exact dimensions TBD during layout; PCB and case will co-evolve.
+
+- [ ] Import schematic to PCB editor
+- [ ] Define board outline (rounded corners and mounting holes, dimensions TBD)
+- [ ] Place components — maximize battery area
+- [ ] Route traces (likely 2-layer board)
+- [ ] Determine final battery size from available area
+- [ ] Add silkscreen artwork
+- [ ] Run DRC (Design Rules Check)
+- [ ] Generate Gerber + BOM + pick-and-place files for JLCPCB
+
+### Phase 5: Case Design
+**Goal**: Design a case for the Marathon PCB
+
+- [ ] Design custom case around the finalized PCB dimensions
+- [ ] Account for component placement (no headphone jack hole, battery fitment, USB-C position)
+- [ ] Verify fit with PCB dimensions
+- [ ] 3D print and potentially order final print from PCBWay
+
+### Phase 6: Software Setup
+**Goal**: Configure RetroPie with proper drivers
+**Note**: Most of this was validated during Phase 2 prototype. Key configs documented in Phase 2 Notes and PROTOTYPE_BUILD_GUIDE.md.
+
+- [x] Flash RetroPie image to SD card -- reused GamePi20 image (Raspbian Buster based)
+- [x] Configure fbcp-ili9341 for the ILI9341 display -- compiled with ILI9341 flags, installed to /usr/local/bin
+- [x] Configure I2S audio overlay for PCM5102A -- `dtoverlay=hifiberry-dac` in config.txt
+- [x] Set up button input driver -- mk_arcade_joystick_rpi kernel module with custom GPIO map
+- [ ] Configure software volume control
+- [ ] Configure Bluetooth audio (optional, for wireless headphones)
+- [ ] Test with ROMs
+- [ ] Consider fresh RetroPie image for final build (current Buster image has archived repos)
+
+### Phase 7: Fabrication & Assembly
+**Goal**: Build the final device
+
+- [ ] Order PCBs + assembly from JLCPCB (they solder all SMD components)
+- [ ] Order remaining components (battery, display, speakers, buttons, Pi)
+- [ ] Hand-solder: Pi Zero, display ribbon, battery wires, speakers, buttons/switches
+- [ ] Assemble into case
+- [ ] Test all subsystems
+- [ ] Final integration testing
+
+---
+
+## Tools Needed
+
+| Tool | Purpose | Status |
+|------|---------|--------|
+| **KiCad 9.0.7** (Flatpak) | Schematic capture + PCB layout | INSTALLED |
+| **RetroPie** | OS image for the Pi | CONFIGURED (GamePi20 image, Buster) |
+| **fbcp-ili9341** | Display driver (SPI framebuffer copy) | COMPILED AND INSTALLED |
+| **mk_arcade_joystick_rpi** | GPIO button driver (kernel module) | CONFIGURED |
+| **Soldering iron + supplies** | Assembly | OWNED |
+| **Multimeter** | Testing and verification | OWNED |
+| **Breadboard + jumper wires** | Prototyping | OWNED |
+
+## Immediate Next Steps
+
+1. ~~**Source prototype modules**~~ -- DONE (ordered 2026-03-22)
+2. ~~**Build breadboard prototype**~~ -- DONE (2026-04-03 to 2026-04-04). All subsystems verified.
+3. **Begin schematic capture in KiCad** -- Phase 3. Study IC datasheets (IP5306, PCM5102A, PAM8403) for reference designs and supporting component values.
+
+## Key Risks & Unknowns
+
+- ~~**I2S pin assignments**~~ -- RESOLVED: BCK=GPIO18, LRCK=GPIO19, DIN=GPIO21. Confirmed via `dtoverlay=hifiberry-dac` during prototype.
+- ~~**Display ribbon pinout**~~ -- RESOLVED: Using 18-pin FPC bare ILI9341 screen.
+- ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
+- **Battery fitment** -- Final cell size depends on PCB layout. Won't know until Phase 4.
+- **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.
+- **Bluetooth audio latency** -- ~100-300ms, fine for passive games, not ideal for timing-sensitive gameplay. Speakers remain the primary audio output.
+- **Display resolution** -- Currently 640x480 HDMI scaled to 320x240 SPI, looks blurry. Need to set HDMI to native 320x240 for pixel-perfect rendering. Low priority.
+
+## Related Documentation
+
+- **PIN_MAPPING.md** -- Complete 40-pin GPIO mapping, subsystem breakdowns, display/audio/button pin assignments
+- **bom/** -- Full bill of materials with status, costs, sourcing, and decision log
+- **PROTOTYPE_BUILD_GUIDE.md** -- Step-by-step breadboard prototype build guide
