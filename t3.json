@@ -1,0 +1,10 @@
+{
+  "scripts": [
+    {
+      "name": "wt setup",
+      "command": "wt setup",
+      "runOnWorktreeCreate": true,
+      "async": false
+    }
+  ]
+}
