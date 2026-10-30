@@ -1,10 +1,7 @@
 # Schematics
 
-KiCad schematic source for Marathon.
+Exports of the Marathon schematic, for viewing without KiCad.
 
-**Status:** Phase 3, in progress. Schematic capture is underway, starting with the IP5306 power subsystem.
+**Status:** Phase 3, mostly complete, with ERC clean. The source is [`../pcb/marathon.kicad_sch`](../pcb/marathon.kicad_sch).
 
-Will contain:
-- `marathon.kicad_sch` and hierarchical sub-sheets (power, audio, display, input).
-- An exported PDF snapshot of the completed schematic for quick viewing.
-- ERC (Electrical Rules Check) results.
+Will contain `marathon.pdf`, added once the sheet layout has been cleaned up for readability.

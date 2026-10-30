@@ -30,8 +30,3 @@ venv/
 
 # Slicer output (keep STL / STEP / 3MF sources; skip per-machine outputs)
 *.gcode
-
-# Local assistant / context (not for public repo)
-.claude/
-CLAUDE.md
-AGENTS.md
