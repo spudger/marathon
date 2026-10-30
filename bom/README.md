@@ -8,17 +8,18 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
-| Raspberry Pi Zero 2 W | ARM Cortex-A53, WiFi/BT | ~$15 | No-headers variant recommended for the final PCB (solders direct). The WH (with headers) is fine for breadboard prototyping but headers have to be desoldered for the final build. |
+| Raspberry Pi Zero 2 W | ARM Cortex-A53, WiFi/BT | ~$15 | No-headers variant recommended for the final PCB. The Pi mounts on the back of the board on 5 mm M2.5 nylon standoffs, joined by a 2x20 strip of long-tail header pins soldered through both boards. The WH (with headers) is fine for breadboard prototyping, but its header would have to come off first. |
 
 ## 2. Power
 
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
 | IP5306 breakout board (prototype) | 5V 2A boost + LiPo charger + load sharing | $10 (10-pack) | Outputs 5.1V. No USB port on this board variant; USB-C cable soldered directly to VIN/GND. Auto-shuts down with no load, auto-starts when Pi draws current. Play-while-charging confirmed. |
-| IP5306 IC (final PCB) | QFN/SOP-8 package | <$1 | Soldered by JLCPCB/PCBWay assembly service. Supporting circuit: inductor, caps, resistors from datasheet reference design. |
+| IP5306 IC (final PCB) | INJOINIC IP5306, eSOP-8 with exposed pad, LCSC C181692 | <$1 | Soldered by JLCPCB assembly. Support parts are listed under Passive Components below. |
 | LiPo Battery (prototype) | 3.7V 500mAh, 702540, JST-PH 2.0 | $7.09 | Soldered directly to IP5306 BAT/GND pads. Charges from wall USB charger (MacBook USB was unreliable for charging). |
-| LiPo Battery (final) | 3.7V, 2000-3000mAh target, ≤6mm thick | ~$5-10 | **Size TBD after PCB layout.** By integrating breakout boards as bare chips, we reclaim major surface area for the battery. Thickness ≤6mm to keep case slim. Minimum target: 505060 (5x50x60mm, 2000mAh). Stretch goal: fit a 2500-3000mAh cell. |
-| USB-C connector | With proper 5.1k CC pulldown resistors | <$1 | For spec-compliant charging. IP5306 board likely has USB-C or micro-USB input already. Final PCB will have its own connector. |
+| LiPo Battery (final) | 3.7V, 2000-3000mAh target, ≤6mm thick | ~$5-10 | The PCB reserves a 60 x 50 mm area for a 505060-class cell (5 x 50 x 60 mm, about 2000mAh) up to 6 mm thick. Stretch goal: fit a 2500-3000mAh cell. The cell needs a JST-PH 2.0 plug with matching polarity. |
+| USB-C connector (final PCB) | GCT USB4125-GF-A-0190, six-contact, power only, LCSC C5246813 | <$1 | 5.1k pulldowns on CC1 and CC2 so C-to-C chargers supply 5V. No USB data lines. |
+| Battery connector (final PCB) | JST S2B-PH-SM4-TB(LF)(SN), PH 2.0 mm right-angle SMT, LCSC C295747 | <$0.50 | Lets the cell be swapped without desoldering. |
 
 **Why IP5306**: Single chip handles charging, 3.7V-to-5V boost, load sharing (play while charging), and battery protection. Simpler than using separate charging and boost ICs.
 
@@ -34,11 +35,11 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
 | PCM5102A DAC breakout (prototype) | I2S input, line-level output, 11-pin left + 3-pin right (R/G/L) | ~$2 | Config pins: FLT, DMP, FMT, SCL to GND; XMT to 5V (unmute). I2S via `dtoverlay=hifiberry-dac`. L/R audio outputs soldered directly to PAM8403. |
-| PCM5102A IC (final PCB) | TSSOP-20 package | <$2 | Integrated directly onto final PCB as bare chip (~4x4mm). Eliminates bulky breakout board. JLCPCB assembly. |
+| PCM5102A IC (final PCB) | TI PCM5102APWR, TSSOP-20 (6.5 x 4.4 mm), LCSC C107671 | <$2 | Bare chip on the final PCB, all supplies on 3.3V. Eliminates the bulky breakout board. JLCPCB assembly. |
 | PAM8403 amp breakout (prototype) | Class-D stereo, 3W per channel | ~$3.55 (5-pack) | Input pins labeled L/G/R (note: "R" may look like "B" on silkscreen). PCM5102A L/R outputs soldered directly to PAM8403 L/R inputs, G to G. POWER+ to 5V, POWER- to GND. |
-| PAM8403 IC (final PCB) | SOP-16 package | <$1 | Integrated directly onto final PCB as bare chip (~3x3mm). Eliminates bulky breakout board. JLCPCB assembly. |
+| PAM8403 IC (final PCB) | Slkor PAM8403, SOP-16 (9.9 x 3.9 mm), LCSC C5122557 | <$1 | Bare chip on the final PCB. Slkor part used because the Diodes Inc. original is NRND/EOL. JLCPCB assembly. |
 | Speakers (x2) | 8 ohm, 1W, 15mm, pre-wired | $2.87 | Both channels verified working in prototype. Connected to PAM8403 LOUT+/-, ROUT+/-. |
-| Mute switch | SPDT slide switch (SS12F15-G5) | <$1 | Mounted on edge of PCB. Cuts power to PAM8403 to silence speakers. Simple on/off, fine volume control handled via RetroPie software. |
+| Mute switch | SPDT slide switch (SS12F15-G5), through-hole | <$1 | Bottom-right edge of the PCB. Cuts power to PAM8403 to silence speakers. Simple on/off, fine volume control handled via RetroPie software. |
 
 **No headphone jack** - Bluetooth audio available via Pi Zero 2W's BT 4.2 for private listening. Speakers are the primary audio output. Note: BT audio has latency (~100-300ms), fine for passive games but not ideal for timing-sensitive gameplay.
 
@@ -49,26 +50,33 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
 | Silicone membrane pads (x2) | Cross/diamond-shaped, 4-way conductive rubber, identical pads for D-pad and ABXY | ~$3-5 | Two identical cross-shaped pads needed (one for D-pad, one for ABXY). Options: generic cross pads, GBC D-pad pads, SNES-style pads, or DS-style pads. Buy pads first, then design PCB contact pad spacing to match. Search AliExpress: "conductive silicone rubber button pad cross". See also: [ZedLabz GBC pads](https://www.zedlabz.com/products/conductive-silicone-rubber-button-membrane-contact-pads-for-nintendo-game-boy-color-cgb-gbc-zedlabz), [AliExpress conductive silicone buttons](https://www.aliexpress.com/w/wholesale-conductive-silicone-rubber-button.html). |
-| SMD tactile switches (x2) | For Start and Select | <$1 | Surface mount, low profile. |
-| Right-angled tactile buttons (x3) | For L shoulder, R shoulder, Z (System) | <$1 | Mount on back of PCB, actuated from case edge. |
+| SMD tactile switches (x3) | Alps Alpine SKTHACE010, 3.5 x 3.2 x 1.8 mm top-push | <$1 | Start, Select, and the IP5306 power key. |
+| Side-push SMD switches (x2) | Alps Alpine SKSCLDE010, 3.5 x 3.55 x 1.25 mm | <$1 | L and R shoulders, on the top edge of the PCB. |
 
-**All buttons are direct GPIO** - no I2C expander needed. Each button shorts its GPIO to ground (active low) using the Pi's internal pull-up resistors.
+**All buttons are direct GPIO** - no I2C expander needed. Each button shorts its GPIO to ground (active low) using the Pi's internal pull-up resistors. There is no dedicated system/hotkey button; Select takes that role in EmulationStation.
+
+**D-pad and ABXY contacts** are 5 mm interdigitated copper pads on the PCB itself (ENIG finish, no solder paste). The rubber pill on the membrane bridges the two combs when pressed.
 
 ## 6. Passive Components (Final PCB)
 
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
-| R1 - Backlight resistor | 3.9 ohm (3R9) SMD | <$0.10 | Current limiting for display backlight LED array. |
-| IP5306 support components | Inductor + caps + resistors per datasheet | <$2 total | Reference design from IP5306 datasheet. Values TBD. |
-| PCM5102A support components | Decoupling caps, pull-up/down resistors per datasheet | <$1 total | SCK to GND, FMT to GND (I2S mode), FLT/DMP config resistors. |
-| PAM8403 support components | Input/output coupling caps, filter components | <$1 total | Per datasheet reference design. |
-| USB-C CC resistors (x2) | 5.1k ohm | <$0.10 | Required for USB-C spec compliance. |
+| R30 - Backlight resistor | 22 ohm, 0.5W, 1206 | <$0.10 | 5V to the backlight anode. About 86 mA through a 3.1V backlight. |
+| R31 - Backlight return | 0 ohm, 0603 | <$0.10 | Backlight cathodes to GND. Lift it to measure or change the backlight circuit. |
+| L1 - IP5306 boost inductor | 1 uH, needs ≥4A saturation | <$0.50 | **Part number not chosen yet.** The 1210 footprint may be too small for a 4A part. |
+| IP5306 capacitors | C1 10uF (VIN), C2 22uF (BAT), C3-C6 22uF (5V out), 0805 | <$0.50 total | |
+| PCM5102A support | C10/C11 2.2uF, C12/C13 0.1uF, C14 10uF, 0603 | <$0.30 total | Charge pump, VNEG, LDO, and supply decoupling. Config pins are strapped directly, no resistors. |
+| DAC output filter | R10/R11 470 ohm, C15/C16 2.2nF, C17/C18 0.47uF, 0603 | <$0.30 total | Low-pass at about 154 kHz, then AC coupling into the amp. |
+| PAM8403 support | R20 10k, C20 1uF (VREF), C21 1uF, C22 470uF electrolytic (8 x 10 mm) | <$0.50 total | R20 pulls MUTE/SHDN high. C22 is bulk supply for the amp. |
+| USB-C CC resistors (x2) | R1/R2 5.1k ohm, 0603 | <$0.10 | Required for USB-C spec compliance. |
+
+LCSC part numbers for the passives are not chosen yet. Values come from the schematic in [`pcb/marathon.kicad_sch`](../pcb/marathon.kicad_sch).
 
 ## 7. Mechanical / Case
 
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
-| 3D printed case | Custom design, in progress | TBD | STL files will be uploaded to this repo when complete. |
+| 3D printed case | Custom design, not started yet | TBD | Designed around the PCB once the layout is locked. STL files will be uploaded to this repo when complete. |
 | M3 bolts + nuts (x4) | 20mm, acrylic or metal | <$2 | Holds case together. |
 | Micro SD card | 32GB+ Class 10 | ~$8 | For RetroPie image. |
 
@@ -90,7 +98,7 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 
 Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts due to AE's Dollar Express vs regular marketplace).
 
-### Final Build (Future — estimates only)
+### Final Build (Future, estimates only)
 
 | Category | Est. Cost |
 |----------|-----------|
@@ -112,7 +120,7 @@ Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts 
 | **Amazon** | IP5306 breakout boards, LiPo battery (prototype) |
 | **AliExpress** | PCM5102A, PAM8403, ILI9341 display, speakers. Future: buttons, silicone pads, final battery |
 | **JLCPCB/PCBWay** | PCB fabrication + SMT assembly for final board |
-| **In-house** | 3D-printed case. Custom design is in progress; STL files will be uploaded to this repo when complete. |
+| **In-house** | 3D-printed case. Custom design starts once the PCB layout is locked; STL files will be uploaded to this repo when complete. |
 
 ---
 
@@ -128,10 +136,15 @@ Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts 
 | 2026-03-03 | Ditch headphone jack, keep speakers + mute switch | No 3.5mm devices owned. Bluetooth available via Pi Zero 2W for private listening (with latency tradeoff). Speakers for gameplay audio. Mute switch for quick silence. Software volume via RetroPie for fine control. Saves board space and simplifies audio circuit. |
 | 2026-03-05 | ILI9341 display: bare 18-pin FPC screen + adapter board | Same listing for both prototype and final build. Adapter board breaks 18-pin FPC to 14-pin header for breadboard use (with F-M jumper wires). Bare screen ribbon solders to final PCB. [AliExpress](https://www.aliexpress.com/item/1005003005329598.html). Buy 1x with adapter + 1x bare. ~$7 each. |
 | 2026-03-05 | Speakers: 8 ohm, 1W, ~10-15mm pre-wired | Commodity part, not mission-critical. Any 8 ohm small speaker works with PAM8403. Exact size to be matched to case cutouts later. ~$2 for a pair. |
-| 2026-03-05 | Silicone membrane pads for D-pad + ABXY | Two identical cross-shaped pads for D-pad and ABXY. Plan: buy pads first, design PCB contact spacing to match. Still researching exact source — options include generic cross pads or repurposed console pads (GBC, SNES, DS). |
+| 2026-03-05 | Silicone membrane pads for D-pad + ABXY | Two identical cross-shaped pads for D-pad and ABXY. Plan: buy pads first, design PCB contact spacing to match. Still researching exact source. Options include generic cross pads or repurposed console pads (GBC, SNES, DS). |
 | 2026-03-22 | Prototype order placed (Amazon + AliExpress) | All prototype components ordered. Amazon: IP5306 boards (10-pack) + 500mAh LiPo. AliExpress: PCM5102A (x2), PAM8403 (5-pack), ILI9341 3.2" display, speakers. Total ~$36. |
-| 2026-03-22 | Prototype display: all-in-one module (not bare FPC + adapter) | Found an ILI9341 3.2" SPI module with screen and pins on a single rigid board — plugs directly into breadboard. Easier for prototyping than the bare FPC + adapter approach. Bare FPC screen still planned for final PCB. |
+| 2026-03-22 | Prototype display: all-in-one module (not bare FPC + adapter) | Found an ILI9341 3.2" SPI module with screen and pins on a single rigid board that plugs directly into a breadboard. Easier for prototyping than the bare FPC + adapter approach. Bare FPC screen still planned for final PCB. |
 | 2026-04-03 | Breadboard prototype: all subsystems verified | Power (IP5306, 5.1V output, play-while-charging), display (ILI9341 via SPI/fbcp-ili9341), audio (PCM5102A DAC + PAM8403 amp, I2S via hifiberry-dac overlay), buttons (mk_arcade_joystick_rpi kernel module). Full prototype build guide in documentation/PROTOTYPE_BUILD_GUIDE.md. |
 | 2026-04-04 | Button driver: mk_arcade_joystick_rpi, NOT retrogame | Retrogame creates a virtual keyboard device that EmulationStation (on this Buster image) does not recognize. mk_arcade_joystick_rpi creates a proper joystick device that ES natively supports. Config: map=5 with custom GPIO list. |
 | 2026-04-21 | Pi Zero 2 W (no headers) for final build | Final PCB solders the Pi direct. WH variant is fine for prototyping but headers have to be desoldered before the final build. Plain W is cheaper and saves the desolder step for anyone replicating this. |
 | 2026-04-21 | Case: custom 3D-printed design | Earlier plan was to base the case on existing Thingiverse STLs. Decision changed to designing the case from scratch to fit the custom PCB footprint, battery, and component layout exactly. STL files will be published in this repo when the design is complete. |
+| 2026-09-21 | Locked final-PCB parts | IP5306 (LCSC C181692), PCM5102APWR (C107671), Slkor PAM8403 (C5122557) because the Diodes Inc. part is NRND/EOL, GCT USB4125 power-only USB-C (C5246813), JST-PH battery connector (C295747), Alps SKTHACE010 / SKSCLDE010 switches. |
+| 2026-09-21 | Backlight from 5V through 22 ohm | The bare panel has no current limiting. 3.3V leaves only 0.2V of headroom over the ~3.1V backlight, so the current would swing with LED tolerance. 5V through 22 ohm gives about 86 mA. |
+| 2026-09-21 | Landscape layout, 160 x 75 mm | Screen centered, D-pad left, ABXY right, shoulders on the top edge. The 77.4 x 54 mm LCD body sets the minimum size. |
+| 2026-09-22 | Pi mounts on standoffs with long-tail header pins | Pi on the back of the board, component side out, 5 mm M2.5 standoffs, 2x20 long-tail pins soldered through both boards. Replaces the earlier plan of soldering the Pi flat to pads. |
+| 2026-09-22 | 1.0 mm board, ENIG finish | Thin handheld target. ENIG because the membrane buttons press directly on exposed copper contacts. |

@@ -111,10 +111,10 @@ schematic shows these pins (top to bottom on the ribbon cable):
 | P$16        | XR     | -       | Touch panel (unused)               |
 | P$17        | YD     | -       | Touch panel (unused)               |
 
-**Backlight circuit**: The LEDA pin receives power (likely 3.3V through R1 resistor for
-current limiting). The four LED_K cathodes are likely tied together to ground. R1 on the
-schematic is a **3R9 (3.9 ohm)** SMD resistor — this is consistent with backlight current
-limiting for a parallel LED array.
+**Backlight circuit**: LEDA is fed from the 5V rail through R30, a 22 ohm 0.5W resistor.
+The four LED_K cathodes are tied together and return to ground through R31, a 0 ohm link.
+With the panel's backlight at about 3.1V / 90 mA, 22 ohm gives roughly 86 mA. The breadboard
+display module had its own current limiting and ran from 3.3V; the bare panel needs R30.
 
 **fbcp-ili9341 config** (from project plan):
 - SPI clock divider: 6
@@ -130,7 +130,7 @@ The audio chain is: **Pi (I2S) → PCM5102A (DAC) → PAM8403 (amplifier) → Sp
 
 | DAC Pin | Signal | Pi GPIO | Description                    |
 |---------|--------|---------|--------------------------------|
-| VCC     | 5V     | -       | 5V power                       |
+| VCC     | 5V     | -       | 5V power (breakout module only) |
 | 3.3V    | 3V3    | -       | 3.3V power                     |
 | GND     | GND    | -       | Ground                         |
 | DIN     | DIN    | GPIO21  | I2S serial data                |
@@ -142,8 +142,12 @@ The audio chain is: **Pi (I2S) → PCM5102A (DAC) → PAM8403 (amplifier) → Sp
 | FMT     | -      | -       | Format select (I2S = low)      |
 | XMT     | -      | -       | Mute control (active low)      |
 
-**Final design**: PCM5102A integrated as bare IC on the custom PCB. No headphone jack.
-Breakout module version used for breadboard prototyping only.
+The table above lists the breakout module's pins as wired on the breadboard. The module
+regulates its 5V VCC down on board.
+
+**Final design**: PCM5102A integrated as bare IC on the custom PCB. All three supplies
+(AVDD, CPVDD, DVDD) run on 3.3V; the bare chip must never see 5V. SCK, FMT, FLT, and DEMP
+are tied to GND, and XSMT is tied to 3.3V. No headphone jack.
 
 #### PAM8403 Amplifier (Line → Speaker)
 
@@ -187,8 +191,8 @@ as a standard joystick device that EmulationStation consumes directly.
 | Y           | 22   | 15       | Silicone membrane pad |
 | Start       | 26   | 37       | SMD tactile switch    |
 | Select      | 16   | 36       | SMD tactile switch    |
-| L Shoulder  | 27   | 13       | Right-angled button   |
-| R Shoulder  | 5    | 29       | Right-angled button   |
+| L Shoulder  | 27   | 13       | Side-push SMD switch  |
+| R Shoulder  | 5    | 29       | Side-push SMD switch  |
 
 The row order matches the `mk_arcade_joystick_rpi` module options:
 `map=5 gpio=12,20,4,17,26,16,23,14,6,22,27,5` (UP, DOWN, LEFT, RIGHT, START, SELECT,
@@ -196,8 +200,8 @@ A, B, X, Y, L, R). Button-to-action mapping is handled by EmulationStation's own
 configuration (`es_input.cfg`), not by the kernel module.
 
 **Button types**:
-- 2x SMD tactile switches → Start and Select
-- 2x right-angled buttons → L and R shoulders
+- 2x SMD tactile switches (Alps SKTHACE010) → Start and Select
+- 2x side-push SMD switches (Alps SKSCLDE010) → L and R shoulders, on the top edge of the PCB
 - Silicone membrane pads → D-pad (4 directions) and face buttons (A, B, X, Y)
 
 Marathon does not include a dedicated hotkey/system button. The RetroPie hotkey
@@ -211,7 +215,9 @@ USB-C → IP5306 ←→ LiPo 2000-3000mAh (TBD)
            │
            ├→ 5V output → Pi Zero 5V pins (2, 4)
            │              + PAM8403 VCC (through mute switch)
-           │              + PCM5102A VCC
+           │              + LCD backlight (through R30)
+           │
+Pi 3.3V regulator (pins 1, 17) → LCD VCC + PCM5102A (all supplies)
            │
            └→ Charging + boost + load sharing + protection
               all handled by one chip
@@ -221,7 +227,8 @@ USB-C → IP5306 ←→ LiPo 2000-3000mAh (TBD)
 - Play while charging (load sharing built into IP5306)
 - Clean 5V boost from 3.7V battery voltage
 - Low battery protection (won't over-discharge and kill the battery)
-- Battery level indication available (4 LEDs or digital)
+- Battery level indication available (up to 4 LEDs). The current PCB leaves these pins
+  unconnected, so there is no charge indicator yet.
 
 ---
 
@@ -234,10 +241,8 @@ These need to be resolved before schematic capture is complete:
 2. ~~**I2S pin assignments**~~ - RESOLVED (2026-04-03): BCK=GPIO18, LRCK=GPIO19,
    DIN=GPIO21. Standard hifiberry-dac overlay. Confirmed working during prototype.
 
-3. **Backlight circuit details** - Is R1 (3.9 ohm) the only component in the backlight
-   path, or is there a transistor/MOSFET for brightness control? Note: during prototype
-   testing, the ILI9341 breakout board's LED pin was connected directly to 3.3V and
-   backlight worked fine (breakout board has its own current limiting).
+3. ~~**Backlight circuit details**~~ - RESOLVED: 5V through R30 (22 ohm) to LEDA, cathodes
+   to GND through R31 (0 ohm). No brightness-control transistor on this revision.
 
 4. ~~**Headphone jack wiring**~~ - RESOLVED: No headphone jack. Bluetooth for private audio.
 
@@ -250,5 +255,5 @@ These need to be resolved before schematic capture is complete:
    Pin order: UP,DOWN,LEFT,RIGHT,START,SELECT,A,B,X,Y,L,R mapped to GPIOs:
    `gpio=12,20,4,17,26,16,23,14,6,22,27,5`
 
-7. **Display backlight power** - LEDA likely connects to 3.3V or 5V through R1, but
-   which rail? Prototype used 3.3V directly to the breakout board's LED pin.
+7. ~~**Display backlight power**~~ - RESOLVED: 5V rail. 3.3V would leave only about 0.2V of
+   headroom over the backlight's forward voltage.
