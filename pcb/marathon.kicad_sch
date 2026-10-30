@@ -8,9 +8,6 @@
   (title "Marathon Handheld - Main Board")
   (date "2026-10-07")
   (rev "Draft")
-  (company "Marathon Open Hardware Project")
-  (comment 1 "Breadboard-validated architecture converted to bare-IC schematic draft")
-  (comment 2 "Mechanical TBDs intentionally flagged; review before fabrication")
 )
 (lib_symbols
 (symbol "Marathon:RaspberryPi_2x20"
