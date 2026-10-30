@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Marathon")(type "KiCad")(uri "${KIPRJMOD}/Marathon.pretty")(options "")(descr "Marathon project-local footprints"))
+)
