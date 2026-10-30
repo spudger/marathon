@@ -53,7 +53,7 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | SMD tactile switches (x3) | Alps Alpine SKTHACE010, 3.5 x 3.2 x 1.8 mm top-push | <$1 | Start, Select, and the IP5306 power key. |
 | Side-push SMD switches (x2) | Alps Alpine SKSCLDE010, 3.5 x 3.55 x 1.25 mm | <$1 | L and R shoulders, on the top edge of the PCB. |
 
-**All buttons are direct GPIO** - no I2C expander needed. Each button shorts its GPIO to ground (active low) using the Pi's internal pull-up resistors. There is no dedicated system/hotkey button; Select takes that role in EmulationStation.
+**All gameplay buttons are direct GPIO** - no I2C expander needed. Each button shorts its GPIO to ground (active low) using the Pi's internal pull-up resistors. There is no dedicated system/hotkey button; Select takes that role in EmulationStation. The power key (SW1) connects to the IP5306 KEY pin, not to the Pi.
 
 **D-pad and ABXY contacts** are 5 mm interdigitated copper pads on the PCB itself (ENIG finish, no solder paste). The rubber pill on the membrane bridges the two combs when pressed.
 

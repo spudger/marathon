@@ -8,7 +8,7 @@ A handheld retro gaming console built around a Raspberry Pi Zero 2 W, designed f
 
 ## Status
 
-- ✅ **Phase 1, Component identification & research:** complete.
+- 🔨 **Phase 1, Component identification & research:** mostly complete.
 - ✅ **Phase 2, Breadboard prototype:** complete. All subsystems (power, display, audio, buttons) verified end-to-end on 2026-04-03 / 2026-04-04.
 - 🔨 **Phase 3, Schematic capture (KiCad):** mostly complete. ERC is clean; test points and a readability pass on the sheet remain.
 - 🔨 **Phase 4, PCB layout (KiCad):** in progress. Power, audio, and I²S are routed. The display, buttons, and power key are not, and the Pi has to move back inside the board outline. Not ready for fabrication.
@@ -75,7 +75,7 @@ flowchart LR
 
 | Phase | Scope | Status |
 |-------|-------|--------|
-| 1 | Component identification & research | ✅ Complete |
+| 1 | Component identification & research | 🔨 Mostly complete |
 | 2 | Breadboard prototype | ✅ Complete (2026-04-03 / 2026-04-04) |
 | 3 | Schematic capture (KiCad) | 🔨 Mostly complete |
 | 4 | PCB layout (KiCad) | 🔨 In progress |
