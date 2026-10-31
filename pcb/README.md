@@ -7,14 +7,14 @@ KiCad 10 project for the Marathon main board. Open `marathon.kicad_pro`. The sch
 - 160 x 75 mm, 2 layers.
 - Placed: every part. The Raspberry Pi mounts on the back, inside the outline and clear of the battery area.
 - Routed: every net, with ground pours on both layers.
-- Footprints named `PROVISIONAL` are sized for placement and still need checking against the real parts.
+- Footprints named `PROVISIONAL` still need checking against the real parts. The Alps switch footprints follow Alps' published land patterns.
 
 ## Checks
 
 | Check | Result |
 |-------|--------|
 | ERC | 0 violations |
-| DRC | 0 errors, 12 library-mismatch warnings |
+| DRC | 0 errors, 9 library-mismatch warnings |
 | Unrouted connections | 0 |
 | Schematic / PCB parity | 0 issues |
 

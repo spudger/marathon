@@ -39,11 +39,11 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | PAM8403 amp breakout (prototype) | Class-D stereo, 3W per channel | ~$3.55 (5-pack) | Input pins labeled L/G/R (note: "R" may look like "B" on silkscreen). PCM5102A L/R outputs soldered directly to PAM8403 L/R inputs, G to G. POWER+ to 5V, POWER- to GND. |
 | PAM8403 IC (final PCB) | Slkor PAM8403, SOP-16 (9.9 x 3.9 mm), LCSC C5122557 | <$1 | Bare chip on the final PCB. Slkor part used because the Diodes Inc. original is NRND/EOL. JLCPCB assembly. |
 | Speakers (x2) | 8 ohm, 1W, 15mm, pre-wired | $2.87 | Both channels verified working in prototype. Connected to PAM8403 LOUT+/-, ROUT+/-. |
-| Mute switch | SPDT slide switch (SS12F15-G5), through-hole | <$1 | Bottom-right edge of the PCB. Cuts power to PAM8403 to silence speakers. Simple on/off, fine volume control handled via RetroPie software. |
+| Mute switch | SPDT slide switch (SS12F15-G5), through-hole | <$1 | Bottom-right edge of the PCB. Drives the PAM8403 SHDN/MUTE pins: 5V plays, GND mutes. The amp stays powered. Fine volume control handled via RetroPie software. |
 
 **No headphone jack** - Bluetooth audio available via Pi Zero 2W's BT 4.2 for private listening. Speakers are the primary audio output. Note: BT audio has latency (~100-300ms), fine for passive games but not ideal for timing-sensitive gameplay.
 
-**Audio chain**: Pi (I2S) → PCM5102A (DAC) → PAM8403 (amp) → Speakers. Mute switch kills amp power for silence.
+**Audio chain**: Pi (I2S) → PCM5102A (DAC) → PAM8403 (amp) → Speakers. The mute switch holds the amp in shutdown.
 
 ## 5. Buttons / Input
 
@@ -63,11 +63,11 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 |-----------|------|-----------|-------|
 | R30 - Backlight resistor | 22 ohm, 0.5W, 1206 | <$0.10 | 5V to the backlight anode. About 86 mA through a 3.1V backlight. |
 | R31 - Backlight return | 0 ohm, 0603 | <$0.10 | Backlight cathodes to GND. Lift it to measure or change the backlight circuit. |
-| L1 - IP5306 boost inductor | 1 uH, needs ≥4A saturation | <$0.50 | **Part number not chosen yet.** The 1210 footprint may be too small for a 4A part. |
+| L1 - IP5306 boost inductor | 1 uH shielded, saturation current at least 6 A, low DCR, 4 x 4 mm molded (XAL4020 footprint) | <$1 | **Part number not chosen yet.** Peak current is about 5.2 A at a 3.0 V battery and 2.1 A output. |
 | IP5306 capacitors | C1 10uF (VIN), C2 22uF (BAT), C3-C6 22uF (5V out), 0805 | <$0.50 total | |
-| PCM5102A support | C10/C11 2.2uF, C12/C13 0.1uF, C14 10uF, 0603 | <$0.30 total | Charge pump, VNEG, LDO, and supply decoupling. Config pins are strapped directly, no resistors. |
-| DAC output filter | R10/R11 470 ohm, C15/C16 2.2nF, C17/C18 0.47uF, 0603 | <$0.30 total | Low-pass at about 154 kHz, then AC coupling into the amp. |
-| PAM8403 support | R20 10k, C20 1uF (VREF), C21 1uF, C22 470uF electrolytic (8 x 10 mm) | <$0.50 total | R20 pulls MUTE/SHDN high. C22 is bulk supply for the amp. |
+| PCM5102A support | C10/C11 2.2uF, C12/C13/C23/C24 0.1uF (0402), C14 10uF (0603) | <$0.30 total | Charge pump, VNEG, LDO, and one bypass capacitor at each supply pin. Config pins are strapped directly, no resistors. |
+| DAC output filter | R10/R11 470 ohm, C15/C16 2.2nF, R12/R13 8.2k, R14/R15 680 ohm, C17/C18 0.47uF, 0603 | <$0.30 total | Low-pass at about 154 kHz, a 22.3 dB attenuator (about 0.8 W per speaker at full scale with the amp's 24 dB gain), then AC coupling into the amp. |
+| PAM8403 support | R20 100k, C20 1uF (VREF), C21/C25/C26 1uF, C22 470uF electrolytic (8 x 10 mm) | <$0.50 total | R20 holds MUTE/SHDN low while SW2 moves. C21, C25 and C26 bypass each supply pin. C22 is bulk supply for the amp. |
 | USB-C CC resistors (x2) | R1/R2 5.1k ohm, 0603 | <$0.10 | Required for USB-C spec compliance. |
 
 LCSC part numbers for the passives are not chosen yet. Values come from the schematic in [`pcb/marathon.kicad_sch`](../pcb/marathon.kicad_sch).
