@@ -148,11 +148,11 @@ Remaining:
 
 - [x] Import schematic to PCB editor
 - [x] Define board outline -- 160 x 75 mm landscape, 6 mm corner radius. Case mounting holes are still placeholders.
-- [ ] Place components -- done except the Raspberry Pi, which currently overhangs the top edge of the board and has to move back inside the outline
-- [ ] Route traces (2-layer board) -- power, audio, and I2S routed. LCD, buttons, and the IP5306 power key still to do.
+- [x] Place components -- the Raspberry Pi sits on its back-side guide, inside the outline and clear of the battery envelope
+- [x] Route traces (2-layer board) -- all nets routed, with ground pours on both layers
 - [ ] Determine final battery size from available area -- 60 x 50 x 6 mm envelope reserved
 - [ ] Add test points, Pi antenna copper keepout, and silkscreen artwork
-- [ ] Run DRC (Design Rules Check) -- 0 errors as of 2026-10-07, but routing is not finished
+- [x] Run DRC (Design Rules Check) -- 0 errors and 0 unrouted connections as of 2026-10-30
 - [ ] Verify provisional footprints (LCD tail, Alps switches, IP5306) against real parts or manufacturer drawings
 - [ ] Generate Gerber + BOM + pick-and-place files for JLCPCB
 
@@ -206,8 +206,8 @@ Remaining:
 1. ~~**Source prototype modules**~~ -- DONE (ordered 2026-03-22)
 2. ~~**Build breadboard prototype**~~ -- DONE (2026-04-03 to 2026-04-04). All subsystems verified.
 3. ~~**Begin schematic capture in KiCad**~~ -- DONE. ERC clean, pin mapping verified.
-4. **Fix the Raspberry Pi placement** -- move it back inside the board outline without colliding with the battery envelope or front-side parts, then reroute its 5V, 3V3, and I2S connections.
-5. **Finish routing** -- LCD, buttons, and the IP5306 power key.
+4. ~~**Fix the Raspberry Pi placement**~~ -- DONE (2026-10-30). The Pi sits on its back-side guide.
+5. ~~**Finish routing**~~ -- DONE (2026-10-30). DRC reports 0 errors and 0 unrouted connections.
 6. **Verify parts against the real hardware** -- LCD tail pitch and contact side, silicone pad fit, Alps switch land patterns.
 
 ## Key Risks & Unknowns
