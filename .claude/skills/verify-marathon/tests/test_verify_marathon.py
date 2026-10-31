@@ -93,6 +93,18 @@ class ProjectPaths(unittest.TestCase):
         pro = json.dumps({'schematic': {'page_layout_descr_file': '/opt/sheets/a.kicad_wks'}})
         self.assertEqual(len(self.scan('m.kicad_pro', pro)), 1)
 
+    def test_sheet_files_outside_the_project_fail(self):
+        sch = (
+            '(property "Sheetfile" "/home/someone/power.kicad_sch")\n'
+            '(property "Sheetfile" "../other/audio.kicad_sch")\n'
+            '(property "Sheetfile" "input.kicad_sch")\n'
+        )
+        self.assertEqual(len(self.scan('m.kicad_sch', sch)), 2)
+
+    def test_project_variable_escaping_upward_fails(self):
+        table = '(lib (name "M")(type "KiCad")(uri "${KIPRJMOD}/../shared/m.pretty"))\n'
+        self.assertEqual(len(self.scan('fp-lib-table', table)), 1)
+
     def test_committed_project_reaches_nothing_outside(self):
         # Fails when the project gains a library, model or sheet path the sandbox does not cover.
         files = sorted(p for p in (ROOT / 'pcb').rglob('*') if p.is_file())
@@ -141,6 +153,9 @@ class SandboxProbe(unittest.TestCase):
             'home': 'hidden',
             'project': 'visible',
             'tables': 'present',
+            'media': 'hidden',
+            'appdata': 'hidden',
+            'env': 'HOME,KICAD_CONFIG_HOME,PATH',
         }
         values.update(change)
         return ''.join(f'{k}={v}\n' for k, v in values.items())
@@ -161,9 +176,59 @@ class SandboxProbe(unittest.TestCase):
         real = '/home/someone/.var/app/org.kicad.KiCad/config'
         self.assertEqual(len(self.failures(self.probe(config=real))), 1)
 
+    def test_visible_media_or_app_data_fails(self):
+        self.assertEqual(len(self.failures(self.probe(media='visible', appdata='visible'))), 2)
+
+    def test_unexpected_environment_variable_fails(self):
+        self.assertEqual(len(self.failures(self.probe(env='GH_TOKEN,HOME,PATH'))), 1)
+
     def test_missing_probe_line_fails(self):
         text = self.probe().replace('tables=present\n', '')
         self.assertEqual(len(self.failures(text)), 1)
+
+
+class HostEnvironment(unittest.TestCase):
+    def test_only_what_flatpak_needs_passes_through(self):
+        host = {
+            'PATH': '/opt/bin:/usr/bin',
+            'HOME': '/home/someone',
+            'XDG_RUNTIME_DIR': '/run/user/1000',
+            'GH_TOKEN': 'stand-in-token',
+            'KICAD10_3DMODEL_DIR': '/opt/models',
+            'SSH_AUTH_SOCK': '/run/user/1000/ssh',
+        }
+        self.assertEqual(
+            verify.host_env(host),
+            {
+                'PATH': '/usr/bin:/bin',
+                'HOME': '/home/someone',
+                'XDG_RUNTIME_DIR': '/run/user/1000',
+                'LANG': 'C.UTF-8',
+            },
+        )
+
+
+class Baseline(unittest.TestCase):
+    def test_missing_origin_main_fails_launch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, dest = Path(tmp) / 'repo', Path(tmp) / 'main'
+            repo.mkdir()
+            verify.git(repo, 'init', '-q')
+            with self.assertRaises(ValueError):
+                verify.extract_baseline(repo, dest)
+
+
+class Diagnostics(unittest.TestCase):
+    def test_records_and_outputs_are_kept_when_a_drive_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run, out = Path(tmp) / 'run', Path(tmp) / 'out'
+            run.mkdir()
+            out.mkdir()
+            (out / 'head-drc.rpt').write_text('partial\n')
+            records = [{'argv': ['kicad-cli'], 'exit': 3, 'stdout': '', 'stderr': 'boom'}]
+            verify.save_outputs(run, 'drc', records, out)
+            self.assertEqual((run / 'head-drc.rpt').read_text(), 'partial\n')
+            self.assertEqual(json.loads((run / 'drc.json').read_text())[0]['stderr'], 'boom')
 
 
 class Ownership(unittest.TestCase):
@@ -174,6 +239,15 @@ class Ownership(unittest.TestCase):
             (run / 'run.json').write_text(json.dumps(data))
             with self.assertRaises(ValueError):
                 verify.state(run, ROOT)
+
+    def test_cleanup_handles_a_launch_that_failed_early(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp)
+            scratch = Path(tempfile.mkdtemp(prefix='verify-marathon-'))
+            (scratch / 'owner').write_text(str(run.resolve()))
+            (run / 'run.json').write_text(json.dumps({'root': str(ROOT), 'scratch': str(scratch)}))
+            verify.cleanup(run, ROOT)
+            self.assertFalse(scratch.exists())
 
     def test_owner_mismatch_is_refused(self):
         with tempfile.TemporaryDirectory() as tmp:

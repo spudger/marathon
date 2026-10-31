@@ -22,14 +22,17 @@ Save the folder printed by `PASS launch` as `run`. Launch refuses the main check
 `org.kicad.KiCad` Flatpak at 10.x and `pdftoppm`, and refuses a project whose library tables, 3D
 models or project file point outside `${KIPRJMOD}` and KiCad's own libraries. It copies the
 working tree's `pcb/` files (committed or not, minus what `.gitignore` excludes) into a scratch
-folder in `/tmp`, extracts `origin/main`'s `pcb/` beside it as a baseline, and seeds a throwaway
-KiCad config whose library tables point at the Flatpak's bundled libraries.
+folder in `/tmp`, extracts `origin/main`'s `pcb/` beside it as the baseline, and seeds a throwaway
+KiCad config whose library tables point at the Flatpak's bundled libraries. Launch fails when
+there is no baseline; run `git fetch origin` and launch again.
 
-Every KiCad call runs as `flatpak run --unshare=network --nofilesystem=home --nofilesystem=host
---filesystem=<scratch> --env=KICAD_CONFIG_HOME=<scratch>/config`. KiCad sees no network, none of
-the home folder and none of the user's KiCad settings. It reads and writes only the scratch folder.
-The helper copies outputs into the evidence folder. Run `git fetch origin` first when the baseline
-should be the latest `main`.
+Every KiCad call runs as `flatpak run --sandbox --unshare=network --filesystem=<scratch>
+--env=KICAD_CONFIG_HOME=<scratch>/config`, with the host environment cut down to `PATH`, `HOME`,
+`XDG_RUNTIME_DIR` and `LANG`. `--sandbox` drops every folder the KiCad Flatpak is normally
+granted (the home folder, `/media`, `/run/media`) and its own data folder in
+`~/.var/app/org.kicad.KiCad`. KiCad sees no network, no credentials and none of the user's KiCad
+settings, and reads and writes only the scratch folder. The helper copies outputs into the
+evidence folder.
 
 ## Doctor
 
@@ -37,10 +40,12 @@ should be the latest `main`.
 python3 .claude/skills/verify-marathon/verify.py doctor --run "$run"
 ```
 
-Expect seven `PASS doctor` lines. `snapshot` fails when HEAD or any `pcb/` file changed since
+Expect ten `PASS doctor` lines. `snapshot` fails when HEAD or any `pcb/` file changed since
 launch. The rest come from a probe run inside the same sandbox the drives use: `config` (KiCad's
-config is the throwaway one), `net` (only `lo`), `root` and `home` (the worktree and home folder
-are hidden), `project` (the snapshot is readable) and `tables` (the library tables exist). Every
+config is the throwaway one), `net` (only `lo`), `root`, `home`, `media` and `appdata` (the
+worktree, home folder, removable media and KiCad's real data folder are hidden), `env` (no
+variable beyond what the Flatpak sets itself), `project` (the snapshot is readable) and `tables`
+(the library tables exist). Every
 drive runs Doctor first. Edits to `pcb/` need a fresh launch.
 
 ## Drive
@@ -54,7 +59,8 @@ python3 .claude/skills/verify-marathon/verify.py drive --run "$run" --feature re
 
 Each drive runs on the working-tree snapshot (`head`) and on the baseline (`main`), prints one
 summary line per side and ends with `PASS drive <feature>`. A drive fails when a `kicad-cli` or
-`pdftoppm` call exits non-zero or writes no output. Violations do not fail a drive; compare the
+`pdftoppm` call exits non-zero or writes no output; its command records and any partial output
+are still saved. Violations do not fail a drive; compare the
 two sides to judge the change. Each feature runs once per run, so evidence is never overwritten.
 
 ## Evidence

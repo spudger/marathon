@@ -5,6 +5,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -36,7 +37,35 @@ TABLES = {
     '(uri "/app/extensions/Library/template/sym-lib-table") (options "") '
     '(descr "KiCad Default Libraries"))\n)\n',
 }
-PROBES = ('config', 'net', 'root', 'home', 'project', 'tables')
+PROBES = ('config', 'net', 'root', 'home', 'media', 'appdata', 'env', 'project', 'tables')
+# Variables the Flatpak itself sets inside a --sandbox run; anything else came from the host.
+SANDBOX_ENV = {
+    '_',
+    '__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS',
+    'ALSA_CONFIG_DIR',
+    'ALSA_CONFIG_PATH',
+    'container',
+    'DEBUGINFOD_URLS',
+    'FLATPAK_ID',
+    'FLATPAK_SANDBOX_DIR',
+    'GI_TYPELIB_PATH',
+    'GST_PLUGIN_SYSTEM_PATH',
+    'HOME',
+    'KICAD_CONFIG_HOME',
+    'LANG',
+    'LD_LIBRARY_PATH',
+    'PATH',
+    'PWD',
+    'PYTHONUSERBASE',
+    'SHELL',
+    'SHLVL',
+    'TMPDIR',
+    'XCURSOR_SIZE',
+    'XCURSOR_THEME',
+    'XDG_CONFIG_DIRS',
+    'XDG_DATA_DIRS',
+    'XDG_RUNTIME_DIR',
+}
 
 
 def git(root: Path, *args: str) -> str:
@@ -76,12 +105,20 @@ def fingerprints(root: Path, files: list[Path]) -> dict[str, str]:
     return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
 
 
+def escapes(value: str) -> bool:
+    return os.path.normpath(value.replace('\\', '/')).startswith('..')
+
+
 def bad_path(value: str) -> bool:
     if any(var not in PATH_VARS for var in re.findall(r'\$\{([^}]*)\}', value)):
         return True
+    if value.startswith('${KIPRJMOD}'):
+        return escapes(value[len('${KIPRJMOD}') :].lstrip('/\\'))
     if value.startswith('${'):
         return False
-    return value.startswith(('/', '~')) or bool(re.match(r'[A-Za-z]:[\\/]', value))
+    if value.startswith(('/', '~')) or re.match(r'[A-Za-z]:[\\/]', value):
+        return True
+    return escapes(value)
 
 
 def path_values(node, under_path_key=False):
@@ -106,6 +143,7 @@ def path_findings(files: list[Path]) -> list[str]:
             values = list(path_values(json.loads(text)))
         else:
             values = re.findall(r'\((?:uri|model)\s+"([^"]*)"', text)
+            values += re.findall(r'\(property\s+"Sheet ?[Ff]ile"\s+"([^"]*)"', text)
         found += [f'{path.name}: {v}' for v in values if bad_path(v)]
     return found
 
@@ -148,10 +186,16 @@ def probe_lines(text: str, scratch: Path) -> list[str]:
         'net': ('lo', 'the sandbox has a network interface besides lo'),
         'root': ('hidden', 'the sandbox can see this worktree'),
         'home': ('hidden', 'the sandbox can see the home folder'),
+        'media': ('hidden', 'the sandbox can see /media or /run/media'),
+        'appdata': ('hidden', "the sandbox can see KiCad's real data folder"),
         'project': ('visible', 'the sandbox cannot see the project snapshot'),
         'tables': ('present', 'the throwaway config has no library tables'),
     }
     lines = []
+    if 'env' in seen:
+        extra = sorted(set(seen['env'].split(',')) - SANDBOX_ENV - {''})
+        seen['env'] = ','.join(extra) or 'clean'
+    want['env'] = ('clean', 'host variables reached the sandbox')
     for key in PROBES:
         expected, problem = want[key]
         if seen.get(key) == expected:
@@ -161,14 +205,22 @@ def probe_lines(text: str, scratch: Path) -> list[str]:
     return lines
 
 
+def host_env(source) -> dict[str, str]:
+    """The only host variables flatpak gets, so no credential or KiCad override reaches KiCad."""
+    env = {'PATH': '/usr/bin:/bin', 'LANG': 'C.UTF-8'}
+    for key in ('HOME', 'XDG_RUNTIME_DIR'):
+        if source.get(key):
+            env[key] = source[key]
+    return {k: env[k] for k in ('PATH', 'HOME', 'XDG_RUNTIME_DIR', 'LANG') if k in env}
+
+
 def sandbox(scratch: Path) -> list[str]:
-    """The Flatpak flags every KiCad call runs with: no network, no home, throwaway config."""
+    """Flatpak flags for every KiCad call: no granted folders, no network, throwaway config."""
     return [
         'flatpak',
         'run',
+        '--sandbox',
         '--unshare=network',
-        '--nofilesystem=home',
-        '--nofilesystem=host',
         f'--filesystem={scratch}',
         f'--env=KICAD_CONFIG_HOME={scratch / "config"}',
     ]
@@ -176,13 +228,34 @@ def sandbox(scratch: Path) -> list[str]:
 
 def run_cmd(argv: list[str], timeout: int = 300) -> dict:
     print('$ ' + ' '.join(argv), flush=True)
-    result = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
+    result = subprocess.run(
+        argv, capture_output=True, text=True, timeout=timeout, env=host_env(os.environ)
+    )
     stderr = '\n'.join(l for l in result.stderr.splitlines() if not l.startswith('F: '))
     return {'argv': argv, 'exit': result.returncode, 'stdout': result.stdout, 'stderr': stderr}
 
 
 def kicad(data: dict, *args: str) -> dict:
     return run_cmd([*data['sandbox'], '--command=kicad-cli', APP, *args])
+
+
+def extract_baseline(root: Path, dest: Path) -> str:
+    """origin/main's pcb/ into dest, or a clear failure: every drive compares against it."""
+    try:
+        commit = git(root, 'rev-parse', '--verify', 'origin/main^{commit}')
+        archive = subprocess.run(
+            ['/usr/bin/git', '-C', str(root), 'archive', commit, 'pcb'],
+            capture_output=True,
+            check=True,
+            timeout=60,
+        )
+        dest.mkdir()
+        subprocess.run(['tar', '-x', '-C', str(dest)], input=archive.stdout, check=True)
+    except (subprocess.CalledProcessError, OSError) as error:
+        raise ValueError(f'no baseline from origin/main ({error}); run git fetch origin') from None
+    if not (dest / SCH).is_file():
+        raise ValueError(f'origin/main has no {SCH}; run git fetch origin and relaunch')
+    return commit
 
 
 def launch(root: Path, evidence_root: Path) -> Path:
@@ -203,26 +276,14 @@ def launch(root: Path, evidence_root: Path) -> Path:
     run.mkdir(parents=True, exist_ok=False)
     scratch = Path(tempfile.mkdtemp(prefix=PREFIX))
     (scratch / 'owner').write_text(str(run.resolve()))
+    # Ownership first, so a failure below can still be cleaned up by the recorded path.
+    (run / 'run.json').write_text(json.dumps({'root': str(root), 'scratch': str(scratch)}) + '\n')
     try:
         for f in files:
             dest = scratch / 'head' / f.relative_to(root)
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(f, dest)
-        baseline = None
-        try:
-            baseline = git(root, 'rev-parse', 'origin/main')
-            archive = subprocess.run(
-                ['/usr/bin/git', '-C', str(root), 'archive', baseline, 'pcb'],
-                capture_output=True,
-                check=True,
-                timeout=60,
-            )
-            (scratch / 'main').mkdir()
-            subprocess.run(
-                ['tar', '-x', '-C', str(scratch / 'main')], input=archive.stdout, check=True
-            )
-        except subprocess.CalledProcessError:
-            baseline = None
+        baseline = extract_baseline(root, scratch / 'main')
         (scratch / 'config/10.0').mkdir(parents=True)
         for name, text in TABLES.items():
             (scratch / 'config/10.0' / name).write_text(text)
@@ -278,6 +339,9 @@ def doctor(run: Path, root: Path) -> bool:
         "echo net=$(tail -n +3 /proc/net/dev | cut -d: -f1 | tr -d ' ' | paste -sd,); "
         f'test -e {root} && echo root=visible || echo root=hidden; '
         f'test -e {Path.home()}/Software && echo home=visible || echo home=hidden; '
+        '{ [ -e /media ] || [ -e /run/media ]; } && echo media=visible || echo media=hidden; '
+        f'test -e {Path.home()}/.var/app/{APP} && echo appdata=visible || echo appdata=hidden; '
+        'echo env=$(env | cut -d= -f1 | sort | paste -sd,); '
         f'test -r {scratch}/head/{SCH} && echo project=visible || echo project=hidden; '
         '[ -r "$KICAD_CONFIG_HOME/10.0/fp-lib-table" ] && echo tables=present || echo tables=none'
     )
@@ -288,11 +352,12 @@ def doctor(run: Path, root: Path) -> bool:
     return all(line.startswith('PASS') for line in lines)
 
 
-def sides(data: dict, scratch: Path) -> list[tuple[str, Path]]:
-    found = [('head', scratch / 'head')]
-    if data['baseline'] and (scratch / 'main' / SCH).is_file():
-        found.append(('main', scratch / 'main'))
-    return found
+def save_outputs(run: Path, feature: str, records: list[dict], out: Path) -> None:
+    """Keep every command record and output file, including after a failed command."""
+    (run / f'{feature}.json').write_text(json.dumps(records, indent=2) + '\n')
+    for f in out.iterdir():
+        if f.is_file():
+            shutil.copy2(f, run / f.name)
 
 
 def drive(run: Path, root: Path, feature: str) -> None:
@@ -303,7 +368,24 @@ def drive(run: Path, root: Path, feature: str) -> None:
         raise ValueError('doctor failed; clean up and relaunch')
     out = scratch / 'out'
     records, proof = [], {}
-    for side, base in sides(data, scratch):
+    try:
+        drive_sides(data, scratch, feature, records, proof)
+    except OSError as error:
+        raise ValueError(f'{error}; see {run / feature}.json') from None
+    finally:
+        save_outputs(run, feature, records, out)
+    failed = [r for r in records if r['exit']]
+    if failed:
+        raise ValueError(f'{len(failed)} command(s) exited non-zero; see {feature}.json')
+    (run / f'{feature}-proof.json').write_text(json.dumps(proof, indent=2) + '\n')
+    for side, result in proof.items():
+        print(f'{side}: {json.dumps(result)}')
+    print(f'PASS drive {feature}: {run}')
+
+
+def drive_sides(data: dict, scratch: Path, feature: str, records: list, proof: dict) -> None:
+    out = scratch / 'out'
+    for side, base in (('head', scratch / 'head'), ('main', scratch / 'main')):
         sch, pcb = str(base / SCH), str(base / PCB)
         if feature == 'erc':
             report = out / f'{side}-erc.rpt'
@@ -349,18 +431,9 @@ def drive(run: Path, root: Path, feature: str) -> None:
                                      '--height', '900', '-o', str(png), pcb))
                 files.append(png)
             proof[side] = {'images': [f.name for f in files if f.suffix == '.png']}
-        for f in files:
-            if not f.is_file():
-                raise ValueError(f'{f.name} was not written')
-            shutil.copy2(f, run / f.name)
-    (run / f'{feature}.json').write_text(json.dumps(records, indent=2) + '\n')
-    failed = [r for r in records if r['exit']]
-    if failed:
-        raise ValueError(f'{len(failed)} command(s) exited non-zero; see {feature}.json')
-    (run / f'{feature}-proof.json').write_text(json.dumps(proof, indent=2) + '\n')
-    for side, result in proof.items():
-        print(f'{side}: {json.dumps(result)}')
-    print(f'PASS drive {feature}: {run}')
+        missing = [f.name for f in files if not f.is_file()]
+        if missing:
+            raise ValueError(f'not written: {", ".join(missing)}; see the command records')
 
 
 def evidence(run: Path) -> None:
