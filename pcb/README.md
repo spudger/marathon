@@ -5,8 +5,8 @@ KiCad 10 project for the Marathon main board. Open `marathon.kicad_pro`. The sch
 **Status:** Phase 4, in progress. **Not ready for fabrication.**
 
 - 160 x 75 mm, 2 layers.
-- Placed: everything except the Raspberry Pi, which overhangs the top edge and has to move inside the outline.
-- Routed: power, audio, and I²S. Not routed: the LCD, buttons, and IP5306 power key.
+- Placed: every part. The Raspberry Pi mounts on the back, inside the outline and clear of the battery area.
+- Routed: every net, with ground pours on both layers.
 - Footprints named `PROVISIONAL` are sized for placement and still need checking against the real parts.
 
 ## Checks
@@ -15,7 +15,7 @@ KiCad 10 project for the Marathon main board. Open `marathon.kicad_pro`. The sch
 |-------|--------|
 | ERC | 0 violations |
 | DRC | 0 errors, 12 library-mismatch warnings |
-| Unrouted connections | 48 (LCD, buttons, power key) |
+| Unrouted connections | 0 |
 | Schematic / PCB parity | 0 issues |
 
 To re-run them from the repo root:
