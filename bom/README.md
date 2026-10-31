@@ -66,7 +66,7 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | L1 - IP5306 boost inductor | 1 uH shielded, saturation current at least 6 A, low DCR, 4 x 4 mm molded (XAL4020 footprint) | <$1 | **Part number not chosen yet.** Peak current is about 5.2 A at a 3.0 V battery and 2.1 A output. |
 | IP5306 capacitors | C1 10uF (VIN), C2 22uF (BAT), C3-C6 22uF (5V out), 0805 | <$0.50 total | |
 | PCM5102A support | C10/C11 2.2uF, C12/C13/C23/C24 0.1uF (0402), C14 10uF (0603) | <$0.30 total | Charge pump, VNEG, LDO, and one bypass capacitor at each supply pin. Config pins are strapped directly, no resistors. |
-| DAC output filter | R10/R11 470 ohm, C15/C16 2.2nF, R12/R13 8.2k, R14/R15 680 ohm, C17/C18 0.47uF, 0603 | <$0.30 total | Low-pass at about 154 kHz, a 22.3 dB attenuator (about 0.8 W per speaker at full scale with the amp's 24 dB gain), then AC coupling into the amp. |
+| DAC output filter | R10/R11 470 ohm, C15/C16 2.2nF, R12/R13 8.2k, R14/R15 470 ohm, C17/C18 0.47uF, 0603 | <$0.30 total | Low-pass at about 154 kHz, a 25.3 dB attenuator (about 2.4 V peak per speaker at full scale with the amp's nominal 24 dB gain: 0.35 W sine, 0.70 W square wave), then AC coupling into the amp. |
 | PAM8403 support | R20 100k, C20 1uF (VREF), C21/C25/C26 1uF, C22 470uF electrolytic (8 x 10 mm) | <$0.50 total | R20 holds MUTE/SHDN low while SW2 moves. C21, C25 and C26 bypass each supply pin. C22 is bulk supply for the amp. |
 | USB-C CC resistors (x2) | R1/R2 5.1k ohm, 0603 | <$0.10 | Required for USB-C spec compliance. |
 

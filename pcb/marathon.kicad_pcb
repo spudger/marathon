@@ -129,6 +129,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -140,6 +141,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -433,6 +435,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -444,6 +447,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1201,6 +1205,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1212,6 +1217,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2139,6 +2145,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2150,6 +2157,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2881,6 +2889,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2892,6 +2901,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4181,7 +4191,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "680R"
+		(property "Value" "470R"
 			(at 0 -1.43 180)
 			(layer "B.Fab")
 			(uuid "ada1bc34-c35e-457a-a03f-018e9f4143c1")
@@ -4521,7 +4531,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Audio attenuator series, right: DAC_R_FILT to DAC_R_ATT (-22.3 dB with R15)"
+		(property "Description" "Audio attenuator series, right: DAC_R_FILT to DAC_R_ATT (-25.3 dB with R15)"
 			(at 0 0 180)
 			(layer "B.Fab")
 			(hide yes)
@@ -7181,6 +7191,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7192,6 +7203,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7203,6 +7215,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10482,7 +10495,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Audio attenuator series, left: DAC_L_FILT to DAC_L_ATT (-22.3 dB with R14)"
+		(property "Description" "Audio attenuator series, left: DAC_L_FILT to DAC_L_ATT (-25.3 dB with R14)"
 			(at 0 0 180)
 			(layer "B.Fab")
 			(hide yes)
@@ -10772,7 +10785,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "680R"
+		(property "Value" "470R"
 			(at 0 -1.43 180)
 			(layer "B.Fab")
 			(uuid "11ac9fcd-ebf4-41e4-8c58-b48a45060e29")
