@@ -89,6 +89,7 @@ Full phase detail is in [`documentation/PROJECT_PLAN.md`](documentation/PROJECT_
 
 ```
 marathon/
+├── .claude/skills/verify-marathon/       ERC, DRC, BOM and renders of the KiCad project, vs main
 ├── README.md                             this file
 ├── LICENSE                               CERN-OHL-P v2
 ├── bom/                                  bill of materials, sourcing, decision log
