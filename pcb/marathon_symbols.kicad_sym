@@ -471,8 +471,8 @@
 (symbol "SPDT_MUTE_0_1"
 (rectangle (start -5.08 -5.08) (end 5.08 5.08) (stroke (width 0) (type default)) (fill (type background))))
 (symbol "SPDT_MUTE_1_1"
-(pin passive line (at 7.62 1.27 180) (length 2.54) (name "AMP_ON" (effects (font (size 1.0 1.0)))) (number "1" (effects (font (size 1.0 1.0)))))
-(pin passive line (at 7.62 0 180) (length 2.54) (name "COMMON_5V" (effects (font (size 1.0 1.0)))) (number "2" (effects (font (size 1.0 1.0)))))
-(pin passive line (at 7.62 -1.27 180) (length 2.54) (name "OFF_NC" (effects (font (size 1.0 1.0)))) (number "3" (effects (font (size 1.0 1.0))))))
+(pin passive line (at 7.62 1.27 180) (length 2.54) (name "ON_5V" (effects (font (size 1.0 1.0)))) (number "1" (effects (font (size 1.0 1.0)))))
+(pin passive line (at 7.62 0 180) (length 2.54) (name "COMMON" (effects (font (size 1.0 1.0)))) (number "2" (effects (font (size 1.0 1.0)))))
+(pin passive line (at 7.62 -1.27 180) (length 2.54) (name "OFF_GND" (effects (font (size 1.0 1.0)))) (number "3" (effects (font (size 1.0 1.0))))))
 (embedded_fonts no))
 )

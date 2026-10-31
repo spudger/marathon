@@ -24,7 +24,7 @@ Design highlights:
 - **Bare-chip build.** Every IC is soldered directly to the PCB, not mounted on breakout modules.
 - **Single-chip power management.** The IP5306 handles LiPo charging from USB-C, 3.7 V → 5 V boost, load sharing (play while charging), and low-voltage protection.
 - **Thin, wide battery.** Target 2000 to 3000 mAh, ≤6 mm thick. The board reserves a 60 x 50 mm area for the cell.
-- **Direct I²S audio chain.** Pi → PCM5102A DAC → PAM8403 amplifier → two speakers. Hardware SPDT mute switch cuts amp power for instant silence; fine volume control is handled in RetroPie.
+- **Direct I²S audio chain.** Pi → PCM5102A DAC → PAM8403 amplifier → two speakers. A hardware SPDT mute switch holds the amp in shutdown for instant silence, and fixed attenuation keeps full-scale audio under the speakers' 1 W rating at the amp's nominal gain. Fine volume control is handled in RetroPie.
 - **Direct GPIO input.** Silicone membrane pads for the D-pad and ABXY, tactile switches for Start, Select, and shoulder buttons. No I²C expander.
 - **USB-C with spec-compliant CC resistors.** Works with any USB-C cable, not just A-to-C.
 - **Landscape handheld form factor.** A 160 x 75 mm board with the screen in the middle, the D-pad on the left, and the face buttons on the right.
@@ -55,8 +55,8 @@ flowchart LR
     BAT <--> IP5306
     IP5306 --> V5
     V5 --> PI
-    V5 --> MUTE
-    MUTE --> PAM
+    V5 --> PAM
+    MUTE -->|shutdown| PAM
     V5 -->|backlight| LCD
     PI --> V33
     V33 --> LCD

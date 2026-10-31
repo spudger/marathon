@@ -18,7 +18,7 @@ This is a multi-phase hardware project spanning: component identification, schem
 | **Audio Amp** | PAM8403 (bare IC) | Class-D stereo, drives two speakers |
 | **Power** | IP5306 (bare IC) | Charging + 3.7V-to-5V boost + load sharing + battery protection, all in one chip |
 | **Battery** | 3.7V LiPo, 2000-3000mAh target | 505060-class cell, 60 x 50 x 6 mm envelope reserved on the PCB, JST-PH connector |
-| **Audio Out** | 2x speakers + mute switch | SPDT switch cuts amp power. Bluetooth available for private listening |
+| **Audio Out** | 2x speakers + mute switch | SPDT switch holds the amp in shutdown. Bluetooth available for private listening |
 | **Buttons** | Silicone membranes + SMD switches | Direct GPIO, no expander IC. Membrane pads press on bare ENIG contacts on the PCB |
 | **Case** | Custom 3D print | Not started yet. Designed around the PCB once the layout is locked |
 
@@ -51,7 +51,7 @@ Prototype uses a TN-panel ILI9341 3.2" SPI LCD. An IPS variant with the same ILI
 ### 5. Simplified Audio
 - **No headphone jack** -- Bluetooth 4.2 on Pi Zero 2W for private listening
 - **Speakers** -- zero-latency audio for gameplay
-- **Mute switch** -- SPDT switch cuts power to PAM8403 (0% or 100%)
+- **Mute switch** -- SPDT switch drives the PAM8403 SHDN/MUTE pins (0% or 100%). The amp stays powered.
 - **Fine volume control** -- software via RetroPie
 - Audio chain: Pi (I2S) -> PCM5102A (DAC) -> PAM8403 (amp) -> Speakers
 
@@ -134,7 +134,7 @@ Remaining:
   - Battery connector
   - Button pads (direct GPIO, silicone membranes)
   - Tactile switches (start, select, shoulders, IP5306 power key)
-  - SPDT mute switch (cuts PAM8403 power)
+  - SPDT mute switch (drives PAM8403 SHDN/MUTE)
   - Speaker pads
   - Power distribution (3.3V from Pi, 5V from IP5306)
 - [x] Cross-reference against PIN_MAPPING.md -- all 40 Pi header pins match (checked 2026-10-07)
@@ -152,8 +152,9 @@ Remaining:
 - [x] Route traces (2-layer board) -- all nets routed, with ground pours on both layers
 - [ ] Determine final battery size from available area -- 60 x 50 x 6 mm envelope reserved
 - [ ] Add test points, Pi antenna copper keepout, and silkscreen artwork
-- [x] Run DRC (Design Rules Check) -- 0 errors and 0 unrouted connections as of 2026-10-30
-- [ ] Verify provisional footprints (LCD tail, Alps switches, IP5306) against real parts or manufacturer drawings
+- [x] Run DRC (Design Rules Check) -- 0 errors and 0 unrouted connections as of 2026-10-31
+- [x] Fix the defects from the 2026-10-31 design review -- switch footprints, mute circuit, audio level, inductor rating, battery clearance, power and audio layout
+- [ ] Verify provisional footprints (LCD tail, IP5306) against real parts or manufacturer drawings. The Alps switch footprints now follow Alps' land patterns.
 - [ ] Generate Gerber + BOM + pick-and-place files for JLCPCB
 
 ### Phase 5: Case Design
@@ -208,15 +209,18 @@ Remaining:
 3. ~~**Begin schematic capture in KiCad**~~ -- DONE. ERC clean, pin mapping verified.
 4. ~~**Fix the Raspberry Pi placement**~~ -- DONE (2026-10-30). The Pi sits on its back-side guide.
 5. ~~**Finish routing**~~ -- DONE (2026-10-30). DRC reports 0 errors and 0 unrouted connections.
-6. **Verify parts against the real hardware** -- LCD tail pitch and contact side, silicone pad fit, Alps switch land patterns.
+6. ~~**Fix design review defects**~~ -- DONE (2026-10-31).
+7. **Power design step** -- clean shutdown from the power key and low battery, and a charge current that suits a thin, high-capacity cell.
+8. **Verify parts against the real hardware** -- LCD tail pitch and contact side, silicone pad fit, Alps switches.
 
 ## Key Risks & Unknowns
 
 - ~~**I2S pin assignments**~~ -- RESOLVED: BCK=GPIO18, LRCK=GPIO19, DIN=GPIO21. Confirmed via `dtoverlay=hifiberry-dac` during prototype.
-- ~~**Display ribbon pinout**~~ -- RESOLVED: Using 18-pin FPC bare ILI9341 screen.
+- **Display ribbon pinout** -- Using an 18-pin FPC bare ILI9341 screen. The exact panel's pinout and backlight rating are not confirmed yet.
 - ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
 - **Battery fitment** -- A 60 x 50 x 6 mm envelope is reserved on the PCB. Final cell size depends on where the Pi ends up once it moves inside the outline.
 - **Unverified footprints** -- The LCD tail, Alps switch, and IP5306 footprints were built from documentation and have not been checked against physical parts yet.
+- **Open design review items** -- No clean shutdown on power key or low battery, IP5306 charge current (about 2.1 A) versus the cell's rating, no battery temperature check, USB input current not set by the charger's advertisement, the B button on the UART TX pin, and no Pi antenna copper keep-out yet.
 - **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.
 - **Bluetooth audio latency** -- ~100-300ms, fine for passive games, not ideal for timing-sensitive gameplay. Speakers remain the primary audio output.
 - **Display resolution** -- Currently 640x480 HDMI scaled to 320x240 SPI, looks blurry. Need to set HDMI to native 320x240 for pixel-perfect rendering. Low priority.
