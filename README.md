@@ -17,13 +17,13 @@ See the [Phases](#phases) table below for the full roadmap.
 
 ## Design
 
-Marathon integrates its power management (IP5306), I²S DAC (PCM5102A), and class-D amplifier (PAM8403) as bare ICs on a single custom PCB. The final board is planned for SMT assembly via JLCPCB. The design dedicates internal case volume to a thin, high-capacity LiPo cell, the source of the "Marathon" name.
+Marathon integrates its power management (BQ25616 charger, TPS61023 boost, LTC2954 power key controller and MAX17048 fuel gauge), I²S DAC (PCM5102A), and class-D amplifier (PAM8403) as bare ICs on a single custom PCB. The final board is planned for SMT assembly via JLCPCB. The design dedicates internal case volume to a thin, high-capacity LiPo cell, the source of the "Marathon" name.
 
 Design highlights:
 
 - **Bare-chip build.** Every IC is soldered directly to the PCB, not mounted on breakout modules.
-- **Single-chip power management.** The IP5306 handles LiPo charging from USB-C, 3.7 V → 5 V boost, load sharing (play while charging), and low-voltage protection.
-- **Thin, wide battery.** Target 2000 to 3000 mAh, ≤6 mm thick. The board reserves a 60 x 50 mm area for the cell.
+- **Safe charging and clean shutdown.** A BQ25616 charges the cell at 0.9 A, only between 0 °C and 45 °C, and runs the device from USB while it charges. A TPS61023 boosts the cell to 5 V. The power key turns the device on with a 1 s hold and shuts Linux down cleanly with a short press; a MAX17048 gauge reports the battery level so the Pi can shut down before the cell runs out.
+- **Thin, wide battery.** Target 2000 to 3000 mAh, ≤6 mm thick. The board reserves a 63 x 50 mm area for the cell, enough for a common 505060 cell with its protection board.
 - **Direct I²S audio chain.** Pi → PCM5102A DAC → PAM8403 amplifier → two speakers. A hardware SPDT mute switch holds the amp in shutdown for instant silence, and fixed attenuation keeps full-scale audio under the speakers' 1 W rating at the amp's nominal gain. Fine volume control is handled in RetroPie.
 - **Direct GPIO input.** Silicone membrane pads for the D-pad and ABXY, tactile switches for Start, Select, and shoulder buttons. No I²C expander.
 - **USB-C with spec-compliant CC resistors.** Works with any USB-C cable, not just A-to-C.
@@ -37,7 +37,10 @@ Power flow and signal flow across the Marathon hardware:
 flowchart LR
     USBC[USB-C in]
     BAT[3.7V LiPo<br/>2000-3000 mAh]
-    IP5306[IP5306<br/>charge + boost<br/>load share + protect]
+    CHG[BQ25616<br/>charger + power path]
+    BOOST[TPS61023<br/>5V boost]
+    KEY[LTC2954<br/>power key]
+    GAUGE[MAX17048<br/>fuel gauge]
     V5((5V rail))
     V33((3.3V rail))
     PI[Raspberry Pi<br/>Zero 2 W]
@@ -51,9 +54,14 @@ flowchart LR
     ABXY[ABXY<br/>silicone pad]
     TACT[Start / Select<br/>L / R shoulders]
 
-    USBC --> IP5306
-    BAT <--> IP5306
-    IP5306 --> V5
+    USBC --> CHG
+    BAT <--> CHG
+    CHG -->|SYS| BOOST
+    BOOST --> V5
+    KEY -->|enable| BOOST
+    KEY <-->|shutdown request / kill| PI
+    BAT --- GAUGE
+    GAUGE -->|I2C| PI
     V5 --> PI
     V5 --> PAM
     MUTE -->|shutdown| PAM
@@ -120,7 +128,7 @@ marathon/
 | Display | ILI9341 3.2" SPI LCD | 18-pin FPC ribbon soldered directly to the PCB |
 | Audio DAC | PCM5102A (bare IC) | I²S input, line-level output |
 | Audio amp | PAM8403 (bare IC) | Class-D stereo, drives two speakers |
-| Power | IP5306 (bare IC) | Charging + boost + load sharing + protection |
+| Power | BQ25616, TPS61023, LTC2954, MAX17048 (bare ICs) | Charging with temperature cutoff, 5 V boost, power key with clean shutdown, battery level |
 | Battery | 3.7 V LiPo, 2000 to 3000 mAh target | Thin cell, ≤6 mm |
 | Input | Silicone membrane pads + tactile switches | Direct GPIO, no expander |
 | Case | Custom 3D print | Not started. Designed around the PCB once the layout is locked |

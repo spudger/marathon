@@ -18,8 +18,8 @@ This is a multi-phase hardware project spanning: component identification, schem
 | **Display** | ILI9341 3.2" SPI LCD | 18-pin FPC ribbon soldered direct to PCB |
 | **Audio DAC** | PCM5102A (bare IC) | I2S input from Pi, line-level output to amplifier |
 | **Audio Amp** | PAM8403 (bare IC) | Class-D stereo, drives two speakers |
-| **Power** | IP5306 (bare IC) | Charging + 3.7V-to-5V boost + load sharing + battery protection, all in one chip |
-| **Battery** | 3.7V LiPo, 2000-3000mAh target | 505060-class cell, 60 x 50 x 6 mm envelope reserved on the PCB, JST-PH connector |
+| **Power** | BQ25616 + TPS61023 + LTC2954 + MAX17048 (bare ICs) | 0.9 A charging with a 0 to 45 °C cutoff and power path, 5 V boost, power key with clean shutdown, battery level over I2C |
+| **Battery** | 3.7V LiPo, 2000-3000mAh target | 505060-class cell, 63 x 50 x 6 mm envelope reserved on the PCB, 3-pin JST-PH connector with NTC |
 | **Audio Out** | 2x speakers + mute switch | SPDT switch holds the amp in shutdown. Bluetooth available for private listening |
 | **Buttons** | Silicone membranes + SMD switches | Direct GPIO, no expander IC. Membrane pads press on bare ENIG contacts on the PCB |
 | **Case** | Custom 3D print | Not started yet. Designed around the PCB once the layout is locked |
@@ -29,19 +29,18 @@ This is a multi-phase hardware project spanning: component identification, schem
 ## Design Decisions
 
 ### 1. Integrated PCB Design
-All ICs (IP5306, PCM5102A, PAM8403) are placed directly on a custom PCB as bare chips, to be soldered by JLCPCB's assembly service when the final board is fabricated. This:
+All ICs (power section, PCM5102A, PAM8403) are placed directly on a custom PCB as bare chips, to be soldered by JLCPCB's assembly service when the final board is fabricated. This:
 - Reclaims ~15-20cm² of surface area (more room for battery)
 - Eliminates fragile board-to-board solder connections
 - Results in a cleaner, more reliable build
 - Only requires hand-soldering for: Pi Zero, display ribbon, battery, speakers, buttons/switches
 
-### 2. Power Management (IP5306)
-Single chip handles ALL power needs:
-- LiPo charging from USB-C
-- 3.7V to 5V boost conversion
-- Load sharing (play while charging)
-- Battery protection (low voltage cutoff)
-- Battery level indication (up to 4 LEDs). The current PCB leaves these pins unconnected, so there is no charge indicator yet.
+### 2. Power Management
+The final board replaced the prototype's IP5306 (spec `planning/specs/011-POWER-DESIGN.md`):
+- BQ25616 charger: 0.9 A from USB-C, charging only between 0 °C and 45 °C, power path for play while charging
+- TPS61023 boost: 5.06 V for the Pi, amp and backlight, switched off completely when the device is off
+- LTC2954 power key controller: hold to turn on, short press for a clean Linux shutdown, long hold to force off
+- MAX17048 fuel gauge: battery percentage for an on-screen level and a clean low-battery shutdown
 
 ### 3. Battery Life (High Priority)
 Target: 2000-3000mAh, 4-6+ hours of gameplay. The "Marathon" name comes from this goal.
@@ -131,14 +130,14 @@ Remaining:
   - ILI9341 display interface (SPI + backlight through R30, 22 ohm from 5V)
   - PCM5102A DAC (I2S, bare IC + supporting components)
   - PAM8403 amplifier (bare IC + supporting components)
-  - IP5306 power management (bare IC + inductor + caps + resistors)
+  - Power section: BQ25616 charger, TPS61023 boost, LTC2954 power key controller, MAX17048 fuel gauge
   - USB-C connector with CC resistors
   - Battery connector
   - Button pads (direct GPIO, silicone membranes)
-  - Tactile switches (start, select, shoulders, IP5306 power key)
+  - Tactile switches (start, select, shoulders, power key)
   - SPDT mute switch (drives PAM8403 SHDN/MUTE)
   - Speaker pads
-  - Power distribution (3.3V from Pi, 5V from IP5306)
+  - Power distribution (3.3V from Pi, 5V from the TPS61023 boost)
 - [x] Cross-reference against PIN_MAPPING.md -- all 40 Pi header pins match (checked 2026-10-07)
 - [ ] Add test points for debugging
 - [x] Run ERC (Electrical Rules Check) -- 0 violations
@@ -152,11 +151,12 @@ Remaining:
 - [x] Define board outline -- 160 x 75 mm landscape, 6 mm corner radius. Case mounting holes are still placeholders.
 - [x] Place components -- the Raspberry Pi sits on its back-side guide, inside the outline and clear of the battery envelope
 - [x] Route traces (2-layer board) -- all nets routed, with ground pours on both layers
-- [ ] Determine final battery size from available area -- 60 x 50 x 6 mm envelope reserved
+- [x] Determine final battery size from available area -- 63 x 50 x 6 mm envelope reserved (2026-11-02), enough for a 505060 cell with its protection board
 - [ ] Add test points, Pi antenna copper keepout, and silkscreen artwork
 - [x] Run DRC (Design Rules Check) -- 0 errors and 0 unrouted connections as of 2026-10-31
 - [x] Fix the defects from the 2026-10-31 design review -- switch footprints, mute circuit, audio level, inductor rating, battery clearance, power and audio layout
-- [ ] Verify provisional footprints (LCD tail, IP5306) against real parts or manufacturer drawings. The Alps switch footprints now follow Alps' land patterns.
+- [x] Build the power design (spec 011) -- charger, boost, power key controller, fuel gauge, backlight switch, 3-pin battery connector (2026-11-02)
+- [ ] Verify provisional footprints (LCD tail) against real parts or manufacturer drawings. The Alps switch footprints now follow Alps' land patterns.
 - [ ] Generate Gerber + BOM + pick-and-place files for JLCPCB
 
 ### Phase 5: Case Design
@@ -212,7 +212,7 @@ Remaining:
 4. ~~**Fix the Raspberry Pi placement**~~ -- DONE (2026-10-30). The Pi sits on its back-side guide.
 5. ~~**Finish routing**~~ -- DONE (2026-10-30). DRC reports 0 errors and 0 unrouted connections.
 6. ~~**Fix design review defects**~~ -- DONE (2026-10-31).
-7. **Power design step** -- clean shutdown from the power key and low battery, and a charge current that suits a thin, high-capacity cell.
+7. ~~**Power design step**~~ -- hardware DONE (2026-11-02). The Pi software settings and the on-screen battery level and brightness control come with Phase 6.
 8. **Verify parts against the real hardware** -- LCD tail pitch and contact side, silicone pad fit, Alps switches.
 
 ## Key Risks & Unknowns
@@ -220,9 +220,9 @@ Remaining:
 - ~~**I2S pin assignments**~~ -- RESOLVED: BCK=GPIO18, LRCK=GPIO19, DIN=GPIO21. Confirmed via `dtoverlay=hifiberry-dac` during prototype.
 - **Display ribbon pinout** -- Using an 18-pin FPC bare ILI9341 screen. The exact panel's pinout and backlight rating are not confirmed yet.
 - ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
-- **Battery fitment** -- A 60 x 50 x 6 mm envelope is reserved on the PCB. Final cell size depends on where the Pi ends up once it moves inside the outline.
-- **Unverified footprints** -- The LCD tail, Alps switch, and IP5306 footprints were built from documentation and have not been checked against physical parts yet.
-- **Open design review items** -- No clean shutdown on power key or low battery, IP5306 charge current (about 2.1 A) versus the cell's rating, no battery temperature check, USB input current not set by the charger's advertisement, the B button on the UART TX pin, and no Pi antenna copper keep-out yet.
+- **Battery fitment** -- A 63 x 50 x 6 mm envelope is reserved on the PCB. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
+- **Unverified footprints** -- The LCD tail and Alps switch footprints were built from documentation and have not been checked against physical parts yet.
+- **Open design review items** -- The B button on the UART TX pin, and no Pi antenna copper keep-out yet. The power design's checks that need a built board are listed in spec 011's finish condition.
 - **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.
 - **Bluetooth audio latency** -- ~100-300ms, fine for passive games, not ideal for timing-sensitive gameplay. Speakers remain the primary audio output.
 - **Display resolution** -- Currently 640x480 HDMI scaled to 320x240 SPI, looks blurry. Need to set HDMI to native 320x240 for pixel-perfect rendering. Low priority.

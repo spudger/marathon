@@ -15,13 +15,16 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
 | IP5306 breakout board (prototype) | 5V 2A boost + LiPo charger + load sharing | $10 (10-pack) | Outputs 5.1V. No USB port on this board variant; USB-C cable soldered directly to VIN/GND. Auto-shuts down with no load, auto-starts when Pi draws current. Play-while-charging confirmed. |
-| IP5306 IC (final PCB) | INJOINIC IP5306, eSOP-8 with exposed pad, LCSC C181692 | <$1 | Soldered by JLCPCB assembly. Support parts are listed under Passive Components below. |
+| Charger (final PCB) | TI BQ25616RTWR, WQFN-24 4 x 4 mm, LCSC C2866447 | ~$2 | Switching charger with power path. Resistor-set 0.9 A charge (0.96 A worst case), about 1.4 A input limit, 4.2 V charge voltage, charging only between 0 °C and 45 °C. Nothing about charging depends on software. |
+| Boost (final PCB) | TI TPS61023DRLR, SOT-563, LCSC C919459 | <$0.50 | SYS to 5V_SYS at 5.06 V. Its enable pin is the power switch; the output is fully disconnected when off. |
+| Power key controller (final PCB) | Analog Devices LTC2954CTS8-1, TSOT-23-8, LCSC C683782 | ~$6.70 | Hold the key about 1 s to turn on. A press of 0.5 to 6 s asks Linux to shut down (INT on GPIO7); Linux cuts power at the end through KILL on GPIO15. A hold of 6.8 to 14.5 s forces power off. |
+| Fuel gauge (final PCB) | Analog Devices MAX17048G+T10, TDFN-8 2 x 2 mm, LCSC C2682616 | ~$1.50 | Battery percentage over I2C (0x36) on GPIO2/GPIO3. Powered from the cell. |
 | LiPo Battery (prototype) | 3.7V 500mAh, 702540, JST-PH 2.0 | $7.09 | Soldered directly to IP5306 BAT/GND pads. Charges from wall USB charger (MacBook USB was unreliable for charging). |
-| LiPo Battery (final) | 3.7V, 2000-3000mAh target, ≤6mm thick | ~$5-10 | The PCB reserves a 60 x 50 mm area for a 505060-class cell (5 x 50 x 60 mm, about 2000mAh) up to 6 mm thick. Stretch goal: fit a 2500-3000mAh cell. The cell needs a JST-PH 2.0 plug with matching polarity. |
+| LiPo Battery (final) | 3.7V, 2000-3000mAh target, ≤6mm thick | ~$5-10 | The PCB reserves 63 x 50 mm, up to 6 mm thick, which fits a common 505060 cell with its protection board (for example VCELL VP505060, 2000 mAh). The cell must charge at 1.0 A or more, discharge 2 A continuously, have a protection board that trips above 3 A, charge to 4.2 V (not a 4.35 V cell), and carry a 10k 103AT NTC on a third wire (or have one added to the harness). |
 | USB-C connector (final PCB) | GCT USB4125-GF-A-0190, six-contact, power only, LCSC C5246813 | <$1 | 5.1k pulldowns on CC1 and CC2 so C-to-C chargers supply 5V. No USB data lines. |
-| Battery connector (final PCB) | JST S2B-PH-SM4-TB(LF)(SN), PH 2.0 mm right-angle SMT, LCSC C295747 | <$0.50 | Lets the cell be swapped without desoldering. |
+| Battery connector (final PCB) | JST S3B-PH-SM4-TB(LF)(SN), PH 2.0 mm 3-pin right-angle SMT, LCSC C265101 | <$0.50 | Pin 1 BAT+, pin 2 NTC, pin 3 GND. JST-PH cells don't share one pin order, so check the chosen cell's drawing before ordering. With no NTC connected the charger reads cold and won't charge. |
 
-**Why IP5306**: Single chip handles charging, 3.7V-to-5V boost, load sharing (play while charging), and battery protection. Simpler than using separate charging and boost ICs.
+**Why not the IP5306 on the final board**: it charges at a fixed 2.1 A, more than thin cells allow, has no battery temperature input, and can't power off after Linux halts. The prototype still uses the IP5306 breakout. The design is in [`planning/specs/011-POWER-DESIGN.md`](../planning/specs/011-POWER-DESIGN.md).
 
 ## 3. Display
 
@@ -50,10 +53,10 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
 | Silicone membrane pads (x2) | Cross/diamond-shaped, 4-way conductive rubber, identical pads for D-pad and ABXY | ~$3-5 | Two identical cross-shaped pads needed (one for D-pad, one for ABXY). Options: generic cross pads, GBC D-pad pads, SNES-style pads, or DS-style pads. Buy pads first, then design PCB contact pad spacing to match. Search AliExpress: "conductive silicone rubber button pad cross". See also: [ZedLabz GBC pads](https://www.zedlabz.com/products/conductive-silicone-rubber-button-membrane-contact-pads-for-nintendo-game-boy-color-cgb-gbc-zedlabz), [AliExpress conductive silicone buttons](https://www.aliexpress.com/w/wholesale-conductive-silicone-rubber-button.html). |
-| SMD tactile switches (x3) | Alps Alpine SKTHACE010, 3.5 x 3.2 x 1.8 mm top-push | <$1 | Start, Select, and the IP5306 power key. |
+| SMD tactile switches (x3) | Alps Alpine SKTHACE010, 3.5 x 3.2 x 1.8 mm top-push | <$1 | Start, Select, and the power key. |
 | Side-push SMD switches (x2) | Alps Alpine SKSCLDE010, 3.5 x 3.55 x 1.25 mm | <$1 | L and R shoulders, on the top edge of the PCB. |
 
-**All gameplay buttons are direct GPIO** - no I2C expander needed. Each button shorts its GPIO to ground (active low) using the Pi's internal pull-up resistors. There is no dedicated system/hotkey button; Select takes that role in EmulationStation. The power key (SW1) connects to the IP5306 KEY pin, not to the Pi.
+**All gameplay buttons are direct GPIO** - no I2C expander needed. Each button shorts its GPIO to ground (active low) using the Pi's internal pull-up resistors. There is no dedicated system/hotkey button; Select takes that role in EmulationStation. The power key (SW1) connects to the LTC2954 power key controller, which tells the Pi to shut down through GPIO7.
 
 **D-pad and ABXY contacts** are 5 mm interdigitated copper pads on the PCB itself (ENIG finish, no solder paste). The rubber pill on the membrane bridges the two combs when pressed.
 
@@ -62,12 +65,16 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
 | R30 - Backlight resistor | 22 ohm, 0.5W, 1206 | <$0.10 | 5V to the backlight anode. About 86 mA through a 3.1V backlight. |
-| R31 - Backlight return | 0 ohm, 0603 | <$0.10 | Backlight cathodes to GND. Lift it to measure or change the backlight circuit. |
-| L1 - IP5306 boost inductor | 1 uH shielded, saturation current at least 6 A, low DCR, 4 x 4 mm molded (XAL4020 footprint) | <$1 | **Part number not chosen yet.** Peak current is about 5.2 A at a 3.0 V battery and 2.1 A output. |
-| IP5306 capacitors | C1 10uF (VIN), C2 22uF (BAT), C3-C6 22uF (5V out), 0805 | <$0.50 total | |
+| Q1 - Backlight switch | AO3400A N-MOSFET, SOT-23, LCSC C20917; R41 100 ohm gate, R42 100k pull-down | <$0.10 | Backlight cathodes to GND, PWM from GPIO13. Off until the Pi drives the pin. |
+| L1 - Boost inductor | 1 uH shielded, saturation current at least 4.5 A, low DCR, 4 x 4 mm molded (XAL4020 footprint) | <$1 | **Part number not chosen yet.** For the TPS61023. |
+| L2 - Charger inductor | 1 uH, TDK TFM252012ALMA1R0MTAA, 2.5 x 2.0 x 1.2 mm, LCSC C404802 | <$1 | For the BQ25616. |
+| Charger support | C1 1uF (VBUS), C27 10uF (PMID), C28 10uF (SYS), C2 22uF (BAT), C29 4.7uF 10V (REGN), C30 47nF (BTST); R32 750R, R33 340R, R34 5.23k, R35 30.9k, all 1% | <$0.50 total | R32 sets the charge current, R33 the input limit, R34/R35 the 0 to 45 °C window. VSET, D+ and D- stay unconnected. |
+| Boost support | C31 10uF (VIN), C3-C6 22uF (5V out, 0805); R36 750k and R37 100k, 1%; C32 220pF | <$0.30 total | R36/R37 set 5.06 V. C32 is the feedforward capacitor the datasheet asks for above 40 uF of output capacitance. |
+| Power key support | C33 0.15uF and C34 1.5uF, X7R 10%; C35 0.1uF; R38 1M; R39/R40 10k | <$0.30 total | C33 sets the 1 s turn-on hold, C34 the forced-off hold. R38 pulls the boost enable to SYS; R39/R40 pull INT and KILL to 3V3. |
+| Fuel gauge support | C36 0.1uF | <$0.05 | VDD bypass at the gauge. |
 | PCM5102A support | C10/C11 2.2uF, C12/C13/C23/C24 0.1uF (0402), C14 10uF (0603) | <$0.30 total | Charge pump, VNEG, LDO, and one bypass capacitor at each supply pin. Config pins are strapped directly, no resistors. |
 | DAC output filter | R10/R11 470 ohm, C15/C16 2.2nF, R12/R13 8.2k, R14/R15 470 ohm, C17/C18 0.47uF, 0603 | <$0.30 total | Low-pass at about 154 kHz, a 25.3 dB attenuator (about 2.4 V peak per speaker at full scale with the amp's nominal 24 dB gain: 0.35 W sine, 0.70 W square wave), then AC coupling into the amp. |
-| PAM8403 support | R20 100k, C20 1uF (VREF), C21/C25/C26 1uF, C22 470uF electrolytic (8 x 10 mm) | <$0.50 total | R20 holds MUTE/SHDN low while SW2 moves. C21, C25 and C26 bypass each supply pin. C22 is bulk supply for the amp. |
+| PAM8403 support | R20 100k, C20 1uF (VREF), C21/C25/C26 1uF, C22 220uF 10V polymer (Panasonic 10TPE220ML, 7343, 2.8 mm tall, LCSC C147767) | <$1 total | R20 holds MUTE/SHDN low while SW2 moves. C21, C25 and C26 bypass each supply pin. C22 is bulk supply for the amp, low enough to sit beside the 6 mm battery. |
 | USB-C CC resistors (x2) | R1/R2 5.1k ohm, 0603 | <$0.10 | Required for USB-C spec compliance. |
 
 LCSC part numbers for the passives are not chosen yet. Values come from the schematic in [`pcb/marathon.kicad_sch`](../pcb/marathon.kicad_sch).
@@ -148,3 +155,4 @@ Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts 
 | 2026-09-21 | Landscape layout, 160 x 75 mm | Screen centered, D-pad left, ABXY right, shoulders on the top edge. The 77.4 x 54 mm LCD body sets the minimum size. |
 | 2026-09-22 | Pi mounts on standoffs with long-tail header pins | Pi on the back of the board, component side out, 5 mm M2.5 standoffs, 2x20 long-tail pins soldered through both boards. Replaces the earlier plan of soldering the Pi flat to pads. |
 | 2026-09-22 | 1.0 mm board, ENIG finish | Thin handheld target. ENIG because the membrane buttons press directly on exposed copper contacts. |
+| 2026-11-02 | Replace the IP5306 with a BQ25616 charger, TPS61023 boost, LTC2954 power key controller and MAX17048 gauge | Thin cells allow about 1 A of charge, not the IP5306's fixed 2.1 A, and charging needs a temperature cutoff. The power key now shuts Linux down cleanly, the board powers off after a halt, and the Pi can read the battery level. Battery space grows to 63 x 50 mm for a 505060 cell with its protection board. Spec: `planning/specs/011-POWER-DESIGN.md`. |

@@ -51,7 +51,7 @@ flowchart LR
     USB[USB-C VBUS] --> CHG[BQ25616<br/>charger + power path]
     CHG <--> BAT[LiPo cell<br/>with NTC]
     BAT --- FG[MAX17048<br/>fuel gauge]
-    CHG -->|SYS| BOOST[TPS61023<br/>5.1 V boost]
+    CHG -->|SYS| BOOST[TPS61023<br/>5.06 V boost]
     CHG -->|SYS| PBC[LTC2954-1<br/>power key controller]
     KEY[Power key SW1] --> PBC
     PBC -->|EN| BOOST
@@ -105,9 +105,9 @@ check below confirms it on the built board. If it fails, the fallback is decisio
 A TI TPS61023DRLR (LCSC C919459, SOT-563, 1.2 x 1.6 x 0.6 mm) makes 5V_SYS from the charger's
 SYS rail.
 
-- **Output:** 5.1 V set by a feedback divider (VREF 0.595 V typical). The datasheet's
+- **Output:** 5.06 V set by a 750 kΩ / 100 kΩ feedback divider (VREF 0.595 V typical). The datasheet's
   application gives 5 V at 1.5 A from a 3.6 V input. The valley current limit is 3.7 A.
-- **Load:** about 1.05 A peak at 5.1 V, with Pi load, full-volume audio and the backlight. At a
+- **Load:** about 1.05 A peak at 5.06 V, with Pi load, full-volume audio and the backlight. At a
   3.2 V cell that's about 1.9 A from the cell.
 - **EN:** driven by the LTC2954's EN output, pulled up to SYS through 1 MΩ. The LTC2954 holds EN low while the device is off, so a 100 kΩ pull-up would waste 37 µA; 1 MΩ wastes about 4 µA. In shutdown the
   output is fully disconnected from the input, and the chip draws 0.1 µA typical from VIN.
@@ -155,8 +155,8 @@ this project would have to characterize.
 A MAX17048G+T10 (LCSC C2682616, TDFN-8, 2 x 2 mm) measures the cell and reports its charge in
 percent over I2C at address 0x36.
 
-- **Power:** VDD and CELL connect to the cell, beside the battery connector, with a 1 µF
-  capacitor. It draws 23 µA active and 3 µA in hibernate.
+- **Power:** VDD and CELL connect to the cell, beside the battery connector, with the 0.1 µF
+  bypass capacitor the datasheet asks for. It draws 23 µA active and 3 µA in hibernate.
 - **Bus:** SDA to GPIO2 and SCL to GPIO3. The Pi already has 1.8 kΩ pull-ups to 3V3 on those
   pins, so no new pull-ups. SDA and SCL tolerate the bus while VDD is at cell voltage.
 - **ALRT:** not connected. Software polls the gauge, because no GPIO is free for it.
@@ -297,7 +297,8 @@ For the hardware PR, each check runs on the PR's head:
   - GPIO7 connects to INT, GPIO15 to KILL, GPIO13 to the FET gate, and GPIO2/GPIO3 to the gauge.
   - PDT and ONT each have their capacitor.
   - No net still names U1, the IP5306.
-- No part on the back is taller than 3 mm, read from each footprint's 3D model or datasheet.
+- No new power part and not C22 is taller than 3 mm, read from each package's datasheet. The Pi
+  and the battery connector sit beside the cell and are exempt.
 - The battery space measures at least 63 x 50 mm with nothing on the back inside it.
 - All new parts fit inside the board outline without entering the battery space or the Pi
   keep-out.
