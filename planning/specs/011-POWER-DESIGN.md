@@ -114,7 +114,9 @@ SYS rail.
 - **Inductor:** L1 stays, as 1 µH with saturation current at least 4.5 A, on the existing
   XAL4020 footprint (2.1 mm tall).
 - **Output capacitance:** the datasheet allows up to 1000 µF effective. C3 to C6 and the new C22
-  stay within that.
+  stay within that. Above 40 µF, TI's section 8.2.2.4 calls for a feedforward capacitor across the
+  top feedback resistor that puts a zero at 1 kHz. The schematic PR sizes it with the datasheet's
+  Equation 10, and the bench checks include a load step.
 
 ### Power key controller: LTC2954-1
 
@@ -126,18 +128,23 @@ this project would have to characterize.
 | Pin | Connection | Behavior |
 |---|---|---|
 | PB | SW1 to GND | Internal 100 kΩ pull-up |
-| ONT | 0.15 µF to GND | Turn-on needs a hold of about 1 s (32 ms + 6.4 s/µF) |
-| PDT | 0.68 µF to GND | Forced off after a hold of about 4.4 s (64 ms + 6.4 s/µF) |
+| ONT | 0.15 µF X7R ±10% to GND | Turn-on needs a hold of 0.8 to 1.6 s |
+| PDT | 1.0 µF X7R ±10% to GND | Forced off after a hold of 5.1 to 10.5 s |
 | EN | TPS61023 EN, 1 MΩ pull-up to SYS | Open drain, released high when on |
 | INT | Pi GPIO7, 10 kΩ pull-up to 3V3 | Pulled low while the key is pressed with the device on |
-| KILL | Pi GPIO15, 10 kΩ pull-up to 3V3 | Low turns the device off. Blanked for 512 ms after turn-on |
+| KILL | Pi GPIO15, 10 kΩ pull-up to 3V3 | Low turns the device off. Blanked for 400 to 650 ms after turn-on |
 
-- **Turn-on hold:** about 1 s, so a key pressed by accident in a pocket doesn't turn the device
-  on. Without ONT's capacitor it would be 32 ms.
-- **Forced-off hold:** about 4.4 s, long enough that a press meant as a clean shutdown never
-  becomes a forced off. With PDT left open, a 64 ms tap would cut power, so the capacitor is
-  required.
-- **KILL:** must be high within 512 ms of turn-on. The pull-up to 3V3 does that as soon as the
+- **Timing ranges.** The ranges in the table are worst cases, not typical values.
+  - The datasheet's 1500 pF test points (tONT and tPDT, 9 to 13.5 ms) give 6.0 to 9.0 s per µF.
+    The fixed parts add 26 to 41 ms (tDB,ON) and 52 to 82 ms (tPD,MIN).
+  - Capacitance is taken as ±15%: ±10% part tolerance plus about ±5% for X7R between 10 °C and
+    40 °C.
+- **Turn-on hold:** 0.8 to 1.6 s, so a key pressed by accident in a pocket doesn't turn the
+  device on. Without ONT's capacitor it would be 32 ms.
+- **Forced-off hold:** at least 5.1 s. Any press shorter than that is safe: the clean shutdown
+  starts at 0.5 s and is never cut short by the forced off. With PDT left open, a 64 ms tap would
+  cut power, so the capacitor is required. A forced off is certain by 10.5 s.
+- **KILL:** must be high within the blanking time, at least 400 ms after turn-on. The pull-up to 3V3 does that as soon as the
   Pi's 3.3 V regulator starts, a few milliseconds after 5 V. The Pi's default pull-down on GPIO15
   (about 50 kΩ) leaves KILL at about 2.75 V, well above its 0.6 V threshold.
 
@@ -180,8 +187,8 @@ The cell must meet all of these:
 
 The closest candidate found, the VCELL VP505060 (2000 mAh, 1 A maximum charge, NTC optional),
 measures up to 50.5 x 62.5 mm with its PCM, 2.5 mm longer than the space. Common 505060 cells
-run that long once the PCM is folded on. The owner decides between growing the space to about
-63 mm and looking for a shorter cell; see Open question.
+run that long once the PCM is folded on. Under decision 6 the cell must fit 60 x 50 mm; see
+Open question.
 
 ### Bulk capacitor: C22
 
@@ -214,10 +221,13 @@ The software phase applies these. They're listed here so the hardware matches th
     outweighs GPIO15's 50 kΩ pull-down, so the pin stays high. The bench checks prove it.
   - `dtparam=i2c_arm=on`.
   - `gpio=13=op,dh`. The firmware turns the backlight on early in boot, before PWM takes over.
-  - `dtoverlay=pwm,pin=13,func=4`. Hardware PWM for brightness, at about 25 kHz.
+  - `dtoverlay=pwm,pin=13,func=4`. This only routes PWM1 to GPIO13; it sets no period or duty.
   - `enable_uart=0`.
   - SPI: no kernel driver may claim GPIO7. Use `dtoverlay=spi0-1cs` if the kernel SPI driver
     stays on, or leave it off, because fbcp-ili9341 drives SPI0 directly.
+- **A backlight service:** at boot it sets PWM1's period to 40,000 ns (25 kHz) and its duty to the
+  saved brightness. It stores brightness changes, and at shutdown it sets the duty to 0 before
+  the power is cut.
 - **A battery service:** reads the gauge every 30 s, shows a warning at 10 %, and runs
   `systemctl poweroff` at 3 % or when the cell reads below 3.40 V on three reads in a row.
 
@@ -227,9 +237,9 @@ The software phase applies these. They're listed here so the hardware matches th
 |---|---|
 | Off, on battery | The TPS61023 is off. The cell feeds only the charger, controller, gauge and EN pull-up, about 25 to 45 µA in total |
 | Off, USB plugged in | Charges at 0.9 A between 0 °C and 45 °C. The device stays off |
-| Key held about 1 s | EN goes high, 5 V comes up, the Pi boots, and KILL goes high |
-| Key pressed 0.5 to 4 s while on | INT goes low, and Linux shuts down cleanly. At the end, GPIO15 pulls KILL low, and 5 V goes off |
-| Key held about 4.4 s | Forced off, for a frozen Pi |
+| Key held 1.6 s | EN goes high, 5 V comes up, the Pi boots, and KILL goes high |
+| Key pressed 0.5 to 5 s while on | INT goes low, and Linux shuts down cleanly. At the end, GPIO15 pulls KILL low, and 5 V goes off |
+| Key held 10.5 s | Forced off, for a frozen Pi |
 | Battery at 3 % | The battery service shuts down cleanly |
 | On, USB plugged in | USB runs the device. The leftover input current, up to about 1.4 A total, charges the cell |
 
@@ -245,8 +255,9 @@ The software phase applies these. They're listed here so the hardware matches th
 ## Open question
 
 The battery space is 60 x 50 mm, and the common 2000 mAh 505060 cell measures up to 62.5 mm
-long with its PCM. Either the hardware PR grows the space to about 63 mm, or the owner picks a
-shorter, smaller cell. The hardware PR doesn't start until the owner answers.
+long with its PCM. Decision 6 fixes the space at 60 x 50 mm, so the cell must fit it, unless
+the owner changes that decision. The author has asked whether to grow the space to about 63 mm.
+The hardware PR doesn't start until the owner answers.
 
 ## Experience open
 
@@ -272,7 +283,7 @@ Each of these needs a discovery issue before the software phase:
 1. **Hardware (build flow):** the schematic, symbols, footprints and layout for everything above,
    plus updates to `README.md`, `bom/README.md`, `documentation/PIN_MAPPING.md` and
    `documentation/PROJECT_PLAN.md`. Verified with verify-marathon.
-2. **Software (build flow, Phase 6):** the `config.txt` lines and the battery service above, in
+2. **Software (build flow, Phase 6):** the `config.txt` lines and the backlight and battery services above, in
    `software/`.
 3. **Discovery:** the two experience-open items.
 
@@ -285,7 +296,9 @@ For the hardware PR, each check runs on the PR's head:
   - VSET has no connection.
   - D+ and D- have no connection.
   - OTG and CE connect to GND.
-  - RICHG is at least 715 Ω, and RILIM is at least 334 Ω.
+  - RICHG is 750 Ω and RILIM is 340 Ω, both 1% or better, read from the value and tolerance
+    fields. At their lowest values, 742.5 Ω and 336.6 Ω, the worst-case currents are 0.96 A and
+    1.49 A.
   - TS sits between RT1 to REGN and RT2 to GND, and B1's NTC pin connects to it.
   - GPIO7 connects to INT, GPIO15 to KILL, GPIO13 to the FET gate, and GPIO2/GPIO3 to the gauge.
   - PDT and ONT each have their capacitor.
@@ -296,14 +309,22 @@ For the hardware PR, each check runs on the PR's head:
 
 On the built board, inconclusive until one exists:
 
-- Holding the key for 1 s turns it on, and a 0.1 s tap does not.
+- From a bench supply at 3.3 V standing in for the cell, with the Pi, display and amp connected:
+  - A 1.7 s hold turns it on, and a 0.1 s tap does not.
+  - It boots to the desktop.
 - `sudo reboot` restarts the Pi without cutting 5 V.
 - A short press shuts down cleanly, and 5 V reads 0 V within 30 s of the halt.
-- A 5 s hold forces it off.
+- An 11 s hold forces it off. A 3 s press shuts down cleanly with no forced off.
 - Charge current is 0.85 to 0.96 A from a USB-C charger, measured at the cell.
-- With the NTC unplugged, it doesn't charge.
+- With the NTC replaced by fixed resistors, charging stops cold below 0 °C (above 27.3 kΩ), runs
+  at 25 °C (10 kΩ), and stops hot above 45 °C (below 4.9 kΩ).
+- With the NTC open or shorted, it doesn't charge.
 - The input current stays under 1.5 A while the device runs and charges.
 - The battery service reads a percentage from address 0x36.
+- A discharge run from full: the warning shows at 10 %, and Linux finishes shutting down before
+  5V_SYS drops, confirmed in the journal on the next boot.
+- Changing the brightness changes the PWM duty, and the backlight is off before 5 V goes off.
+- A 0.2 to 1 A load step on 5V_SYS settles without ringing.
 
 ## What else uses this
 
