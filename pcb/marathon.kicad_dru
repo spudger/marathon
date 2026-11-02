@@ -1,0 +1,11 @@
+(version 1)
+
+# The SOT-563 (U5) and TSOT-23-8 (U6) land patterns put pads 0.15 mm apart, under the 0.2 mm
+# default clearance. JLCPCB's minimum spacing is 0.1 mm, so allow 0.12 mm inside those courtyards.
+(rule "U5 fine-pitch pads"
+  (condition "A.intersectsCourtyard('U5') && B.intersectsCourtyard('U5')")
+  (constraint clearance (min 0.12mm)))
+
+(rule "U6 fine-pitch pads"
+  (condition "A.intersectsCourtyard('U6') && B.intersectsCourtyard('U6')")
+  (constraint clearance (min 0.12mm)))
