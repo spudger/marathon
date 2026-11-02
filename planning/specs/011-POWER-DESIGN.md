@@ -1,6 +1,6 @@
 # Power design: clean shutdown, battery level and charge current
 
-- **Status:** draft
+- **Status:** approved
 - **Issue:** spudger/marathon#11
 - **PRs:** none yet
 - **Draft:** none
@@ -35,8 +35,8 @@ The owner approved these while scoping issue #11:
 3. Software sets the backlight brightness and turns the backlight off at shutdown.
 4. The cell charges at no more than its rated current, even if a full charge takes 2 to 3 hours. This replaces the IP5306.
 5. Charging stops when the cell is too hot or too cold.
-6. The battery space stays 60 x 50 mm and at most 6 mm thick. The owner picks the cell from the
-   requirements below.
+6. The battery space grows from 60 x 50 mm to 63 x 50 mm and stays at most 6 mm thick, so a
+   common 505060 cell fits with its PCM. The owner picks the cell from the requirements below.
 7. Option 1: a BQ25616 switching charger with a separate TPS61023 boost. The fallback is a
    BQ24074 linear charger, if the BQ25616's input limit can't be confirmed.
 8. The USB input is limited to about 1.5 A, which assumes a USB-C wall charger.
@@ -180,7 +180,7 @@ The cell must meet all of these:
 
 | Requirement | Value |
 |---|---|
-| Size, including PCM and tolerance | fits 60 x 50 mm, at most 6.0 mm thick |
+| Size, including PCM and tolerance | fits 63 x 50 mm, at most 6.0 mm thick |
 | Chemistry | LiPo, 4.2 V full charge, not a 4.35 V high-voltage cell |
 | Maximum charge current | at least 1.0 A |
 | Continuous discharge | at least 2 A |
@@ -188,9 +188,8 @@ The cell must meet all of these:
 | Temperature sensor | 10 kΩ NTC, B = 3435 (103AT type), on a third wire. Otherwise, add one to the harness against the cell |
 
 The closest candidate found, the VCELL VP505060 (2000 mAh, 1 A maximum charge, NTC optional),
-measures up to 50.5 x 62.5 mm with its PCM, 2.5 mm longer than the space. Common 505060 cells
-run that long once the PCM is folded on. Under decision 6 the cell must fit 60 x 50 mm; see
-Open question.
+measures up to 50.5 x 62.5 mm with its PCM. Common 505060 cells run that long once the PCM is
+folded on, which is why decision 6 grew the space to 63 x 50 mm.
 
 ### Bulk capacitor: C22
 
@@ -254,13 +253,6 @@ The software phase applies these. They're listed here so the hardware matches th
 - C1 to C6 as IP5306 parts. The schematic PR reuses them where the new datasheets call for the
   same values.
 
-## Open question
-
-The battery space is 60 x 50 mm, and the common 2000 mAh 505060 cell measures up to 62.5 mm
-long with its PCM. Decision 6 fixes the space at 60 x 50 mm, so the cell must fit it, unless
-the owner changes that decision. The author has asked whether to grow the space to about 63 mm.
-The hardware PR doesn't start until the owner answers.
-
 ## Experience open
 
 Each of these needs a discovery issue before the software phase:
@@ -283,7 +275,7 @@ Each of these needs a discovery issue before the software phase:
 ## PRs
 
 1. **Hardware (build flow):** the schematic, symbols, footprints and layout for everything above,
-   plus updates to `README.md`, `bom/README.md`, `documentation/PIN_MAPPING.md` and
+   the battery space grown to 63 x 50 mm, plus updates to `README.md`, `bom/README.md`, `documentation/PIN_MAPPING.md` and
    `documentation/PROJECT_PLAN.md`. Verified with verify-marathon.
 2. **Software (build flow, Phase 6):** the `config.txt` lines and the backlight and battery services above, in
    `software/`.
@@ -306,6 +298,7 @@ For the hardware PR, each check runs on the PR's head:
   - PDT and ONT each have their capacitor.
   - No net still names U1, the IP5306.
 - No part on the back is taller than 3 mm, read from each footprint's 3D model or datasheet.
+- The battery space measures at least 63 x 50 mm with nothing on the back inside it.
 - All new parts fit inside the board outline without entering the battery space or the Pi
   keep-out.
 
