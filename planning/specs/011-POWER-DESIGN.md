@@ -2,7 +2,7 @@
 
 - **Status:** approved
 - **Issue:** spudger/marathon#11
-- **PRs:** none yet
+- **PRs:** spudger/marathon#16
 - **Draft:** none
 - **Plans:** none yet
 
