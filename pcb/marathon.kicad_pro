@@ -538,23 +538,23 @@
         "via_drill": 0.5
       },
       {
-        "clearance": 0.25,
+        "clearance": 0.2,
         "name": "PWR_BAT",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 10,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 1.2,
+        "track_width": 0.6,
         "tuning_profile": "",
-        "via_diameter": 1.0,
-        "via_drill": 0.5
+        "via_diameter": 0.8,
+        "via_drill": 0.4
       },
       {
-        "clearance": 0.25,
+        "clearance": 0.2,
         "name": "PWR_USB",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 30,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.8,
+        "track_width": 0.6,
         "tuning_profile": "",
         "via_diameter": 0.8,
         "via_drill": 0.4
@@ -608,6 +608,18 @@
       {
         "netclass": "SPEAKER",
         "pattern": "/SPK_R_N"
+      },
+      {
+        "netclass": "PWR_BAT",
+        "pattern": "/SYS"
+      },
+      {
+        "netclass": "PWR_BAT",
+        "pattern": "/CHG_SW"
+      },
+      {
+        "netclass": "PWR_BAT",
+        "pattern": "/BST_SW"
       }
     ]
   },
