@@ -14,7 +14,7 @@ KiCad 10 project for the Marathon main board. Open `marathon.kicad_pro`. The sch
 | Check | Result |
 |-------|--------|
 | ERC | 0 violations |
-| DRC | 0 errors, 9 library-mismatch warnings |
+| DRC | 0 errors; warnings: 9 library mismatches, 82 unmirrored texts on B.Fab |
 | Unrouted connections | 0 |
 | Schematic / PCB parity | 0 issues |
 
