@@ -4,6 +4,8 @@
 
 Marathon is a DIY retro gaming handheld built around a Raspberry Pi Zero 2 W. The design prioritizes battery life by integrating all ICs (power management, DAC, amplifier) as bare chips on a custom PCB, dedicating maximum internal volume to a high-capacity LiPo cell.
 
+The goal is a thin, sleek handheld that fits comfortably in a pocket, with battery life long enough to game without worrying about it. Thinness and battery capacity win over other layout choices.
+
 This is a multi-phase hardware project spanning: component identification, schematic capture, PCB layout, case design, firmware/software setup, and final assembly.
 
 ---
