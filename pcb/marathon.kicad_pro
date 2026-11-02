@@ -594,10 +594,6 @@
         "pattern": "/3V3"
       },
       {
-        "netclass": "AUDIO_PWR",
-        "pattern": "/AMP_5V"
-      },
-      {
         "netclass": "SPEAKER",
         "pattern": "/SPK_L_P"
       },

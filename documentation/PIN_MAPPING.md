@@ -163,12 +163,12 @@ are tied to GND, and XSMT is tied to 3.3V. No headphone jack.
 | GND     | GND    | Ground                               |
 
 **Final design**: PAM8403 integrated as bare IC on the custom PCB. Mute switch (SPDT)
-cuts 5V power to the PAM8403 for silence. Breakout module version used for breadboard
+drives the PAM8403 SHDN/MUTE pins for silence; the amp stays on 5V. Breakout module version used for breadboard
 prototyping only.
 
 **Audio output path**:
 - Speakers: PAM8403 L/R outputs → 2x small speakers
-- Mute switch: SPDT slide switch on PCB edge, cuts power to PAM8403
+- Mute switch: SPDT slide switch on PCB edge, drives PAM8403 SHDN/MUTE
 - No headphone jack (Bluetooth available for private listening via Pi Zero 2W's BT 4.2)
 - Volume control: software via RetroPie (mute switch = 0% or 100%)
 
@@ -214,7 +214,7 @@ which works fine without a dedicated modifier key.
 USB-C → IP5306 ←→ LiPo 2000-3000mAh (TBD)
            │
            ├→ 5V output → Pi Zero 5V pins (2, 4)
-           │              + PAM8403 VCC (through mute switch)
+           │              + PAM8403 VCC (mute switch drives SHDN/MUTE)
            │              + LCD backlight (through R30)
            │
 Pi 3.3V regulator (pins 1, 17) → LCD VCC + PCM5102A (all supplies)
@@ -246,7 +246,7 @@ These need to be resolved before schematic capture is complete:
 
 4. ~~**Headphone jack wiring**~~ - RESOLVED: No headphone jack. Bluetooth for private audio.
 
-5. ~~**Mute switch circuit**~~ - RESOLVED: SPDT switch cuts power to PAM8403. Simple on/off.
+5. ~~**Mute switch circuit**~~ - RESOLVED: SPDT switch drives PAM8403 SHDN/MUTE. Cutting amp power instead would leave the DAC driving an unpowered amp.
 
 6. ~~**Button input method**~~ - RESOLVED (2026-04-04): mk_arcade_joystick_rpi kernel
    module with `map=5` (custom GPIO mode). NOT retrogame (ES doesn't recognize
