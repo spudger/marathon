@@ -2862,9 +2862,9 @@
 (uuid "c9d48d1c-738a-4f1d-a6ec-75c3ae265585")
 (property "Reference" "C27" (at 367.03 43.18 0) (effects (font (size 1.27 1.27))))
 (property "Value" "10uF" (at 367.03 58.42 0) (effects (font (size 1.27 1.27))))
-(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" (at 367.03 50.80 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 367.03 50.80 0) (effects (font (size 1.27 1.27)) (hide yes)))
 (property "Datasheet" "" (at 367.03 50.80 0) (effects (font (size 1.27 1.27)) (hide yes)))
-(property "Description" "BQ25616 PMID bypass, place at pin 23" (at 367.03 50.80 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(property "Description" "BQ25616 PMID bypass, 10 V rated, place at pin 23" (at 367.03 50.80 0) (effects (font (size 1.27 1.27)) (hide yes)))
 (pin "1" (uuid "10139947-e1ed-4e33-a808-e22446cf8783"))
 (pin "2" (uuid "ba4e0b54-1ccd-45e1-8f0e-ca8d56fad1e7"))
 (instances
