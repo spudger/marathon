@@ -16,8 +16,8 @@ physical pin to its GPIO number, the signal name, and what it connects to.
 | Phys Pin | Pi Function     | GPIO | Signal | Subsystem | Destination               |
 |----------|-----------------|------|---------------|-----------|---------------------------|
 | 1        | 3V3 Power       | -    | 3V3           | Power     | Display VCC, DAC VCC      |
-| 3        | GPIO2 (SDA1)    | 2    | (unused)      | -         | -                         |
-| 5        | GPIO3 (SCL1)    | 3    | (unused)      | -         | -                         |
+| 3        | GPIO2 (SDA1)    | 2    | I2C_SDA       | Power     | MAX17048 fuel gauge SDA   |
+| 5        | GPIO3 (SCL1)    | 3    | I2C_SCL       | Power     | MAX17048 fuel gauge SCL   |
 | 7        | GPIO4 (GCLK)    | 4    | LEFT          | Buttons   | D-pad Left (active low)   |
 | 9        | GND             | -    | (GND)         | Power     | Ground                    |
 | 11       | GPIO17 (GEN0)   | 17   | RIGHT         | Buttons   | D-pad Right (active low)  |
@@ -31,7 +31,7 @@ physical pin to its GPIO number, the signal name, and what it connects to.
 | 27       | ID_SD           | 0    | (reserved)    | -         | HAT EEPROM; do not use    |
 | 29       | GPIO5           | 5    | R             | Buttons   | Right shoulder button     |
 | 31       | GPIO6           | 6    | X             | Buttons   | X button (active low)     |
-| 33       | GPIO13          | 13   | (unused)      | -         | -                         |
+| 33       | GPIO13          | 13   | BL_PWM        | Display   | Backlight MOSFET gate (PWM1) |
 | 35       | GPIO19          | 19   | LCK           | Audio     | I2S word clock (LRCK)     |
 | 37       | GPIO26          | 26   | START         | Buttons   | Start button              |
 | 39       | GND             | -    | (GND)         | Power     | Ground                    |
@@ -44,7 +44,7 @@ physical pin to its GPIO number, the signal name, and what it connects to.
 | 4        | 5V Power        | -    | 5V            | Power     | Main 5V rail (second pin) |
 | 6        | GND             | -    | (GND)         | Power     | Ground                    |
 | 8        | GPIO14 (TXD)    | 14   | B             | Buttons   | B button (active low)     |
-| 10       | GPIO15 (RXD)    | 15   | (unused)      | -         | -                         |
+| 10       | GPIO15 (RXD)    | 15   | PWR_KILL      | Power     | LTC2954 KILL (gpio-poweroff, active low) |
 | 12       | GPIO18 (PCM_CLK)| 18   | BCK           | Audio     | I2S bit clock             |
 | 14       | GND             | -    | (GND)         | Power     | Ground                    |
 | 16       | GPIO23          | 23   | A             | Buttons   | A button (active low)     |
@@ -52,7 +52,7 @@ physical pin to its GPIO number, the signal name, and what it connects to.
 | 20       | GND             | -    | (GND)         | Power     | Ground                    |
 | 22       | GPIO25          | 25   | RESET         | Display   | ILI9341 Reset             |
 | 24       | GPIO8 (CE0)     | 8    | CSX           | Display   | ILI9341 Chip Select       |
-| 26       | GPIO7 (CE1)     | 7    | (unused)      | -         | -                         |
+| 26       | GPIO7 (CE1)     | 7    | PWR_INT       | Power     | LTC2954 INT (gpio-shutdown, active low) |
 | 28       | ID_SC           | 1    | (reserved)    | -         | HAT EEPROM; do not use    |
 | 30       | GND             | -    | GND           | Power     | Ground                    |
 | 32       | GPIO12          | 12   | UP            | Buttons   | D-pad Up (active low)     |
@@ -77,9 +77,13 @@ The standard `hifiberry-dac` overlay uses GPIO18/19/21 and works correctly.
 
 - **Pin 27 (ID_SD / GPIO0)** and **Pin 28 (ID_SC / GPIO1)** are reserved for the Pi's
   HAT EEPROM interface. Leave them unconnected on the custom PCB.
-- **Pins 3 / 5 (GPIO2 / GPIO3)**, **Pin 10 (GPIO15)**, **Pin 26 (GPIO7)**, and
-  **Pin 33 (GPIO13)** are unused in the Marathon design. GPIO2/3 remain available
-  as I2C (SDA1/SCL1) if a future revision adds an I2C peripheral.
+- **GPIO2/3, 7, 13 and 15** carry the power design (spec `planning/specs/011-POWER-DESIGN.md`):
+  - GPIO2/3 (I2C1) reach the MAX17048 fuel gauge at address 0x36.
+  - GPIO7 reads the LTC2954 INT line for a clean shutdown. No kernel SPI driver may claim it as a
+    chip select.
+  - GPIO15 drives KILL at the end of shutdown. It needs the serial console off.
+  - GPIO13 drives the backlight MOSFET with hardware PWM.
+  - GPIO7 can't be KILL: fbcp-ili9341 sets it to input when it exits, which would leave KILL high.
 
 ---
 
@@ -112,7 +116,9 @@ schematic shows these pins (top to bottom on the ribbon cable):
 | P$17        | YD     | -       | Touch panel (unused)               |
 
 **Backlight circuit**: LEDA is fed from the 5V rail through R30, a 22 ohm 0.5W resistor.
-The four LED_K cathodes are tied together and return to ground through R31, a 0 ohm link.
+The four LED_K cathodes are tied together and return to ground through Q1, an AO3400A MOSFET
+whose gate GPIO13 drives through 100 ohm (R41), with a 100k pull-down (R42), so software sets the
+brightness and the backlight stays off until the Pi drives the pin.
 With the panel's backlight at about 3.1V / 90 mA, 22 ohm gives roughly 86 mA. The breadboard
 display module had its own current limiting and ran from 3.3V; the bare panel needs R30.
 
@@ -208,27 +214,27 @@ Marathon does not include a dedicated hotkey/system button. The RetroPie hotkey
 role (quit-emulator, save-state, etc.) is assigned to Select in EmulationStation,
 which works fine without a dedicated modifier key.
 
-### Power Circuit (IP5306)
+### Power Circuit
 
 ```
-USB-C → IP5306 ←→ LiPo 2000-3000mAh (TBD)
-           │
-           ├→ 5V output → Pi Zero 5V pins (2, 4)
-           │              + PAM8403 VCC (mute switch drives SHDN/MUTE)
-           │              + LCD backlight (through R30)
-           │
+USB-C → BQ25616 charger ←→ LiPo (63 x 50 mm space, ≤6 mm, 10k NTC)
+           │ SYS              │
+           │                  └→ MAX17048 fuel gauge → I2C (GPIO2/3)
+           ├→ TPS61023 boost → 5V_SYS → Pi Zero 5V pins (2, 4)
+           │        ↑ EN                + PAM8403 (mute switch drives SHDN/MUTE)
+           │        │                   + LCD backlight (R30, Q1)
+           └→ LTC2954 power key controller ← SW1
+                    INT → GPIO7, KILL ← GPIO15
+
 Pi 3.3V regulator (pins 1, 17) → LCD VCC + PCM5102A (all supplies)
-           │
-           └→ Charging + boost + load sharing + protection
-              all handled by one chip
 ```
 
 **Key features**:
-- Play while charging (load sharing built into IP5306)
-- Clean 5V boost from 3.7V battery voltage
-- Low battery protection (won't over-discharge and kill the battery)
-- Battery level indication available (up to 4 LEDs). The current PCB leaves these pins
-  unconnected, so there is no charge indicator yet.
+- Play while charging: the charger's power path runs the device from USB and tops up the cell.
+- Charges at 0.9 A, only between 0 °C and 45 °C. A missing or broken NTC stops charging.
+- Hold the power key about 1 s to turn on. A press of 0.5 to 6 s shuts Linux down cleanly, then
+  GPIO15 cuts 5 V. A hold of 6.8 to 14.5 s forces power off.
+- The Pi reads the battery percentage from the fuel gauge and shuts down before the cell runs out.
 
 ---
 
@@ -236,13 +242,13 @@ Pi 3.3V regulator (pins 1, 17) → LCD VCC + PCM5102A (all supplies)
 
 These need to be resolved before schematic capture is complete:
 
-1. ~~**5V boost regulation**~~ - RESOLVED: IP5306 handles 3.7V->5V boost.
+1. ~~**5V boost regulation**~~ - RESOLVED: a TPS61023 boosts the charger's SYS rail to 5.06 V.
 
 2. ~~**I2S pin assignments**~~ - RESOLVED (2026-04-03): BCK=GPIO18, LRCK=GPIO19,
    DIN=GPIO21. Standard hifiberry-dac overlay. Confirmed working during prototype.
 
 3. ~~**Backlight circuit details**~~ - RESOLVED: 5V through R30 (22 ohm) to LEDA, cathodes
-   to GND through R31 (0 ohm). No brightness-control transistor on this revision.
+   to GND through Q1 (AO3400A), PWM from GPIO13.
 
 4. ~~**Headphone jack wiring**~~ - RESOLVED: No headphone jack. Bluetooth for private audio.
 

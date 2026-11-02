@@ -8,13 +8,15 @@ KiCad 10 project for the Marathon main board. Open `marathon.kicad_pro`. The sch
 - Placed: every part. The Raspberry Pi mounts on the back, inside the outline and clear of the battery area.
 - Routed: every net, with ground pours on both layers.
 - Footprints named `PROVISIONAL` still need checking against the real parts. The Alps switch footprints follow Alps' published land patterns.
+- `marathon.kicad_dru` allows 0.12 mm clearance inside the U5 (SOT-563) and U6 (TSOT-23-8) courtyards, whose stock land patterns put pads 0.15 mm apart.
+- The BQ25616 uses a project copy of KiCad's RTW footprint with four 0.3 mm vias in the exposed pad, the board's minimum drill.
 
 ## Checks
 
 | Check | Result |
 |-------|--------|
 | ERC | 0 violations |
-| DRC | 0 errors, 9 library-mismatch warnings |
+| DRC | 0 errors, 7 library-mismatch warnings |
 | Unrouted connections | 0 |
 | Schematic / PCB parity | 0 issues |
 
