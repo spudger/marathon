@@ -151,7 +151,7 @@ Remaining:
 - [x] Define board outline -- 160 x 75 mm landscape, 6 mm corner radius. Case mounting holes are still placeholders.
 - [x] Place components -- the Raspberry Pi sits on its back-side guide, inside the outline and clear of the battery envelope
 - [x] Route traces (2-layer board) -- all nets routed, with ground pours on both layers
-- [x] Determine final battery size from available area -- 63 x 50 x 6 mm envelope reserved (2026-11-02), enough for a 505060 cell with its protection board
+- [x] Determine final battery size from available area -- 63 x 50 x 6 mm envelope reserved (2026-11-02), long enough for a 505060 cell with its protection board; the chosen cell's width still needs checking
 - [ ] Add test points, Pi antenna copper keepout, and silkscreen artwork
 - [x] Run DRC (Design Rules Check) -- 0 errors and 0 unrouted connections as of 2026-10-31
 - [x] Fix the defects from the 2026-10-31 design review -- switch footprints, mute circuit, audio level, inductor rating, battery clearance, power and audio layout

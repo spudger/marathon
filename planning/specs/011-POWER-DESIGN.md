@@ -35,8 +35,8 @@ The owner approved these while scoping issue #11:
 3. Software sets the backlight brightness and turns the backlight off at shutdown.
 4. The cell charges at no more than its rated current, even if a full charge takes 2 to 3 hours. This replaces the IP5306.
 5. Charging stops when the cell is too hot or too cold.
-6. The battery space grows from 60 x 50 mm to 63 x 50 mm and stays at most 6 mm thick, so a
-   common 505060 cell fits with its PCM. The owner picks the cell from the requirements below.
+6. The battery space grows from 60 x 50 mm to 63 x 50 mm and stays at most 6 mm thick, to take the
+   62.5 mm length of a common 505060 cell with its PCM. The owner picks the cell from the requirements below.
 7. Option 1: a BQ25616 switching charger with a separate TPS61023 boost. The fallback is a
    BQ24074 linear charger, if the BQ25616's input limit can't be confirmed.
 8. The USB input is limited to about 1.5 A, which assumes a USB-C wall charger.
@@ -189,7 +189,8 @@ The cell must meet all of these:
 
 The closest candidate found, the VCELL VP505060 (2000 mAh, 1 A maximum charge, NTC optional),
 measures up to 50.5 x 62.5 mm with its PCM. Common 505060 cells run that long once the PCM is
-folded on, which is why decision 6 grew the space to 63 x 50 mm.
+folded on, which is why decision 6 grew the space to 63 x 50 mm. Its 50.5 mm maximum width is
+0.5 mm over the space, so it stays an unconfirmed candidate until a supplier drawing shows a fit.
 
 ### Bulk capacitor: C22
 

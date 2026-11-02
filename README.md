@@ -23,7 +23,7 @@ Design highlights:
 
 - **Bare-chip build.** Every IC is soldered directly to the PCB, not mounted on breakout modules.
 - **Safe charging and clean shutdown.** A BQ25616 charges the cell at 0.9 A, only between 0 °C and 45 °C, and runs the device from USB while it charges. A TPS61023 boosts the cell to 5 V. The power key turns the device on with a 1 s hold and shuts Linux down cleanly with a short press; a MAX17048 gauge reports the battery level so the Pi can shut down before the cell runs out.
-- **Thin, wide battery.** Target 2000 to 3000 mAh, ≤6 mm thick. The board reserves a 63 x 50 mm area for the cell, enough for a common 505060 cell with its protection board.
+- **Thin, wide battery.** Target 2000 to 3000 mAh, ≤6 mm thick. The board reserves a 63 x 50 mm area for the cell, long enough for a common 505060 cell with its protection board; the chosen cell's width still needs checking.
 - **Direct I²S audio chain.** Pi → PCM5102A DAC → PAM8403 amplifier → two speakers. A hardware SPDT mute switch holds the amp in shutdown for instant silence, and fixed attenuation keeps full-scale audio under the speakers' 1 W rating at the amp's nominal gain. Fine volume control is handled in RetroPie.
 - **Direct GPIO input.** Silicone membrane pads for the D-pad and ABXY, tactile switches for Start, Select, and shoulder buttons. No I²C expander.
 - **USB-C with spec-compliant CC resistors.** Works with any USB-C cable, not just A-to-C.
