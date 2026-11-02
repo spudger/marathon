@@ -128,22 +128,24 @@ this project would have to characterize.
 | Pin | Connection | Behavior |
 |---|---|---|
 | PB | SW1 to GND | Internal 100 kΩ pull-up |
-| ONT | 0.15 µF X7R ±10% to GND | Turn-on needs a hold of 0.8 to 1.6 s |
-| PDT | 1.0 µF X7R ±10% to GND | Forced off after a hold of 5.1 to 10.5 s |
+| ONT | 0.15 µF X7R ±10% to GND | Turn-on needs a hold of 0.7 to 1.5 s |
+| PDT | 1.5 µF X7R ±10% to GND | Forced off after a hold of 6.8 to 14.5 s, typically about 9.7 s |
 | EN | TPS61023 EN, 1 MΩ pull-up to SYS | Open drain, released high when on |
 | INT | Pi GPIO7, 10 kΩ pull-up to 3V3 | Pulled low while the key is pressed with the device on |
 | KILL | Pi GPIO15, 10 kΩ pull-up to 3V3 | Low turns the device off. Blanked for 400 to 650 ms after turn-on |
 
 - **Timing ranges.** The ranges in the table are worst cases, not typical values.
-  - The datasheet's 1500 pF test points (tONT and tPDT, 9 to 13.5 ms) give 6.0 to 9.0 s per µF.
+  - The datasheet sizes both capacitors as C = 1.56 × 10⁻⁴ µF/ms × (t − 1 ms). Its 1500 pF test
+    points (tONT and tPDT, 9 to 13.5 ms) give 5.33 to 8.33 s per µF once the fixed 1 ms is taken
+    out.
     The fixed parts add 26 to 41 ms (tDB,ON) and 52 to 82 ms (tPD,MIN).
   - Capacitance is taken as ±15%: ±10% part tolerance plus about ±5% for X7R between 10 °C and
     40 °C.
-- **Turn-on hold:** 0.8 to 1.6 s, so a key pressed by accident in a pocket doesn't turn the
+- **Turn-on hold:** 0.7 to 1.5 s, so a key pressed by accident in a pocket doesn't turn the
   device on. Without ONT's capacitor it would be 32 ms.
-- **Forced-off hold:** at least 5.1 s. Any press shorter than that is safe: the clean shutdown
-  starts at 0.5 s and is never cut short by the forced off. With PDT left open, a 64 ms tap would
-  cut power, so the capacitor is required. A forced off is certain by 10.5 s.
+- **Forced-off hold:** at least 6.8 s. A press of 0.5 to 6 s is a clean shutdown: it starts at
+  0.5 s and is never cut short by the forced off. With PDT left open, a 64 ms tap would
+  cut power, so the capacitor is required. A forced off is certain by 14.5 s.
 - **KILL:** must be high within the blanking time, at least 400 ms after turn-on. The pull-up to 3V3 does that as soon as the
   Pi's 3.3 V regulator starts, a few milliseconds after 5 V. The Pi's default pull-down on GPIO15
   (about 50 kΩ) leaves KILL at about 2.75 V, well above its 0.6 V threshold.
@@ -237,9 +239,9 @@ The software phase applies these. They're listed here so the hardware matches th
 |---|---|
 | Off, on battery | The TPS61023 is off. The cell feeds only the charger, controller, gauge and EN pull-up, about 25 to 45 µA in total |
 | Off, USB plugged in | Charges at 0.9 A between 0 °C and 45 °C. The device stays off |
-| Key held 1.6 s | EN goes high, 5 V comes up, the Pi boots, and KILL goes high |
-| Key pressed 0.5 to 5 s while on | INT goes low, and Linux shuts down cleanly. At the end, GPIO15 pulls KILL low, and 5 V goes off |
-| Key held 10.5 s | Forced off, for a frozen Pi |
+| Key held 1.5 s | EN goes high, 5 V comes up, the Pi boots, and KILL goes high |
+| Key pressed 0.5 to 6 s while on | INT goes low, and Linux shuts down cleanly. At the end, GPIO15 pulls KILL low, and 5 V goes off |
+| Key held 14.5 s | Forced off, for a frozen Pi |
 | Battery at 3 % | The battery service shuts down cleanly |
 | On, USB plugged in | USB runs the device. The leftover input current, up to about 1.4 A total, charges the cell |
 
@@ -314,10 +316,11 @@ On the built board, inconclusive until one exists:
   - It boots to the desktop.
 - `sudo reboot` restarts the Pi without cutting 5 V.
 - A short press shuts down cleanly, and 5 V reads 0 V within 30 s of the halt.
-- An 11 s hold forces it off. A 3 s press shuts down cleanly with no forced off.
+- A 15 s hold forces it off. A 6 s press shuts down cleanly with no forced off.
 - Charge current is 0.85 to 0.96 A from a USB-C charger, measured at the cell.
-- With the NTC replaced by fixed resistors, charging stops cold below 0 °C (above 27.3 kΩ), runs
-  at 25 °C (10 kΩ), and stops hot above 45 °C (below 4.9 kΩ).
+- With the NTC replaced by fixed 1% resistors, charging stops at 33 kΩ (cold), runs at 10 kΩ
+  (25 °C) and stops at 4.3 kΩ (hot). The nominal cutoffs are 27.3 kΩ (0 °C) and 4.9 kΩ (45 °C);
+  the test points sit outside the charger's threshold tolerance.
 - With the NTC open or shorted, it doesn't charge.
 - The input current stays under 1.5 A while the device runs and charges.
 - The battery service reads a percentage from address 0x36.
