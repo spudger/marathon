@@ -2573,7 +2573,7 @@
 		(at 143 90 180)
 		(descr "Two large plated through-hole pads for pre-wired small speaker leads")
 		(property "Reference" "J6"
-			(at 0 -4 0)
+			(at 0 -4 180)
 			(layer "F.SilkS")
 			(uuid "df2bf054-fa59-40b9-b706-9adaea95b665")
 			(effects
@@ -2584,7 +2584,7 @@
 			)
 		)
 		(property "Value" "Right Speaker"
-			(at 0 4 0)
+			(at 0 4 180)
 			(layer "F.Fab")
 			(uuid "a1e4a424-0f4a-4ead-8a40-a684198d0ca9")
 			(effects
@@ -2595,7 +2595,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 0)
+			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9e4051d4-3d02-491d-968a-c481a80e0a62")
@@ -2606,7 +2606,7 @@
 			)
 		)
 		(property "Description" "8 ohm 1W speaker"
-			(at 0 0 0)
+			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "4d48bffc-8cb1-4ded-93e9-b06d4ddcb89b")
@@ -2639,7 +2639,7 @@
 			(uuid "c55e5177-8aff-46a8-9497-a78f28274910")
 		)
 		(fp_text user "+   -"
-			(at 0 -2.7 0)
+			(at 0 -2.7 180)
 			(layer "F.SilkS")
 			(uuid "5e82c257-e8dd-443b-8c96-f26f094bf5a1")
 			(effects
@@ -2650,7 +2650,7 @@
 			)
 		)
 		(pad "1" thru_hole circle
-			(at -2.5 0)
+			(at -2.5 0 180)
 			(size 2.6 2.6)
 			(drill 1.2)
 			(layers "*.Cu" "*.Mask")
@@ -2661,7 +2661,7 @@
 			(uuid "e4db606d-9edb-4960-9d4e-3b598863c334")
 		)
 		(pad "2" thru_hole circle
-			(at 2.5 0)
+			(at 2.5 0 180)
 			(size 2.6 2.6)
 			(drill 1.2)
 			(layers "*.Cu" "*.Mask")
@@ -3963,7 +3963,7 @@
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal with elongated pad for handsoldering. (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing)")
 		(tags "capacitor handsolder")
 		(property "Reference" "C1"
-			(at 0 -1.68 270)
+			(at 0 -1.68 90)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "f1e53421-d46f-4f87-8983-26b622f01149")
@@ -3976,7 +3976,7 @@
 			)
 		)
 		(property "Value" "1uF"
-			(at 0 1.68 270)
+			(at 0 1.68 90)
 			(layer "B.Fab")
 			(uuid "3fd824dd-4530-4283-8b3c-77abd8f284ad")
 			(effects
@@ -3988,7 +3988,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "105a9bf3-0066-482c-85f0-3a925cc568fa")
@@ -3999,7 +3999,7 @@
 			)
 		)
 		(property "Description" "BQ25616 VBUS bypass, place at pin 24"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "13af44d3-5f2f-4080-8d2e-6314f4f78a61")
@@ -4010,7 +4010,7 @@
 			)
 		)
 		(property "KiLib_Generator" "SMD_2terminal_chip_molded"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.SilkS")
 			(hide yes)
 			(uuid "2e06164f-36e7-4427-a7a3-da21febdbf62")
@@ -4075,7 +4075,7 @@
 			(uuid "07d2544e-a4d2-47b1-b945-2cb7ad84b4ab")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.Fab")
 			(uuid "e7a2ec48-df8d-4a44-996e-3f42f4f6d595")
 			(effects
@@ -4087,7 +4087,7 @@
 			)
 		)
 		(pad "1" smd roundrect
-			(at -1.0375 0 270)
+			(at -1.0375 0 90)
 			(size 1.175 1.45)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.212766)
@@ -4097,7 +4097,7 @@
 			(uuid "01399272-56c7-440a-bbf4-5c91673e1ce9")
 		)
 		(pad "2" smd roundrect
-			(at 1.0375 0 270)
+			(at 1.0375 0 90)
 			(size 1.175 1.45)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.212766)
@@ -8517,7 +8517,7 @@
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal with elongated pad for handsoldering. (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing)")
 		(tags "capacitor handsolder")
 		(property "Reference" "C6"
-			(at 0 -1.68 90)
+			(at 0 -1.68 270)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "2aec524f-2c20-4467-9b64-96f4dc9fce03")
@@ -8530,7 +8530,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 0 1.68 90)
+			(at 0 1.68 270)
 			(layer "B.Fab")
 			(uuid "0184c66b-343a-4248-bd6f-60517480cb56")
 			(effects
@@ -8542,7 +8542,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 90)
+			(at 0 0 270)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "aced4a14-dad2-4829-8b46-e2f2aa285f40")
@@ -8553,7 +8553,7 @@
 			)
 		)
 		(property "Description" "TPS61023 output capacitor on 5V_SYS"
-			(at 0 0 90)
+			(at 0 0 270)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "8ed8e2eb-04c8-4ca8-907b-e505ac788ee1")
@@ -8564,7 +8564,7 @@
 			)
 		)
 		(property "KiLib_Generator" "SMD_2terminal_chip_molded"
-			(at 0 0 90)
+			(at 0 0 270)
 			(layer "B.SilkS")
 			(hide yes)
 			(uuid "b6ff6505-4a18-42ef-8851-3a296b0f47f8")
@@ -8629,7 +8629,7 @@
 			(uuid "c56c6734-0e4a-4b9c-abb1-96a48764698f")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 90)
+			(at 0 0 270)
 			(layer "B.Fab")
 			(uuid "7485fee3-e5bf-418e-a654-ea6f5a1a2eec")
 			(effects
@@ -8641,7 +8641,7 @@
 			)
 		)
 		(pad "1" smd roundrect
-			(at -1.0375 0 90)
+			(at -1.0375 0 270)
 			(size 1.175 1.45)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.212766)
@@ -8651,7 +8651,7 @@
 			(uuid "304ebaaf-49b7-4787-b0e1-1e45aa10ad01")
 		)
 		(pad "2" smd roundrect
-			(at 1.0375 0 90)
+			(at 1.0375 0 270)
 			(size 1.175 1.45)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.212766)
@@ -13335,7 +13335,7 @@
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal with elongated pad for handsoldering. (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing)")
 		(tags "capacitor handsolder")
 		(property "Reference" "C2"
-			(at 0 -1.68 270)
+			(at 0 -1.68 90)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "fb07a7a4-75bd-4005-a6c9-221bc88a308d")
@@ -13348,7 +13348,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 0 1.68 270)
+			(at 0 1.68 90)
 			(layer "B.Fab")
 			(uuid "15e950d4-23ea-4bd8-a2bc-ef07d3bedf87")
 			(effects
@@ -13360,7 +13360,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "77c24f6c-d2c3-4d9d-a36f-b8f169b3e8b3")
@@ -13371,7 +13371,7 @@
 			)
 		)
 		(property "Description" "BQ25616 BAT bypass, place at pins 13-14"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
 			(uuid "007688cb-541f-4319-a247-f553973ff4f3")
@@ -13382,7 +13382,7 @@
 			)
 		)
 		(property "KiLib_Generator" "SMD_2terminal_chip_molded"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.SilkS")
 			(hide yes)
 			(uuid "6096476c-651f-4a9e-a2d8-377c1175ba66")
@@ -13447,7 +13447,7 @@
 			(uuid "6e18a35e-2a7c-4635-a645-9422d9ecc0f1")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "B.Fab")
 			(uuid "787fa795-1518-40ff-a451-be3308f59b22")
 			(effects
@@ -13459,7 +13459,7 @@
 			)
 		)
 		(pad "1" smd roundrect
-			(at -1.0375 0 270)
+			(at -1.0375 0 90)
 			(size 1.175 1.45)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.212766)
@@ -13469,7 +13469,7 @@
 			(uuid "ae6d4301-3b7e-4916-bb7e-d0be26ecd3c7")
 		)
 		(pad "2" smd roundrect
-			(at 1.0375 0 270)
+			(at 1.0375 0 90)
 			(size 1.175 1.45)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.212766)
