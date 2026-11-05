@@ -698,4 +698,46 @@
 )
 (embedded_fonts no)
 )
+
+(symbol "TESTPOINT"
+(pin_names (offset 1.016) (hide yes))
+(exclude_from_sim no)
+(in_bom no)
+(on_board yes)
+(property "Reference" "TP" (at 0.00 -2.54 0) (effects (font (size 1.27 1.27))))
+(property "Value" "TESTPOINT" (at 0.00 2.54 0) (effects (font (size 1.27 1.27))))
+(property "Footprint" "" (at 0.00 0.00 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(property "Datasheet" "" (at 0.00 0.00 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(property "Description" "Bare test pad for probing a net" (at 0.00 0.00 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(symbol "TESTPOINT_0_1"
+(circle (center 0 0) (radius 0.762) (stroke (width 0.254) (type default)) (fill (type none)))
+)
+(symbol "TESTPOINT_1_1"
+(pin passive line (at 2.54 0 180) (length 1.778)
+(name "1" (effects (font (size 1.0 1.0))))
+(number "1" (effects (font (size 1.0 1.0)))))
+)
+(embedded_fonts no)
+)
+
+(symbol "MOUNTINGHOLE"
+(pin_names (offset 1.016) (hide yes))
+(exclude_from_sim no)
+(in_bom no)
+(on_board yes)
+(property "Reference" "H" (at 0.00 -2.54 0) (effects (font (size 1.27 1.27))))
+(property "Value" "MOUNTINGHOLE" (at 0.00 2.54 0) (effects (font (size 1.27 1.27))))
+(property "Footprint" "" (at 0.00 0.00 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(property "Datasheet" "" (at 0.00 0.00 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(property "Description" "Plated case mounting hole tied to a net" (at 0.00 0.00 0) (effects (font (size 1.27 1.27)) (hide yes)))
+(symbol "MOUNTINGHOLE_0_1"
+(circle (center 0 0) (radius 1.27) (stroke (width 0.254) (type default)) (fill (type none)))
+)
+(symbol "MOUNTINGHOLE_1_1"
+(pin passive line (at 2.54 0 180) (length 1.27)
+(name "1" (effects (font (size 1.0 1.0))))
+(number "1" (effects (font (size 1.0 1.0)))))
+)
+(embedded_fonts no)
+)
 )
