@@ -139,7 +139,7 @@ Remaining:
   - Speaker pads
   - Power distribution (3.3V from Pi, 5V from the TPS61023 boost)
 - [x] Cross-reference against PIN_MAPPING.md -- all 40 Pi header pins match (checked 2026-10-07)
-- [ ] Add test points for debugging
+- [x] Add test points for debugging -- TP1 to TP13 on the power, power key, backlight and I2C nets (2026-11-04)
 - [x] Run ERC (Electrical Rules Check) -- 0 violations
 - [ ] Clean up the sheet layout for readability (overlapping symbols and notes), then export a PDF to `schematics/`
 
@@ -148,12 +148,14 @@ Remaining:
 **Status**: IN PROGRESS. Not ready for fabrication.
 
 - [x] Import schematic to PCB editor
-- [x] Define board outline -- 160 x 75 mm landscape, 6 mm corner radius. Case mounting holes are still placeholders.
+- [x] Define board outline -- 160 x 75 mm landscape, 6 mm corner radius. Four plated M2 case holes, 5 mm in from each edge (2026-11-04).
 - [x] Place components -- the Raspberry Pi sits on its back-side guide, inside the outline and clear of the battery envelope
 - [x] Route traces (2-layer board) -- all nets routed, with ground pours on both layers
 - [x] Determine final battery size from available area -- 63 x 50 x 6 mm envelope reserved (2026-11-02), long enough for a 505060 cell with its protection board; the chosen cell's width still needs checking
-- [ ] Add test points, Pi antenna copper keepout, and silkscreen artwork
-- [x] Run DRC (Design Rules Check) -- 0 errors and 0 unrouted connections as of 2026-10-31
+- [x] Add test points and a Pi antenna copper keep-out (2026-11-04)
+- [ ] Add silkscreen artwork
+- [ ] Fix the U2 (PCM5102A) and U3 (PAM8403) footprints, which are mirrored on the back side
+- [x] Run DRC (Design Rules Check) -- 0 errors and 0 unrouted connections as of 2026-11-04; two warnings flag the mirrored U2 and U3
 - [x] Fix the defects from the 2026-10-31 design review -- switch footprints, mute circuit, audio level, inductor rating, battery clearance, power and audio layout
 - [x] Build the power design (spec 011) -- charger, boost, power key controller, fuel gauge, backlight switch, 3-pin battery connector (2026-11-02)
 - [ ] Verify provisional footprints (LCD tail) against real parts or manufacturer drawings. The Alps switch footprints now follow Alps' land patterns.
@@ -222,7 +224,7 @@ Remaining:
 - ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
 - **Battery fitment** -- A 63 x 50 x 6 mm envelope is reserved on the PCB. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
 - **Unverified footprints** -- The LCD tail and Alps switch footprints were built from documentation and have not been checked against physical parts yet.
-- **Open design review items** -- The B button on the UART TX pin, and no Pi antenna copper keep-out yet. The power design's checks that need a built board are listed in spec 011's finish condition.
+- **Open design review items** -- The B button on the UART TX pin, and the mirrored U2 and U3 footprints. The power design's checks that need a built board are listed in spec 011's finish condition.
 - **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.
 - **Bluetooth audio latency** -- ~100-300ms, fine for passive games, not ideal for timing-sensitive gameplay. Speakers remain the primary audio output.
 - **Display resolution** -- Currently 640x480 HDMI scaled to 320x240 SPI, looks blurry. Need to set HDMI to native 320x240 for pixel-perfect rendering. Low priority.
