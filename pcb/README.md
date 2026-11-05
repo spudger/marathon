@@ -8,8 +8,8 @@ KiCad 10 project for the Marathon main board. Open `marathon.kicad_pro`. The sch
 - Placed: every part. The Raspberry Pi mounts on the back, inside the outline and clear of the battery area.
 - Routed: every net, with ground pours on both layers that fill the rounded corners.
 - Four plated M2 case holes (H1 to H4), tied to GND, 5 mm in from each edge.
-- 13 test pads (TP1 to TP13) on the back, labeled with their net names, outside the Pi, battery and antenna areas.
-- The `PI_ANTENNA_KEEPOUT` rule area keeps tracks, vias and pours off both layers under the Pi Zero 2 W's antenna, plus 5 mm. The antenna sits on the Pi's edge opposite the GPIO header, between the mini-HDMI and USB data ports.
+- 13 test pads (TP1 to TP13) on the back, labeled with their net names, outside the Pi, the microSD card's overhang, the battery and the antenna areas.
+- The `PI_ANTENNA_KEEPOUT` rule area keeps tracks, vias, pads and pours off both layers under the Pi Zero 2 W's antenna, plus 5 mm, or 4.2 mm on the left where the D-pad's right contact (SW13) sits. The antenna sits on the Pi's edge opposite the GPIO header, between the mini-HDMI and USB data ports.
 - **Known defect:** U2 (PCM5102A) and U3 (PAM8403) sit on the back with front-side pad positions, so their pin order is mirrored. Both need flipping and their routes redoing before fabrication. DRC flags them as library mismatches.
 - Footprints named `PROVISIONAL` still need checking against the real parts. The Alps switch footprints follow Alps' published land patterns.
 - `marathon.kicad_dru` allows 0.12 mm clearance inside the U5 (SOT-563) and U6 (TSOT-23-8) courtyards, whose stock land patterns put pads 0.15 mm apart.
