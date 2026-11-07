@@ -2,9 +2,9 @@
 
 - **Status:** approved
 - **Issue:** spudger/marathon#22
-- **PRs:** none yet
+- **PRs:** spudger/marathon#23
 - **Draft:** none
-- **Plans:** none yet
+- **Plans:** spudger/marathon#23
 
 ## Problem
 
