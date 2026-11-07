@@ -16,7 +16,7 @@ The project goal is 4 to 6 hours or more (`documentation/PROJECT_PLAN.md`, "Batt
 ## Goal
 
 Grow the battery space so it takes an in-stock cell of about 4000 mAh, and pick that cell. The
-case may get about 1 mm deeper than the rear-mounted Pi already makes it (decision 3).
+case may get about 1 to 1.5 mm deeper than the rear-mounted Pi already makes it (decision 3).
 
 ## Free space on the back
 
@@ -43,6 +43,18 @@ the 65 mm side along the board's long axis.
 The current 63 x 50 mm space (x 112 to 175, y 38 to 88) already touches J6 and H4 at its bottom
 edge, by up to 0.5 mm.
 
+### The battery connector
+
+B1, the JST-PH side-entry connector, sits at (106.5, 44) and opens toward +x, straight at the
+battery: its mouth is at about x = 111, and a cell of full length starts at x = 113. The mated
+plug and the bend in its wires need more room than that, so as placed the plug would press into
+the cell's end. This was already true of the 63 x 50 mm space.
+
+B1 turns to open toward the board's top edge (-y), still in the column between the Pi (right edge
+x = 99.2) and the cell (x = 112). The back of the board above it, x 100 to 112 and y 21 to 38, is
+empty. The plug and the first bend of its wires stay in that area, and the leads run from the
+cell's end along it. B1 keeps its pins, nets and pin order.
+
 ## Thickness
 
 The Pi Zero 2 W mounts on the back on 5 mm standoffs, component side outward
@@ -68,8 +80,18 @@ stack is about **10.0 mm** deep from the back of the main board, 9.7 to 10.4 mm.
 2 x 20 long-tail header ends about 8 mm out, below the HDMI connector, so it adds nothing. Calipers
 on the real parts replace these figures.
 
-A pouch cell swells over its life, so it needs room above it, about 8% of its thickness. A
-10 mm cell therefore needs about 10.8 mm, about 1 mm more than the Pi's stack (decision 3).
+The case's clearance over the battery covers the whole installed stack, not only the cell's
+nominal thickness:
+
+| Item | Allowance |
+|---|---|
+| Cell, at the seller's maximum thickness | about 10.3 mm (10 mm nominal plus a typical 0.3 mm tolerance; the seller's figure replaces it) |
+| Adhesive pad or tape holding the cell | about 0.2 mm |
+| Swelling over the cell's life | about 0.8 mm, 8% of the thickness |
+| **Clearance from the back of the board** | **about 11.3 mm** |
+
+That is about 1.3 mm more than the Pi's stack (decision 3). A taped-on NTC goes on the cell's edge,
+not its face, so it adds no thickness.
 
 ## Cell requirements
 
@@ -86,8 +108,9 @@ Spec 011's requirements stand, except the size:
 | Temperature sensor | 10 kΩ NTC, B = 3435 (103AT type), on a third wire. Otherwise, add one to the harness against the cell |
 | Availability | in stock, buyable in ones and twos, not made to order |
 
-A cell of 2000 mAh or more rated at 1C meets the charge and discharge rows, so at 4000 mAh only
-the PCM trip and the sensor need checking.
+At 4000 mAh, 0.25C of charge and 0.5C of discharge meet those two rows. The seller has to state
+both ratings separately: a single "1C" may mean discharge only, and some cells allow a lower charge
+rate than discharge rate.
 
 ## Cell search
 
@@ -149,11 +172,13 @@ Near misses:
 
 ### Recommended cell
 
-The Bihuade 105063, 4000 mAh, with the JST-PH 3-pin NTC option. It is the only 4000 mAh cell
-found that is sold singly with an NTC fitted. Unconfirmed: whether it ships from stock, its
+The Bihuade 105063, 4000 mAh, with the JST-PH 3-pin NTC option, as a provisional pick. It is the
+only 4000 mAh cell found that is sold singly with an NTC fitted. It qualifies only once the seller
+states the missing ratings and the arrival checks pass. Unconfirmed: whether it ships from stock, its
 length with the PCM (65 mm is the limit), the NTC's value and B constant, the pin order, the
 current ratings and the PCM trip. The Bihuade 105060, 3500 mAh, is the fallback if the 105063 runs
-too long: same store, same option, 3 mm shorter.
+too long: same store, same option, 3 mm shorter. It is a runtime compromise: about 3.6 hours of
+heavy play, under decision 1's 4 hours, so taking it is the owner's call.
 
 ### Checks when a cell arrives
 
@@ -162,7 +187,9 @@ too long: same store, same option, 3 mm shorter.
    means the capacity is overstated.
 3. Open-circuit voltage of 3.7 to 3.9 V, and a 4.2 V label, not 4.35 V.
 4. Polarity and pin order at the connector before plugging it in: 3-pin order varies by seller.
-5. The NTC reads about 10 kΩ at 25 °C.
+5. The NTC reads about 10 kΩ at 25 °C, and about 27 to 29 kΩ in ice water (0 °C). A 10 kΩ
+   B3950 sensor, a common substitute, reads about 33 kΩ at 0 °C and would shift the charger's
+   temperature cutoffs.
 6. A capacity test: charge to 4.2 V, discharge at 0.2C to 3.0 V.
 7. A 2 to 3 A load test, to confirm the PCM doesn't trip early.
 
@@ -189,8 +216,8 @@ Measuring the real draw on the prototype replaces these figures.
 
 1. The target is about 4000 mAh, for 4 hours or more even in demanding games.
 2. The cell is bought in stock, not made to order.
-3. The case may get about 1 mm deeper for the battery, to take a 105060-class cell, about 10 mm
-   thick. The owner chose this on 2026-11-07 over staying at the Pi's depth, which holds only
+3. The case may get about 1 to 1.5 mm deeper for the battery, to take a 105060-class cell, about
+   10 mm thick (see "Thickness" for the installed stack). The owner chose this on 2026-11-07 over staying at the Pi's depth, which holds only
    about 3000 to 3500 mAh.
 
 ## Changes
@@ -199,7 +226,8 @@ One PR, through the build flow:
 
 1. **Board.** Move the battery outline, the B.Fab rectangle, from (112, 38) to (175, 88) to (112, 28)
    to (179, 87). Change its two B.Fab labels to name a 105060-class cell, at most 57 x 65 mm with its
-   PCM and about 10 mm thick. No part, track or zone moves.
+   PCM and about 10 mm thick. Turn B1 to open toward the top edge, as "The battery connector"
+   says, and reroute its three tracks. No other part moves.
 2. **Spec 011.** Decision 6 and the size row of its cell requirements point to this spec. Its
    history stays as written.
 3. **Docs.** Replace the 63 x 50 x 6 mm space and the 2000 to 3000 mAh target with this spec's space
@@ -207,16 +235,19 @@ One PR, through the build flow:
    `documentation/PROJECT_PLAN.md`, at the places "What else uses this" lists. The battery row in
    `bom/README.md` names the recommended cell and the fallback, and the 103AT-2 as the add-on NTC.
    The battery-life goal and strategy in `PROJECT_PLAN.md` say 4000 mAh and about 10 mm.
-4. **Case.** Phase 5 in `PROJECT_PLAN.md` notes that the back must clear about 10.8 mm over the
-   battery, about 1 mm more than the Pi's stack.
+4. **Case.** Phase 5 in `PROJECT_PLAN.md` notes that the back must clear about 11.3 mm over the
+   battery, about 1.3 mm more than the Pi's stack.
+5. **The cell is provisional.** The `bom/README.md` battery row says so until the arrival checks
+   pass.
 
 Finish condition for that PR:
 
 - DRC with schematic parity reports 0 errors and 0 warnings, as on `main`.
 - No back-side courtyard, through-hole pad or hole lies inside the new outline, checked by a
   script over every footprint.
-- `git grep -n -E "63 ?x ?50|60 x 50 x 6|2000-3000|2000 to 3000" -- ':!planning'` finds only the
-  dated rows of the `bom/README.md` change log.
+- B1's mouth faces -y, and no part's courtyard lies in the 10 mm in front of it.
+- `git grep -n -E "63 ?x ?50|60 x 50 x 6|2000-3000|2000 to 3000|≤ ?6 ?mm|6 mm battery|505060" -- ':!planning'`
+  finds only the dated rows of the `bom/README.md` change log.
 
 ## What else uses this
 
@@ -232,6 +263,8 @@ Searches run on `0c61d2f`:
   `README.md:39` and `:132`, `bom/README.md:77` (C22 sits beside the battery, and at 2.8 mm stays
   lower than it) and `:113`, and `documentation/PROJECT_PLAN.md:46` and `:47` ("keep battery thin
   (≤6mm)"). The dated `bom/README.md:142` row is history and stays.
+- `git grep -n -E "\bB1\b" -- ':!pcb/marathon.kicad_pcb'` finds only the schematic symbol and spec
+  011's part choice (`:175`, `:297`); neither names B1's position, so turning it changes no doc.
 - `git grep -n -i battery -- .claude` finds `.claude/skills/verify-marathon/features/render.md:24`,
   which only names the battery area in the back render.
 
