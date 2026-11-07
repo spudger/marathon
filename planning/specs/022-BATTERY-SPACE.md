@@ -48,8 +48,18 @@ edge, by up to 0.5 mm.
 The Pi Zero 2 W mounts on the back on 5 mm standoffs, component side outward
 (`documentation/PROJECT_PLAN.md`). The case back has to clear the standoff gap, the Pi's board
 and its tallest part, so a cell up to that depth costs no thickness, if the back of the case is
-flat. Open: the Pi's stack depth, from the official mechanical drawing and then calipers on the
-real board.
+flat.
+
+Raspberry Pi publishes no heights for the Zero 2 W: the mechanical drawing and product brief give
+only X and Y dimensions. The best figure found is a forum measurement on a Zero W of 4.76 mm from
+the bottom of the Pi's board to the top of its mini-HDMI connector, the tallest part
+(https://forums.raspberrypi.com/viewtopic.php?t=203435). With the 5 mm standoffs
+(`bom/README.md`), the stack is about **9.8 mm** deep from the back of the main board. A typical
+2 x 20 long-tail header ends about 8 mm out, below the HDMI connector, so it adds nothing. These are
+estimates until calipers confirm the HDMI height, the standoff length and the Pi's bottom-side parts.
+
+A pouch cell swells over its life, so it needs room above it. Leaving about 0.8 mm, about 8% of the
+thickness, the cell can be at most about **9 mm** thick without making the case deeper.
 
 ## Cell requirements
 
@@ -71,7 +81,55 @@ the PCM trip and the sensor need checking.
 
 ## Cell search
 
-Started 2026-11-07.
+Searched 2026-11-07. "Read" means the page or datasheet was opened; "snippet" means it was only
+seen in search results. AliExpress and Amazon item pages refused automated fetches, so their
+figures are snippets or come from search result pages.
+
+### What the space can hold
+
+Listing titles often overstate capacity. A good pouch cell stores about 0.12 to 0.14 mAh per cubic
+mm of body, not counting about 2 mm of PCM on its end. By size class:
+
+| Class (thickness x width x length, mm) | Fits 57 x 65? | Realistic capacity | Fits under the Pi's depth? |
+|---|---|---|---|
+| 805060 (8 x 50 x 60) | yes | 2800 to 3250 mAh | yes |
+| 905060 (9 x 50 x 60) | yes | 3100 to 3650 mAh | yes, at the limit |
+| 105060 (10 x 50 x 60) | yes | 3500 to 4050 mAh | no, about 1 mm deeper |
+| 955565 (9.5 x 55 x 65) | no: 66 to 67 mm long with its PCM | 3950 to 4600 mAh | no |
+
+A true 4000 mAh cell needs about 10 mm of thickness in this footprint. At the Pi's depth the most
+the space holds is about 3000 to 3500 mAh.
+
+### Candidates
+
+| Cell | Size with PCM (mm) | Capacity | NTC | Ratings | Connector | Price, 1 piece | Evidence |
+|---|---|---|---|---|---|---|---|
+| MikroE MIKROE-4474 (805660), DigiKey, 276 in stock | 8.1 x 57.0 x 63.0 max, from its drawing | 3000 mAh minimum | no | 1C charge and discharge (3 A); PCM trips at 3.0 to 4.0 A; OVP 4.28 V | JST-XH, 2-pin | $26 | read: [DigiKey](https://www.digikey.com/en/products/detail/mikroelektronika/MIKROE-4474/13679437), [datasheet](https://download.mikroe.com/documents/datasheets/MLP805660%203000mAh%203.7V.pdf) |
+| Bihuade (Liter Energy store) 805060 | about 8 x 50 x 60; PCM inclusion not stated | 3000 mAh | option: JST-PH 3-pin with NTC, value not stated | not stated | JST-PH, 2- or 3-pin | $6.35 | read: [page](https://bihuade.com/products/37v-3000mah-805060-polymer-lithium-lipo-rechargeable-battery-for-gps-psp-dvd-e-book-tablet-pc-power-bank-speaker-camera-pad) |
+| GeB 805060, LaskaKit, 81 in stock | 8 x 50 x 60 | 3000 mAh | no | 1C charge, 0.5C discharge (1.5 A, under the 2 A rule) | JST-PH, 2-pin | €8.13 | read: [page](https://www.laskakit.cz/en/geb-lipol-baterie-805060-3000mah-3-7v-jst-ph-2-0/) |
+| Easylander 905060, AliExpress | 9 x 50 x 60 nominal | 3500 mAh plausible | third wire offered, value not confirmed | not stated | JST-PH 3-pin option | about $9.69 to $15.69 | snippet: [listing](https://www.aliexpress.us/item/3256812165960549.html) |
+| 955060 with PCB, AliExpress | 9.5 x 50 x 60 nominal | 4000 claimed, 3300 to 3850 plausible | not stated | not stated | JST-PH or XH option | $12.55 to $13.05 | search results: [1](https://www.aliexpress.us/item/3256812201363679.html), [2](https://www.aliexpress.us/item/3256812324315768.html) |
+| YTKavq 105060, Amazon B08TTR1291 | 10 x 50 x 60 nominal | 3300 mAh | no | not stated | JST-PH, 2-pin | not seen | snippet; its listed 30 g weight is implausible |
+
+Near misses:
+
+- 955565 "5000 mAh" cells (Amazon: Meshnology, OCTelect, HXJNLDC; Bihuade with a 3-pin NTC option
+  at $7.59): 66 to 67 mm long with the PCM, and about 4000 to 4500 mAh in reality. Snippets.
+- AliExpress 905068, 4000 mAh, 3-wire NTC, JST 3-pin, $9.49: 68 mm long. Search results.
+- PiShop 755060, 3000 mAh: out of stock. Read.
+- LP105065 from lipobattery.us, 4000 mAh with a 10k NTC: made to order, and 65 mm excludes the PCM.
+  Snippet.
+
+### Checks when a cell arrives
+
+1. Calipers on thickness, width and length, PCM and tape included; look for swelling.
+2. Weight: about 55 to 60 g for a real 3000 mAh 805060, about 70 g for 4000 mAh. Much lighter
+   means the capacity is overstated.
+3. Open-circuit voltage of 3.7 to 3.9 V, and a 4.2 V label, not 4.35 V.
+4. Polarity and pin order at the connector before plugging it in: 3-pin order varies by seller.
+5. The NTC reads about 10 kΩ at 25 °C.
+6. A capacity test: charge to 4.2 V, discharge at 0.2C to 3.0 V.
+7. A 2 to 3 A load test, to confirm the PCM doesn't trip early.
 
 ## Runtime
 
@@ -86,6 +144,8 @@ nominal, 90% of the rated capacity before the fuel gauge shuts down, and 88% boo
 | Audio, DAC, display | about 0.25 W | about 0.4 W |
 | From the cell | about 1.7 W | about 3.2 W |
 | 1800 mAh cell | about 3.5 h | about 1.9 h |
+| 3000 mAh cell | about 5.9 h | about 3.1 h |
+| 3500 mAh cell | about 6.9 h | about 3.6 h |
 | 4000 mAh cell | about 7.8 h | about 4.2 h |
 
 Measuring the real draw on the prototype replaces these figures.
@@ -111,5 +171,7 @@ Searches run on `0c61d2f`:
 
 ## Open questions
 
-1. The Pi's stack depth, which sets the cell's maximum thickness.
-2. Which cell: see "Cell search".
+1. The Pi's stack depth, about 9.8 mm estimated, which sets the cell's maximum thickness.
+2. Decision 3 against decision 1: at the Pi's depth the space holds about 3000 to 3500 mAh. A true
+   4000 mAh cell (105060 class) needs about 1 mm more depth.
+3. Which cell: see "Cell search".
