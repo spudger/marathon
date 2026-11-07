@@ -15,8 +15,8 @@ The project goal is 4 to 6 hours or more (`documentation/PROJECT_PLAN.md`, "Batt
 
 ## Goal
 
-Grow the battery space so it takes an in-stock cell of about 4000 mAh, without making the case
-thicker than the rear-mounted Pi already makes it, and pick that cell.
+Grow the battery space so it takes an in-stock cell of about 4000 mAh, and pick that cell. The
+case may get about 1 mm deeper than the rear-mounted Pi already makes it (decision 3).
 
 ## Free space on the back
 
@@ -67,7 +67,7 @@ Spec 011's requirements stand, except the size:
 
 | Requirement | Value |
 |---|---|
-| Size, including PCM and tolerance | at most 57 x 65 mm, no thicker than the Pi's stack depth |
+| Size, including PCM and tolerance | at most 57 x 65 mm, about 10 mm thick (105060 class) |
 | Capacity | about 4000 mAh |
 | Chemistry | LiPo, 4.2 V full charge, not a 4.35 V high-voltage cell |
 | Maximum charge current | at least 1.0 A (the charger runs at 0.90 A typical, 0.96 A worst case) |
@@ -154,7 +154,9 @@ Measuring the real draw on the prototype replaces these figures.
 
 1. The target is about 4000 mAh, for 4 hours or more even in demanding games.
 2. The cell is bought in stock, not made to order.
-3. The case does not get thicker for the battery: the cell is no thicker than the Pi's stack.
+3. The case may get about 1 mm deeper for the battery, to take a 105060-class cell, about 10 mm
+   thick. The owner chose this on 2026-11-07 over staying at the Pi's depth, which holds only
+   about 3000 to 3500 mAh.
 
 ## What else uses this
 
@@ -171,7 +173,6 @@ Searches run on `0c61d2f`:
 
 ## Open questions
 
-1. The Pi's stack depth, about 9.8 mm estimated, which sets the cell's maximum thickness.
-2. Decision 3 against decision 1: at the Pi's depth the space holds about 3000 to 3500 mAh. A true
-   4000 mAh cell (105060 class) needs about 1 mm more depth.
-3. Which cell: see "Cell search".
+1. The Pi's stack depth, about 9.8 mm estimated, which sets how much deeper than the Pi the case
+   gets for a 10 mm cell.
+2. Which cell: see "Cell search".
