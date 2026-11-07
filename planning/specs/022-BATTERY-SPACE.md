@@ -193,6 +193,31 @@ Measuring the real draw on the prototype replaces these figures.
    thick. The owner chose this on 2026-11-07 over staying at the Pi's depth, which holds only
    about 3000 to 3500 mAh.
 
+## Changes
+
+One PR, through the build flow:
+
+1. **Board.** Move the battery outline, the B.Fab rectangle, from (112, 38) to (175, 88) to (112, 28)
+   to (179, 87). Change its two B.Fab labels to name a 105060-class cell, at most 57 x 65 mm with its
+   PCM and about 10 mm thick. No part, track or zone moves.
+2. **Spec 011.** Decision 6 and the size row of its cell requirements point to this spec. Its
+   history stays as written.
+3. **Docs.** Replace the 63 x 50 x 6 mm space and the 2000 to 3000 mAh target with this spec's space
+   and the 4000 mAh target in `README.md`, `bom/README.md`, `documentation/PIN_MAPPING.md` and
+   `documentation/PROJECT_PLAN.md`, at the places "What else uses this" lists. The battery row in
+   `bom/README.md` names the recommended cell and the fallback, and the 103AT-2 as the add-on NTC.
+   The battery-life goal and strategy in `PROJECT_PLAN.md` say 4000 mAh and about 10 mm.
+4. **Case.** Phase 5 in `PROJECT_PLAN.md` notes that the back must clear about 10.8 mm over the
+   battery, about 1 mm more than the Pi's stack.
+
+Finish condition for that PR:
+
+- DRC with schematic parity reports 0 errors and 0 warnings, as on `main`.
+- No back-side courtyard, through-hole pad or hole lies inside the new outline, checked by a
+  script over every footprint.
+- `git grep -n -E "63 ?x ?50|60 x 50 x 6|2000-3000|2000 to 3000" -- ':!planning'` finds only the
+  dated rows of the `bom/README.md` change log.
+
 ## What else uses this
 
 Searches run on `0c61d2f`:
@@ -203,6 +228,10 @@ Searches run on `0c61d2f`:
   requirements (`planning/specs/011-POWER-DESIGN.md:38`, `:183`, `:190-192`, `:303`).
 - `git grep -n -i -E "63x50|505060|BATTERY" -- pcb/marathon.kicad_pcb` finds the two battery
   labels on B.Fab, and the battery outline is the B.Fab rectangle from (112, 38) to (175, 88).
+- `git grep -n -E "2000-3000|2000 to 3000|6 ?mm" -- README.md bom documentation` adds
+  `README.md:39` and `:132`, `bom/README.md:77` (C22 sits beside the battery, and at 2.8 mm stays
+  lower than it) and `:113`, and `documentation/PROJECT_PLAN.md:46` and `:47` ("keep battery thin (≤6mm)"). The dated
+  `bom/README.md:142` row is history and stays.
 - `git grep -n -i battery -- .claude` finds `.claude/skills/verify-marathon/features/render.md:24`,
   which only names the battery area in the back render.
 
