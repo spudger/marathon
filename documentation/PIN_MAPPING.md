@@ -217,7 +217,7 @@ which works fine without a dedicated modifier key.
 ### Power Circuit
 
 ```
-USB-C → BQ25616 charger ←→ LiPo (63 x 50 mm space, ≤6 mm, 10k NTC)
+USB-C → BQ25616 charger ←→ LiPo (105060 class, about 4000 mAh, 10k NTC)
            │ SYS              │
            │                  └→ MAX17048 fuel gauge → I2C (GPIO2/3)
            ├→ TPS61023 boost → 5V_SYS → Pi Zero 5V pins (2, 4)

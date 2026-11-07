@@ -19,7 +19,7 @@ This is a multi-phase hardware project spanning: component identification, schem
 | **Audio DAC** | PCM5102A (bare IC) | I2S input from Pi, line-level output to amplifier |
 | **Audio Amp** | PAM8403 (bare IC) | Class-D stereo, drives two speakers |
 | **Power** | BQ25616 + TPS61023 + LTC2954 + MAX17048 (bare ICs) | 0.9 A charging with a 0 to 45 °C cutoff and power path, 5 V boost, power key with clean shutdown, battery level over I2C |
-| **Battery** | 3.7V LiPo, 2000-3000mAh target | 505060-class cell, 63 x 50 x 6 mm envelope reserved on the PCB, 3-pin JST-PH connector with NTC |
+| **Battery** | 3.7V LiPo, about 4000 mAh target | 105060-class cell, about 10 mm thick, in a 67 x 59 mm space on the back of the PCB, 3-pin JST-PH connector with NTC |
 | **Audio Out** | 2x speakers + mute switch | SPDT switch holds the amp in shutdown. Bluetooth available for private listening |
 | **Buttons** | Silicone membranes + SMD switches | Direct GPIO, no expander IC. Membrane pads press on bare ENIG contacts on the PCB |
 | **Case** | Custom 3D print | Not started yet. Designed around the PCB once the layout is locked |
@@ -43,8 +43,8 @@ The final board replaced the prototype's IP5306 (spec `planning/specs/011-POWER-
 - MAX17048 fuel gauge: battery percentage for an on-screen level and a clean low-battery shutdown
 
 ### 3. Battery Life (High Priority)
-Target: 2000-3000mAh, 4-6+ hours of gameplay. The "Marathon" name comes from this goal.
-Strategy: keep battery thin (≤6mm), maximize footprint area using space reclaimed from the integrated PCB layout. Final cell size TBD after PCB layout.
+Target: about 4000 mAh, 4+ hours of demanding games and about 8 hours of light ones (estimated). The "Marathon" name comes from this goal.
+Strategy: use the whole free area beside the Pi on the back of the board, and a cell about 10 mm thick. With tolerance, mounting tape and room to swell, the case clears about 11.3 mm over it, about 1.3 mm more than the Pi's own stack. Spec: `planning/specs/022-BATTERY-SPACE.md`.
 
 ### 4. Display
 Prototype uses a TN-panel ILI9341 3.2" SPI LCD. An IPS variant with the same ILI9341 controller and 18-pin FPC pinout exists as a drop-in upgrade and will be evaluated during final build if TN viewing angles prove inadequate in the case.
@@ -85,7 +85,7 @@ Resolved:
 Remaining:
 - [ ] Identify silicone button pad dimensions and mounting style -- **IN PROGRESS**. Design uses 2x identical cross-shaped pads (D-pad and ABXY). The PCB currently uses 5 mm contacts with 24 mm between opposite contacts, which still needs a fit check against real pads.
 - [x] Identify tactile switch specs -- Alps Alpine SKTHACE010 (top-push) for Start, Select, and the power key. Alps Alpine SKSCLDE010 (side-push) for L and R.
-- [ ] Finalize battery cell dimensions -- PCB reserves a 505060-class envelope (60 x 50 x 6 mm). Exact cell picked once layout is final.
+- [ ] Finalize battery cell -- PCB reserves 67 x 59 mm for a 105060-class cell up to 57 x 65 mm with its protection board, about 10 mm thick. Provisional pick: Bihuade 105063, 4000 mAh, until it passes the arrival checks in spec 022.
 
 ### Phase 2: Breadboard Prototype
 **Goal**: Verify all subsystems work together before designing PCB
@@ -151,7 +151,7 @@ Remaining:
 - [x] Define board outline -- 160 x 75 mm landscape, 6 mm corner radius. Four plated M2 case holes, 5 mm in from each edge (2026-11-04).
 - [x] Place components -- the Raspberry Pi sits on its back-side guide, inside the outline and clear of the battery envelope
 - [x] Route traces (2-layer board) -- all nets routed, with ground pours on both layers
-- [x] Determine final battery size from available area -- 63 x 50 x 6 mm envelope reserved (2026-11-02), long enough for a 505060 cell with its protection board; the chosen cell's width still needs checking
+- [x] Determine final battery size from available area -- 67 x 59 mm reserved for a 105060-class cell, about 10 mm thick (2026-11-07, spec 022)
 - [x] Add test points and a Pi antenna copper keep-out (2026-11-04)
 - [ ] Add silkscreen artwork
 - [x] Fix the U2 (PCM5102A) and U3 (PAM8403) footprints, which were mirrored on the back side (2026-11-06)
@@ -165,7 +165,7 @@ Remaining:
 **Goal**: Design a case for the Marathon PCB
 
 - [ ] Design custom case around the finalized PCB dimensions
-- [ ] Account for component placement (no headphone jack hole, battery fitment, USB-C position)
+- [ ] Account for component placement (no headphone jack hole, battery fitment, USB-C position). The back must clear about 11.3 mm over the battery, about 1.3 mm more than the Pi's stack (spec 022).
 - [ ] Verify fit with PCB dimensions
 - [ ] 3D print and potentially order final print from PCBWay
 
@@ -222,7 +222,7 @@ Remaining:
 - ~~**I2S pin assignments**~~ -- RESOLVED: BCK=GPIO18, LRCK=GPIO19, DIN=GPIO21. Confirmed via `dtoverlay=hifiberry-dac` during prototype.
 - **Display ribbon pinout** -- Using an 18-pin FPC bare ILI9341 screen. The exact panel's pinout and backlight rating are not confirmed yet.
 - ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
-- **Battery fitment** -- A 63 x 50 x 6 mm envelope is reserved on the PCB. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
+- **Battery fitment** -- A 67 x 59 mm space is reserved on the back of the PCB for a cell up to 57 x 65 mm, about 10 mm thick. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
 - **Unverified footprints** -- The LCD tail and Alps switch footprints were built from documentation and have not been checked against physical parts yet.
 - **Open design review items** -- The B button on the UART TX pin. The power design's checks that need a built board are listed in spec 011's finish condition.
 - **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.

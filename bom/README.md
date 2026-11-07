@@ -20,7 +20,7 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | Power key controller (final PCB) | Analog Devices LTC2954CTS8-1, TSOT-23-8, LCSC C683782 | ~$6.70 | Hold the key about 1 s to turn on. A press of 0.5 to 6 s asks Linux to shut down (INT on GPIO7); Linux cuts power at the end through KILL on GPIO15. A hold of 6.8 to 14.5 s forces power off. |
 | Fuel gauge (final PCB) | Analog Devices MAX17048G+T10, TDFN-8 2 x 2 mm, LCSC C2682616 | ~$1.50 | Battery percentage over I2C (0x36) on GPIO2/GPIO3. Powered from the cell. |
 | LiPo Battery (prototype) | 3.7V 500mAh, 702540, JST-PH 2.0 | $7.09 | Soldered directly to IP5306 BAT/GND pads. Charges from wall USB charger (MacBook USB was unreliable for charging). |
-| LiPo Battery (final) | 3.7V, 2000-3000mAh target, ≤6mm thick | ~$5-10 | The PCB reserves 63 x 50 mm, up to 6 mm thick: long enough for a common 505060 cell with its protection board folded on. Width still needs checking. The VCELL VP505060 (2000 mAh) is listed at up to 50.5 x 62.5 mm, 0.5 mm wider than the space, so it is an unconfirmed candidate until a supplier drawing shows it fits. The cell must charge at 1.0 A or more, discharge 2 A continuously, have a protection board that trips above 3 A, charge to 4.2 V (not a 4.35 V cell), and carry a 10k 103AT NTC on a third wire (or have one added to the harness). |
+| LiPo Battery (final) | 3.7V, about 4000 mAh, 105060 class, about 10 mm thick | ~$7-10 | The PCB reserves 67 x 59 mm on the back for a cell up to 57 x 65 mm with its protection board (`planning/specs/022-BATTERY-SPACE.md`). Provisional pick, until it passes the spec's arrival checks: Bihuade 105063, 4000 mAh, with the JST-PH 3-pin NTC option (about $9.90, https://bihuade.com/products/37v-105063-4000mah). Fallback: the Bihuade 105060, 3500 mAh, with the same option and 3 mm shorter, for about 3.6 hours of heavy play instead of 4.2. The cell must charge at 1.0 A or more, discharge 2 A continuously, have a protection board that trips above 3 A, charge to 4.2 V (not a 4.35 V cell), and carry a 10k B3435 NTC on a third wire. If its NTC is a different type, tape a Semitec 103AT-2 (DigiKey 4316-103AT-2-ND, $0.68) to the cell's edge and wire that instead. |
 | USB-C connector (final PCB) | GCT USB4125-GF-A-0190, six-contact, power only, LCSC C5246813 | <$1 | 5.1k pulldowns on CC1 and CC2 so C-to-C chargers supply 5V. No USB data lines. |
 | Battery connector (final PCB) | JST S3B-PH-SM4-TB(LF)(SN), PH 2.0 mm 3-pin right-angle SMT, LCSC C265101 | <$0.50 | Pin 1 BAT+, pin 2 NTC, pin 3 GND. JST-PH cells don't share one pin order, so check the chosen cell's drawing before ordering. With no NTC connected the charger reads cold and won't charge. |
 
@@ -74,7 +74,7 @@ Prototype work also uses a standard breadboard, jumper wires, and tactile push b
 | Fuel gauge support | C36 0.1uF | <$0.05 | VDD bypass at the gauge. |
 | PCM5102A support | C10/C11 2.2uF, C12/C13/C23/C24 0.1uF (0402), C14 10uF (0603) | <$0.30 total | Charge pump, VNEG, LDO, and one bypass capacitor at each supply pin. Config pins are strapped directly, no resistors. |
 | DAC output filter | R10/R11 470 ohm, C15/C16 2.2nF, R12/R13 8.2k, R14/R15 470 ohm, C17/C18 0.47uF, 0603 | <$0.30 total | Low-pass at about 154 kHz, a 25.3 dB attenuator (about 2.4 V peak per speaker at full scale with the amp's nominal 24 dB gain: 0.35 W sine, 0.70 W square wave), then AC coupling into the amp. |
-| PAM8403 support | R20 100k, C20 1uF (VREF), C21/C25/C26 1uF, C22 220uF 10V polymer (Panasonic 10TPE220ML, 7343, 2.8 mm tall, LCSC C147767) | <$1 total | R20 holds MUTE/SHDN low while SW2 moves. C21, C25 and C26 bypass each supply pin. C22 is bulk supply for the amp, low enough to sit beside the 6 mm battery. |
+| PAM8403 support | R20 100k, C20 1uF (VREF), C21/C25/C26 1uF, C22 220uF 10V polymer (Panasonic 10TPE220ML, 7343, 2.8 mm tall, LCSC C147767) | <$1 total | R20 holds MUTE/SHDN low while SW2 moves. C21, C25 and C26 bypass each supply pin. C22 is bulk supply for the amp, low enough to sit beside the battery. |
 | USB-C CC resistors (x2) | R1/R2 5.1k ohm, 0603 | <$0.10 | Required for USB-C spec compliance. |
 
 LCSC part numbers for the passives are not chosen yet. Values come from the schematic in [`pcb/marathon.kicad_sch`](../pcb/marathon.kicad_sch).
@@ -110,7 +110,7 @@ Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts 
 | Category | Est. Cost |
 |----------|-----------|
 | Display (bare screen for PCB) | ~$7 |
-| Battery (2000-3000mAh) | ~$5-10 |
+| Battery (about 4000 mAh) | ~$7-10 |
 | Buttons / input (silicone pads, tactile switches) | $5-7 |
 | Case / mechanical | TBD |
 | PCB fabrication (JLCPCB) | ~$5-15 |
@@ -156,3 +156,4 @@ Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts 
 | 2026-09-22 | Pi mounts on standoffs with long-tail header pins | Pi on the back of the board, component side out, 5 mm M2.5 standoffs, 2x20 long-tail pins soldered through both boards. Replaces the earlier plan of soldering the Pi flat to pads. |
 | 2026-09-22 | 1.0 mm board, ENIG finish | Thin handheld target. ENIG because the membrane buttons press directly on exposed copper contacts. |
 | 2026-11-02 | Replace the IP5306 with a BQ25616 charger, TPS61023 boost, LTC2954 power key controller and MAX17048 gauge | Thin cells allow about 1 A of charge, not the IP5306's fixed 2.1 A, and charging needs a temperature cutoff. The power key now shuts Linux down cleanly, the board powers off after a halt, and the Pi can read the battery level. Battery space grows to 63 x 50 mm for a 505060 cell with its protection board. Spec: `planning/specs/011-POWER-DESIGN.md`. |
+| 2026-11-07 | Battery space grows to 67 x 59 mm, for a 105060-class cell of about 4000 mAh, about 10 mm thick | No in-stock cell that fit 63 x 50 x 6 mm held more than about 2000 mAh, about 2 hours of heavy play. The case gets about 1.3 mm deeper than the Pi needs. B1 turns to open toward the top edge, clear of the cell. Spec: `planning/specs/022-BATTERY-SPACE.md`. |
