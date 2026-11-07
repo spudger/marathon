@@ -50,16 +50,26 @@ The Pi Zero 2 W mounts on the back on 5 mm standoffs, component side outward
 and its tallest part, so a cell up to that depth costs no thickness, if the back of the case is
 flat.
 
-Raspberry Pi publishes no heights for the Zero 2 W: the mechanical drawing and product brief give
-only X and Y dimensions. The best figure found is a forum measurement on a Zero W of 4.76 mm from
-the bottom of the Pi's board to the top of its mini-HDMI connector, the tallest part
-(https://forums.raspberrypi.com/viewtopic.php?t=203435). With the 5 mm standoffs
-(`bom/README.md`), the stack is about **9.8 mm** deep from the back of the main board. A typical
-2 x 20 long-tail header ends about 8 mm out, below the HDMI connector, so it adds nothing. These are
-estimates until calipers confirm the HDMI height, the standoff length and the Pi's bottom-side parts.
+Raspberry Pi publishes no heights and no 3D model for the Zero 2 W: its downloads page, mechanical
+drawing and product brief give only X and Y dimensions
+(https://pip.raspberrypi.com/categories/584-raspberry-pi-zero-2-w). The figures found online for
+the Pi's height, from the bottom of its board to the top of its mini-HDMI connector, the tallest
+part:
 
-A pouch cell swells over its life, so it needs room above it. Leaving about 0.8 mm, about 8% of the
-thickness, the cell can be at most about **9 mm** thick without making the case deeper.
+| Source | Height |
+|---|---|
+| Community STEP model of the Zero 2 W (https://github.com/AndrewK0val/CAD-Models), parsed | 5.05 mm; micro-USB 4.28 mm; nothing modeled under the board |
+| Caliper measurement of a Zero W (https://forums.raspberrypi.com/viewtopic.php?t=203435) | 4.76 mm |
+| "Maximum z-height" of the Zero 2 W, source not given (https://picockpit.com/raspberry-pi/everything-about-raspberry-pi-zero-2-w/) | 5.2 mm |
+| Lab measurement of the original Zero (https://raspi.tv/2015/raspberry-pi-zero-free-on-the-cover-of-this-months-magpi-magazine) | 5.4 mm, probably including connector legs under the board |
+
+So the Pi is about 5.0 mm tall (4.7 to 5.4 mm). With the 5 mm standoffs (`bom/README.md`), the
+stack is about **10.0 mm** deep from the back of the main board, 9.7 to 10.4 mm. A typical
+2 x 20 long-tail header ends about 8 mm out, below the HDMI connector, so it adds nothing. Calipers
+on the real parts replace these figures.
+
+A pouch cell swells over its life, so it needs room above it, about 8% of its thickness. A
+10 mm cell therefore needs about 10.8 mm, about 1 mm more than the Pi's stack (decision 3).
 
 ## Cell requirements
 
@@ -93,7 +103,7 @@ mm of body, not counting about 2 mm of PCM on its end. By size class:
 | Class (thickness x width x length, mm) | Fits 57 x 65? | Realistic capacity | Fits under the Pi's depth? |
 |---|---|---|---|
 | 805060 (8 x 50 x 60) | yes | 2800 to 3250 mAh | yes |
-| 905060 (9 x 50 x 60) | yes | 3100 to 3650 mAh | yes, at the limit |
+| 905060 (9 x 50 x 60) | yes | 3100 to 3650 mAh | yes |
 | 105060 (10 x 50 x 60) | yes | 3500 to 4050 mAh | no, about 1 mm deeper |
 | 955565 (9.5 x 55 x 65) | no: 66 to 67 mm long with its PCM | 3950 to 4600 mAh | no |
 
@@ -110,6 +120,31 @@ the space holds is about 3000 to 3500 mAh.
 | Easylander 905060, AliExpress | 9 x 50 x 60 nominal | 3500 mAh plausible | third wire offered, value not confirmed | not stated | JST-PH 3-pin option | about $9.69 to $15.69 | snippet: [listing](https://www.aliexpress.us/item/3256812165960549.html) |
 | 955060 with PCB, AliExpress | 9.5 x 50 x 60 nominal | 4000 claimed, 3300 to 3850 plausible | not stated | not stated | JST-PH or XH option | $12.55 to $13.05 | search results: [1](https://www.aliexpress.us/item/3256812201363679.html), [2](https://www.aliexpress.us/item/3256812324315768.html) |
 | YTKavq 105060, Amazon B08TTR1291 | 10 x 50 x 60 nominal | 3300 mAh | no | not stated | JST-PH, 2-pin | not seen | snippet; its listed 30 g weight is implausible |
+
+The second pass looked only at the 105060 class, for decision 3:
+
+| Cell | Size (mm) | Capacity | NTC | Ratings | Price, 1 piece | Evidence |
+|---|---|---|---|---|---|---|
+| Bihuade 105063 | "about 63 x 50 x 10"; PCM inclusion not stated | 4000 mAh | option: JST-PH 3-pin with NTC, value not stated | 4.2 V; PCM fitted, thresholds not stated; currents not stated | $9.90, "0 sold", stock not shown | read: [page](https://bihuade.com/products/37v-105063-4000mah) |
+| Bihuade 105060 | "about 60 x 50 x 10" | 3500 mAh | same option | same as above | $6.59, "1 sold" | read: [page](https://bihuade.com/products/polymer-lithium-battery-37v-105060-3500mah-mobile-power-led-instrument-flat-panel-universal) |
+| YDL 105060 | 10 x 50 x 62 max | 3300 mAh | option: 10 kΩ, B25/50 = 3435 K | 1.65 A discharge, under the 2 A rule; PCM trips at 5 to 9 A; 58 g, light for its rating | $7.02, minimum of 4 | read: [page](https://ydlbattery.com/products/copy-of-ydl-3-7v-3300mah-105060-rechargeable-lipo-battery-with-jst-connector), [datasheet](https://ydlbattery.com/cdn/shop/files/YDL-105060-3300mAh-specification.pdf) |
+| Ufine 105063 | not listed | 4000 mAh | no | 4 A charge and discharge; PCM trips at 2.5 to 4.5 A; 74 g | quote only | read: [page](https://www.ufinebattery.com/products/3-7-v-4000mah-lithium-ion-battery-105063/) |
+
+Ufine's 74 g for the same size suggests a real 105063 can hold 4000 mAh. The Bihuade cells come
+from Liter Energy's factory store. A Hadex 105565 (64 x 55 x 10 overall, measured at 4493 mAh)
+would fit, but its sellers show it out of stock or discontinued.
+
+If the cell's own NTC is not 10 kΩ B3435, a Semitec 103AT-2 (10 kΩ ±1%, B25/85 = 3435 K ±1%)
+taped to the cell replaces it: [DigiKey 4316-103AT-2-ND](https://www.digikey.com/en/products/detail/semitec-usa-corp/103AT-2/16579059),
+$0.68, read.
+
+### Recommended cell
+
+The Bihuade 105063, 4000 mAh, with the JST-PH 3-pin NTC option. It is the only 4000 mAh cell
+found that is sold singly with an NTC fitted. Unconfirmed: its length with the PCM (65 mm is the
+limit), the NTC's value and B constant, the pin order, the current ratings and the PCM trip. The
+Bihuade 105060, 3500 mAh, is the fallback if the 105063 runs too long: same store, same option,
+3 mm shorter.
 
 Near misses:
 
@@ -173,6 +208,5 @@ Searches run on `0c61d2f`:
 
 ## Open questions
 
-1. The Pi's stack depth, about 9.8 mm estimated, which sets how much deeper than the Pi the case
-   gets for a 10 mm cell.
+1. The Pi's stack depth, about 10.0 mm estimated, until calipers measure the real parts.
 2. Which cell: see "Cell search".
