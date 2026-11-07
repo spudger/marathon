@@ -53,7 +53,8 @@ the cell's end. This was already true of the 63 x 50 mm space.
 B1 turns to open toward the board's top edge (-y), still in the column between the Pi (right edge
 x = 99.2) and the cell (x = 112). The back of the board above it, x 100 to 112 and y 21 to 38, is
 empty. The plug and the first bend of its wires stay in that area, and the leads run from the
-cell's end along it. B1 keeps its pins, nets and pin order.
+cell's end along it. Turned, B1's courtyard is about 11.3 mm wide in x, so its center moves left
+to about x = 106.3 to stay clear of the cell outline. B1 keeps its pins, nets and pin order.
 
 ## Thickness
 
