@@ -1,6 +1,6 @@
 # Battery space for a 4000 mAh cell
 
-- **Status:** draft
+- **Status:** approved
 - **Issue:** spudger/marathon#22
 - **PRs:** none yet
 - **Draft:** none

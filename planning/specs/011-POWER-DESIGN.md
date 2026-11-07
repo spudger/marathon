@@ -37,6 +37,8 @@ The owner approved these while scoping issue #11:
 5. Charging stops when the cell is too hot or too cold.
 6. The battery space grows from 60 x 50 mm to 63 x 50 mm and stays at most 6 mm thick, to take the
    62.5 mm length of a common 505060 cell with its PCM. The owner picks the cell from the requirements below.
+   Spec 022 (`planning/specs/022-BATTERY-SPACE.md`) later replaced this space with 67 x 59 mm and a
+   cell about 10 mm thick.
 7. Option 1: a BQ25616 switching charger with a separate TPS61023 boost. The fallback is a
    BQ24074 linear charger, if the BQ25616's input limit can't be confirmed.
 8. The USB input is limited to about 1.5 A, which assumes a USB-C wall charger.
@@ -180,7 +182,7 @@ The cell must meet all of these:
 
 | Requirement | Value |
 |---|---|
-| Size, including PCM and tolerance | fits 63 x 50 mm, at most 6.0 mm thick |
+| Size, including PCM and tolerance | fits 63 x 50 mm, at most 6.0 mm thick. Replaced by spec 022: at most 57 x 65 mm, about 10 mm thick |
 | Chemistry | LiPo, 4.2 V full charge, not a 4.35 V high-voltage cell |
 | Maximum charge current | at least 1.0 A |
 | Continuous discharge | at least 2 A |
