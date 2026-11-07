@@ -44,7 +44,7 @@ The final board replaced the prototype's IP5306 (spec `planning/specs/011-POWER-
 
 ### 3. Battery Life (High Priority)
 Target: about 4000 mAh, 4+ hours of demanding games and about 8 hours of light ones (estimated). The "Marathon" name comes from this goal.
-Strategy: use the whole free area beside the Pi on the back of the board, and a cell about 10 mm thick, about 1.3 mm deeper than the Pi's own stack. Spec: `planning/specs/022-BATTERY-SPACE.md`.
+Strategy: use the whole free area beside the Pi on the back of the board, and a cell about 10 mm thick. With tolerance, mounting tape and room to swell, the case clears about 11.3 mm over it, about 1.3 mm more than the Pi's own stack. Spec: `planning/specs/022-BATTERY-SPACE.md`.
 
 ### 4. Display
 Prototype uses a TN-panel ILI9341 3.2" SPI LCD. An IPS variant with the same ILI9341 controller and 18-pin FPC pinout exists as a drop-in upgrade and will be evaluated during final build if TN viewing angles prove inadequate in the case.
@@ -85,7 +85,7 @@ Resolved:
 Remaining:
 - [ ] Identify silicone button pad dimensions and mounting style -- **IN PROGRESS**. Design uses 2x identical cross-shaped pads (D-pad and ABXY). The PCB currently uses 5 mm contacts with 24 mm between opposite contacts, which still needs a fit check against real pads.
 - [x] Identify tactile switch specs -- Alps Alpine SKTHACE010 (top-push) for Start, Select, and the power key. Alps Alpine SKSCLDE010 (side-push) for L and R.
-- [ ] Finalize battery cell -- PCB reserves 67 x 59 mm for a 105060-class cell up to 57 x 65 x 10 mm with its protection board. Provisional pick: Bihuade 105063, 4000 mAh, until it passes the arrival checks in spec 022.
+- [ ] Finalize battery cell -- PCB reserves 67 x 59 mm for a 105060-class cell up to 57 x 65 mm with its protection board, about 10 mm thick. Provisional pick: Bihuade 105063, 4000 mAh, until it passes the arrival checks in spec 022.
 
 ### Phase 2: Breadboard Prototype
 **Goal**: Verify all subsystems work together before designing PCB
@@ -222,7 +222,7 @@ Remaining:
 - ~~**I2S pin assignments**~~ -- RESOLVED: BCK=GPIO18, LRCK=GPIO19, DIN=GPIO21. Confirmed via `dtoverlay=hifiberry-dac` during prototype.
 - **Display ribbon pinout** -- Using an 18-pin FPC bare ILI9341 screen. The exact panel's pinout and backlight rating are not confirmed yet.
 - ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
-- **Battery fitment** -- A 67 x 59 mm space is reserved on the back of the PCB for a cell up to 57 x 65 x 10 mm. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
+- **Battery fitment** -- A 67 x 59 mm space is reserved on the back of the PCB for a cell up to 57 x 65 mm, about 10 mm thick. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
 - **Unverified footprints** -- The LCD tail and Alps switch footprints were built from documentation and have not been checked against physical parts yet.
 - **Open design review items** -- The B button on the UART TX pin. The power design's checks that need a built board are listed in spec 011's finish condition.
 - **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.

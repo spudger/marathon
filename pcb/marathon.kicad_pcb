@@ -18563,7 +18563,7 @@
 			)
 		)
 	)
-	(gr_text "BATTERY: 105060 CLASS / MAX CELL 57x65x10mm WITH PCM"
+	(gr_text "BATTERY: 105060 CLASS / MAX CELL 57x65mm WITH PCM, ~10mm THICK"
 		(at 145 90 0)
 		(layer "B.Fab")
 		(uuid "8b8b71a9-da8e-4acf-9262-ec0616a103bd")
