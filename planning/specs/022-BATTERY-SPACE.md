@@ -36,8 +36,8 @@ Through-hole parts and holes count on the back too: their leads, solder joints a
 standoffs sit there.
 
 The free block is therefore about x 112 to 179 by y 28 to 87, roughly 67 x 59 mm. It reaches
-past the holes' x range because the holes sit only at the top and bottom corners. Leaving 0.5 to
-1 mm on each side, a cell fits if it measures at most **57 x 65 mm including its PCM**, with
+past the holes' x range because the holes sit only at the top and bottom corners. Leaving 1 mm on
+each side, a cell fits if it measures at most **57 x 65 mm including its PCM**, with
 the 65 mm side along the board's long axis.
 
 The current 63 x 50 mm space (x 112 to 175, y 38 to 88) already touches J6 and H4 at its bottom
@@ -138,14 +138,6 @@ If the cell's own NTC is not 10 kΩ B3435, a Semitec 103AT-2 (10 kΩ ±1%, B25/8
 taped to the cell replaces it: [DigiKey 4316-103AT-2-ND](https://www.digikey.com/en/products/detail/semitec-usa-corp/103AT-2/16579059),
 $0.68, read.
 
-### Recommended cell
-
-The Bihuade 105063, 4000 mAh, with the JST-PH 3-pin NTC option. It is the only 4000 mAh cell
-found that is sold singly with an NTC fitted. Unconfirmed: its length with the PCM (65 mm is the
-limit), the NTC's value and B constant, the pin order, the current ratings and the PCM trip. The
-Bihuade 105060, 3500 mAh, is the fallback if the 105063 runs too long: same store, same option,
-3 mm shorter.
-
 Near misses:
 
 - 955565 "5000 mAh" cells (Amazon: Meshnology, OCTelect, HXJNLDC; Bihuade with a 3-pin NTC option
@@ -154,6 +146,14 @@ Near misses:
 - PiShop 755060, 3000 mAh: out of stock. Read.
 - LP105065 from lipobattery.us, 4000 mAh with a 10k NTC: made to order, and 65 mm excludes the PCM.
   Snippet.
+
+### Recommended cell
+
+The Bihuade 105063, 4000 mAh, with the JST-PH 3-pin NTC option. It is the only 4000 mAh cell
+found that is sold singly with an NTC fitted. Unconfirmed: whether it ships from stock, its
+length with the PCM (65 mm is the limit), the NTC's value and B constant, the pin order, the
+current ratings and the PCM trip. The Bihuade 105060, 3500 mAh, is the fallback if the 105063 runs
+too long: same store, same option, 3 mm shorter.
 
 ### Checks when a cell arrives
 
@@ -230,8 +230,8 @@ Searches run on `0c61d2f`:
   labels on B.Fab, and the battery outline is the B.Fab rectangle from (112, 38) to (175, 88).
 - `git grep -n -E "2000-3000|2000 to 3000|6 ?mm" -- README.md bom documentation` adds
   `README.md:39` and `:132`, `bom/README.md:77` (C22 sits beside the battery, and at 2.8 mm stays
-  lower than it) and `:113`, and `documentation/PROJECT_PLAN.md:46` and `:47` ("keep battery thin (≤6mm)"). The dated
-  `bom/README.md:142` row is history and stays.
+  lower than it) and `:113`, and `documentation/PROJECT_PLAN.md:46` and `:47` ("keep battery thin
+  (≤6mm)"). The dated `bom/README.md:142` row is history and stays.
 - `git grep -n -i battery -- .claude` finds `.claude/skills/verify-marathon/features/render.md:24`,
   which only names the battery area in the back render.
 
