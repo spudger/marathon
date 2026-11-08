@@ -1,6 +1,6 @@
 # First case concept
 
-- **Status:** draft
+- **Status:** approved
 - **Issue:** spudger/marathon#27
 - **PRs:** none yet
 - **Draft:** planning/drafts/README-HERO-RENDER.md
