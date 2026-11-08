@@ -151,7 +151,8 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
   above the pad at rest. When the pressed arm's dome, 27.25 mm from the pivot, bottoms out after its
   1 mm of travel, the nub, 15.25 mm from it, has come down about 0.56 mm and has not landed. A
   press on the middle sinks the cap 0.7 mm onto the nub, short of the 1 mm a contact needs.
-- **ABXY.** Four 10 mm round caps, on SW14 to SW17's contacts, 1.5 mm proud.
+- **ABXY.** Four 9 mm round caps, on SW14 to SW17's contacts, 1.5 mm proud. At 9 mm, the flange
+  of the cap at x 145 clears the LCD's edge, x 138.7, by 0.3 mm; at 10 mm it would overlap it.
 - **Silicone pads.** Both are the same provisional cross (see "Provisional figures"). Four short
   posts from the front plate press each pad's center onto the board, between the caps.
 - **Start and Select.** 8 x 3.5 mm pill caps on SW19 (94, 84) and SW18 (106, 84), 1.0 mm proud,
@@ -162,7 +163,7 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
   actuator stands 2.3 mm proud of the face.
 - **Speakers.** Each sits in a ring on the inside of the front plate, face against the plate,
   glued in. Grilles are 1.2 mm holes on a hex grid inside an 11 mm circle. Left at (48, 82), right at
-  (152, 79), both clear of the pads, the caps, and the front-side parts. Their leads run to J5 and J6.
+  (150, 80), both clear of the pads, the caps, and the front-side parts. Their leads run to J5 and J6.
 
 ### Edges
 
@@ -295,7 +296,8 @@ One PR, on this spec's branch, through the build flow:
 Searches run on `e38a91c`, leaving out this spec:
 
 - `git grep -n -i -E "freecad|openscad|cadquery|case/|3d.print|phase 5|case design"` finds
-  `README.md:92`, `:112`, `:117`, and `:137`, `bom/README.md:86`, `:130`, and `:152` (a dated
+  `README.md:92`, `:112`, `:117`, and `:137`, `bom/README.md:86` (with the M3 bolts row below it at
+  `:87`, which M2 screws and inserts replace), `:130`, and `:152` (a dated
   decision, which stays), `case/README.md:3` to `:9`, `documentation/PROJECT_PLAN.md:25`, `:164`
   to `:170`, and `:229`, and the uv commands in `tools/render/README.md:21` and `:35`,
   `tools/render/models.py:3`, and `tools/render/tests/test_models.py:3`. It also finds

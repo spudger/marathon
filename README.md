@@ -4,7 +4,7 @@
 ![phase](https://img.shields.io/badge/phase-4%20of%207-blue)
 ![license](https://img.shields.io/badge/license-CERN--OHL--P%20v2-informational)
 
-![Marathon main board, front, with stand-in models of the LCD and switches](pcb/renders/angle-front.png)
+![Marathon in its first case concept: a black 3D-printed case with red buttons, around the main board](case/renders/angle-front.png)
 
 A handheld retro gaming console built around a Raspberry Pi Zero 2 W, designed for long battery life through a custom PCB that places every power, audio, and amplifier IC as a bare chip directly on the board.
 
@@ -14,6 +14,7 @@ A handheld retro gaming console built around a Raspberry Pi Zero 2 W, designed f
 - ✅ **Phase 2, Breadboard prototype:** complete. All subsystems (power, display, audio, buttons) verified end-to-end on 2026-04-03 / 2026-04-04.
 - 🔨 **Phase 3, Schematic capture (KiCad):** mostly complete. ERC is clean; a readability pass on the sheet remains.
 - 🔨 **Phase 4, PCB layout (KiCad):** in progress. Placement and routing are done, and DRC reports 0 errors. Provisional footprints still need checking against the real parts, and there are no fabrication files yet. Not ready for fabrication.
+- 🔨 **Phase 5, Case design:** first concept modeled in CadQuery, with STLs and renders in [`case/`](case/). Not printed yet, and several part sizes are provisional.
 
 See the [Phases](#phases) table below for the full roadmap.
 
@@ -89,7 +90,7 @@ flowchart LR
 | 2 | Breadboard prototype | ✅ Complete (2026-04-03 / 2026-04-04) |
 | 3 | Schematic capture (KiCad) | 🔨 Mostly complete |
 | 4 | PCB layout (KiCad) | 🔨 In progress |
-| 5 | Case design (3D print) | ⏳ Planned |
+| 5 | Case design (3D print) | 🔨 First concept |
 | 6 | Software & RetroPie tuning | 🔨 Partial (validated during Phase 2) |
 | 7 | Fabrication & final assembly (JLCPCB + hand-solder) | ⏳ Planned |
 
@@ -109,12 +110,12 @@ marathon/
 │   └── PROTOTYPE_BUILD_GUIDE.md          step-by-step breadboard prototype build guide
 ├── schematics/                           schematic PDF export (planned)
 ├── pcb/                                  KiCad 10 project: schematic, layout, libraries, renders
-├── case/                                 STL files for the 3D-printed enclosure (Phase 5)
+├── case/                                 the 3D-printed case: CadQuery source, STEP, STLs, renders
 ├── software/                             firmware and OS configuration (Phase 6)
 └── tools/render/                         board renders and the stand-in 3D models
 ```
 
-`case/` and `software/` are placeholders for later phases.
+`software/` is a placeholder for a later phase.
 
 ## Build Documentation
 
@@ -134,7 +135,7 @@ marathon/
 | Power | BQ25616, TPS61023, LTC2954, MAX17048 (bare ICs) | Charging with temperature cutoff, 5 V boost, power key with clean shutdown, battery level |
 | Battery | 3.7 V LiPo, about 4000 mAh target | 105060-class cell, about 10 mm thick |
 | Input | Silicone membrane pads + tactile switches | Direct GPIO, no expander |
-| Case | Custom 3D print | Not started. Designed around the PCB once the layout is locked |
+| Case | Custom 3D print | First concept: two shells, 164.2 x 79.2 x 20.4 mm, held by four M2 screws (`case/`) |
 
 ## License
 

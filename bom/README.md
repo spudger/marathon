@@ -83,8 +83,11 @@ LCSC part numbers for the passives are not chosen yet. Values come from the sche
 
 | Component | Spec | Est. Cost | Notes |
 |-----------|------|-----------|-------|
-| 3D printed case | Custom design, not started yet | TBD | Designed around the PCB once the layout is locked. STL files will be uploaded to this repo when complete. |
-| M3 bolts + nuts (x4) | 20mm, acrylic or metal | <$2 | Holds case together. |
+| 3D printed case | Two shells and printed caps, PETG or PLA | ~$3 filament | First concept: STLs and print notes in [`case/`](../case/), design in `planning/specs/027-CASE-CONCEPT.md`. Not printed yet. |
+| M2 screws (x4) | M2 x 16 mm socket head, DIN 912 | <$2 | From the back, through the board's case holes, into the inserts. |
+| M2 heat-set inserts (x4) | M2 x 3 mm, 3.2 mm hole | <$2 | Pressed into the front shell's bosses. |
+| Screen lens | 1 mm clear acrylic or polycarbonate, 71.6 x 55.4 mm | ~$2 | Laser-cut. Sits in a pocket inside the front shell. |
+| Foam and tape | 1 mm closed-cell foam tape; thin double-sided tape | ~$3 | Foam gasket between the lens and the LCD, about twice the gap; tape holds the lens. |
 | Micro SD card | 32GB+ Class 10 | ~$8 | For RetroPie image. |
 
 ---
@@ -127,7 +130,7 @@ Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts 
 | **Amazon** | IP5306 breakout boards, LiPo battery (prototype) |
 | **AliExpress** | PCM5102A, PAM8403, ILI9341 display, speakers. Future: buttons, silicone pads, final battery |
 | **JLCPCB/PCBWay** | PCB fabrication + SMT assembly for final board |
-| **In-house** | 3D-printed case. Custom design starts once the PCB layout is locked; STL files will be uploaded to this repo when complete. |
+| **In-house** | 3D-printed case, from the STLs in `case/`. |
 
 ---
 
@@ -157,3 +160,4 @@ Amazon order: ~$17 | AliExpress order: ~$19 (may be split across multiple carts 
 | 2026-09-22 | 1.0 mm board, ENIG finish | Thin handheld target. ENIG because the membrane buttons press directly on exposed copper contacts. |
 | 2026-11-02 | Replace the IP5306 with a BQ25616 charger, TPS61023 boost, LTC2954 power key controller and MAX17048 gauge | Thin cells allow about 1 A of charge, not the IP5306's fixed 2.1 A, and charging needs a temperature cutoff. The power key now shuts Linux down cleanly, the board powers off after a halt, and the Pi can read the battery level. Battery space grows to 63 x 50 mm for a 505060 cell with its protection board. Spec: `planning/specs/011-POWER-DESIGN.md`. |
 | 2026-11-07 | Battery space grows to 67 x 59 mm, for a 105060-class cell of about 4000 mAh, about 10 mm thick | No in-stock cell that fit 63 x 50 x 6 mm held more than about 2000 mAh, about 2 hours of heavy play. The case gets about 1.3 mm deeper than the Pi needs. B1 turns to open toward the top edge, clear of the cell. Spec: `planning/specs/022-BATTERY-SPACE.md`. |
+| 2026-11-08 | Case: first concept in CadQuery, two shells held by M2 screws into heat-set inserts | The case is code, so each change reads as a diff; the STEP file still opens in FreeCAD. The case prints at home without supports, black with red caps. Spec: `planning/specs/027-CASE-CONCEPT.md`. |
