@@ -440,4 +440,5 @@
 		(uuid "31f406ca-8407-4c92-9917-fb8475925fb6")
 	)
 	(embedded_fonts no)
+  (model "${KIPRJMOD}/Marathon.3dshapes/RaspberryPi_Zero_2W_StandIn.step" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )
