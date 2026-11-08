@@ -185,8 +185,9 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
 - **USB-C.** J4's receptacle reaches 0.9 mm past the board's edge (KiCad's STEP export: y 89.0 to
   95.9, z 1.0 to 4.26). A notch in the front shell's bottom wall, open at the split and through the
   skirt, lets it pass as the board drops in. A tab on the back shell fills the notch below the
-  receptacle, leaving a 9.6 x 3.9 mm opening. A 12.5 x 6.0 mm pocket, 0.6 mm deep, around the
-  opening on the outside lets a plug's overmold reach within 0.6 mm of the receptacle's mouth.
+  receptacle, leaving a 9.6 x 3.9 mm opening. A 12.5 x 4.7 mm pocket, 0.6 mm deep, around the
+  opening on the outside lets a plug's overmold reach within 0.6 mm of the receptacle's mouth. It
+  ends at z 4.98, under the front edge's 1.0 mm fillet, so no thin lip is left over it.
 - **L and R.** SW20 and SW21 push toward the top edge; their plungers end at y = 21.0. A printed
   shoulder button slides in a slot in the front shell's top wall. A flange inside the wall holds it
   in, and the flange's inner face rests on the plunger. The button stands 1.5 mm proud of the edge
@@ -266,7 +267,9 @@ written.
 
 - **Heat.** The case has no vents. The Pi Zero 2 W throttles when hot; measure it on the prototype.
 - **USB-C plugs.** The receptacle's mouth sits 1.2 mm in from the wall's outer face, 0.6 mm past
-  the pocket. Plugs with short shells or wide overmolds may not seat; try several cables.
+  the pocket. Plugs with short shells or wide overmolds may not seat; try several cables. An
+  overmold taller than 4.7 mm, which the 6.5 mm pocket of the 20.4 mm case took, now stops at the
+  wall's face, 1.2 mm from the mouth.
 - **Inserts in thin bosses.** About 1.15 mm of wall can bulge as an insert goes in. Use a guide
   tip and a light touch, or thread-forming screws if a boss splits.
 - **Two parts have no 3D model.** KiCad's library has none for B1 and U7, so the clearance test
@@ -347,7 +350,8 @@ to 15. The tag `case-concept-1` (`26c0c29`) holds the 20.4 mm design.
 
 What it took: pockets in the plate's inside over the cap flanges, the speakers, and the mute
 switch's body; flanges 0.7 mm thick; shoulder buttons 0.5 mm shorter; M2 x 12 mm screws in a
-deeper counterbore; a 6.0 mm tall USB-C pocket, clear of the front edge's fillet.
+deeper counterbore; a USB-C pocket 4.7 mm tall instead of 6.5 mm, so it stays under the front
+edge's fillet.
 
 What stops it going thinner without shaping the back or shrinking the battery space: at the front,
 the LCD stack (glass at 4.0, gasket, lens, 1.0 mm bezel) and the provisional pads' domes (4.5,
