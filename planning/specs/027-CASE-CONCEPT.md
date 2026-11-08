@@ -2,9 +2,9 @@
 
 - **Status:** built
 - **Issue:** spudger/marathon#27
-- **PRs:** spudger/marathon#28
+- **PRs:** spudger/marathon#28, spudger/marathon#31
 - **Draft:** planning/drafts/README-HERO-RENDER.md
-- **Plans:** spudger/marathon#28
+- **Plans:** spudger/marathon#28, spudger/marathon#31
 
 ## Problem
 
@@ -336,8 +336,8 @@ Searches run on `e38a91c`, leaving out this spec:
 
 ## Slimming
 
-spudger/marathon#30 took the first concept from 20.4 mm to 18.5 mm, under decisions 13 to 15. The
-tag `case-concept-1` (`26c0c29`) holds the 20.4 mm design.
+spudger/marathon#31 (issue #30) took the first concept from 20.4 mm to 18.5 mm, under decisions 13
+to 15. The tag `case-concept-1` (`26c0c29`) holds the 20.4 mm design.
 
 | Cut | Saves | How |
 |---|---|---|
