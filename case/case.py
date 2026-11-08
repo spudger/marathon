@@ -78,7 +78,9 @@ MUTE_BODY = (10.0, 4.4)                  # its body reaches z 4.8, above the pla
 
 # USB-C: J4's receptacle from KiCad's STEP export: 8.94 mm wide, z 1.0 to 4.26.
 USB_HALF_W, USB_TOP, USB_TAB_TOP = 4.47, 4.26, 0.7
-USB_POCKET = (12.5, 6.0, 0.6)            # width, height, depth
+# Width, height, depth. Centered on the receptacle (z 2.63), it ends at z 4.98, under the front
+# edge's 1.0 mm fillet, which starts at z 5.0.
+USB_POCKET = (12.5, 4.7, 0.6)
 
 # Shoulder buttons: the plungers end at board y 21.02 (KiCad's STEP export).
 SHOULDER_W, SHOULDER_FLANGE_W = 14.0, 18.0

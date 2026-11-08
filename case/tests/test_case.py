@@ -247,6 +247,15 @@ class Plate(unittest.TestCase):
         x, y = PCB.at('SW2')
         self.assert_pocket_under_plate(x + 4.0, y)
 
+    def test_usb_pocket_stays_under_the_front_edge_fillet(self):
+        # Spec 027: the 0.6 mm deep pocket around the USB-C opening ends at z 5.0, where the
+        # front edge's 1.0 mm fillet starts, so no thin lip is left over it. The wall's outer
+        # face is at board y 97.1 (the board's edge, 0.3 mm, and a 1.8 mm wall).
+        x, _ = PCB.at('J4')
+        shell = shape('front-shell')
+        self.assertFalse(shell.isInside(cq.Vector(x + 5.0, -96.8, 4.9)))  # the pocket
+        self.assertTrue(shell.isInside(cq.Vector(x + 5.0, -96.8, 5.1)))   # wall over it
+
     def test_gasket_bears_on_the_lcd_glass_under_the_lens(self):
         # On the glass outside the active area, at board (135, 53): the gasket starts at the
         # glass's top, and the lens sits at least 0.5 mm above it.
