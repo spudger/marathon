@@ -171,10 +171,14 @@ class InMotion(unittest.TestCase):
                 self.assertAlmostEqual(low.BoundingBox().zmin, 3.5, delta=0.05)  # pressed 1 mm
                 self.clear('cap-dpad', moved)
 
+    # A switch press closes the gap to the actuator, up to the 0.2 mm spec 027 allows, and then
+    # the Alps switch's travel, 0.25 mm (assumed, provisional).
+    SWITCH_STROKE = 0.2 + 0.25
+
     def test_caps_pressed_through_their_travel(self):
-        # Domes travel 1 mm (spec 027); the Alps switches 0.25 mm (assumed, provisional).
-        for name, travel in (('cap-abxy', 1.0), ('cap-start', 0.25), ('cap-select', 0.25),
-                             ('cap-power', 0.25)):
+        # Domes travel 1 mm (spec 027) and the caps rest on them.
+        for name, travel in (('cap-abxy', 1.0), ('cap-start', self.SWITCH_STROKE),
+                             ('cap-select', self.SWITCH_STROKE), ('cap-power', self.SWITCH_STROKE)):
             with self.subTest(cap=name):
                 self.clear(name, shape(name).translate(cq.Vector(0, 0, -travel)))
 
@@ -182,7 +186,7 @@ class InMotion(unittest.TestCase):
         for name in ('shoulder-l', 'shoulder-r'):
             with self.subTest(button=name):
                 # Toward the board: +y in board coordinates is -y here.
-                self.clear(name, shape(name).translate(cq.Vector(0, -0.25, 0)))
+                self.clear(name, shape(name).translate(cq.Vector(0, -self.SWITCH_STROKE, 0)))
 
     def test_mute_actuator_at_both_ends_of_its_slot(self):
         # The SS12F15-G5 stand-in's actuator: 2.0 x 1.5 mm, from its body's top (z 4.8) to 9.8;
