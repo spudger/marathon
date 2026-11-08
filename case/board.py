@@ -4,19 +4,28 @@ sits. The case follows the board, so a part that moves on the board moves its op
 Coordinates are the board's, in mm, with y down, as KiCad shows them.
 """
 
+import importlib.util
 import math
 import os
 import re
 import subprocess
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BOARD = ROOT / 'pcb' / 'marathon.kicad_pcb'
-# tools/render/render.py holds the sandboxed kicad-cli command the board renders use.
-sys.path.insert(0, str(ROOT / 'tools' / 'render'))
-import render
+
+
+def _load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+# tools/render/render.py holds the sandboxed kicad-cli command the board renders use. It loads
+# under its own name, since case/render.py is also called render.
+board_render = _load('board_render', ROOT / 'tools' / 'render' / 'render.py')
 CASE_HOLE = 'MountingHole:MountingHole_2.2mm_M2'
 
 
@@ -126,7 +135,7 @@ def export_step(out, refs=None, body=True, runner=subprocess.run):
         args += ['--component-filter', ','.join(refs)]
     if not body:
         args.append('--no-board-body')
-    argv = render.kicad_cli(out.parent, *args, '--output', str(out), str(BOARD))
+    argv = board_render.kicad_cli(out.parent, *args, '--output', str(out), str(BOARD))
     env = {k: os.environ[k] for k in ('PATH', 'HOME', 'XDG_RUNTIME_DIR', 'LANG') if k in os.environ}
     result = runner(argv, capture_output=True, text=True, env=env)
     if result.returncode != 0 or not out.is_file():

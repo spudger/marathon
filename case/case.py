@@ -94,7 +94,7 @@ RED = srgb(0.78, 0.08, 0.08)
 RUBBER = srgb(0.35, 0.35, 0.37)
 SPEAKER = srgb(0.20, 0.20, 0.22)
 FOAM = srgb(0.15, 0.15, 0.15)
-CLEAR_LENS = srgb(0.85, 0.90, 0.95)
+CLEAR_LENS = srgb(0.04, 0.05, 0.06)  # rendered nearly transparent; dark, so the screen reads black
 
 
 @dataclass
