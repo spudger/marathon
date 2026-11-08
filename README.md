@@ -106,9 +106,10 @@ marathon/
 │   ├── PIN_MAPPING.md                    complete 40-pin GPIO map across all subsystems
 │   └── PROTOTYPE_BUILD_GUIDE.md          step-by-step breadboard prototype build guide
 ├── schematics/                           schematic PDF export (planned)
-├── pcb/                                  KiCad 10 project: schematic, layout, project libraries
+├── pcb/                                  KiCad 10 project: schematic, layout, libraries, renders
 ├── case/                                 STL files for the 3D-printed enclosure (Phase 5)
-└── software/                             firmware and OS configuration (Phase 6)
+├── software/                             firmware and OS configuration (Phase 6)
+└── tools/render/                         board renders and the stand-in 3D models
 ```
 
 `case/` and `software/` are placeholders for later phases.
