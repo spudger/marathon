@@ -1,10 +1,10 @@
 # First case concept
 
-- **Status:** approved
+- **Status:** built
 - **Issue:** spudger/marathon#27
-- **PRs:** none yet
+- **PRs:** spudger/marathon#28
 - **Draft:** planning/drafts/README-HERO-RENDER.md
-- **Plans:** none yet
+- **Plans:** spudger/marathon#28
 
 ## Problem
 
