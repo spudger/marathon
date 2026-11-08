@@ -7,7 +7,9 @@ Expected values come from documentation/PROJECT_PLAN.md (Phase 4: a 160 x 75 mm 
 position.
 """
 
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -55,6 +57,54 @@ class Parts(unittest.TestCase):
     def test_an_unknown_reference_names_itself(self):
         with self.assertRaisesRegex(KeyError, 'SW99'):
             PCB.at('SW99')
+
+
+class FakeKicad:
+    """Stands in for subprocess.run: writes the STEP file kicad-cli would write."""
+
+    def __init__(self, code=0, write=True):
+        self.calls, self.code, self.write = [], code, write
+
+    def __call__(self, argv, **kwargs):
+        self.calls.append(argv)
+        if self.write:
+            Path(argv[argv.index('--output') + 1]).write_text('ISO-10303-21;')
+        return subprocess.CompletedProcess(argv, self.code, '', 'Failed to load board\n')
+
+
+class ExportStep(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.out = Path(self.tmp.name) / 'board.step'
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_runs_kicad_cli_sandboxed_on_the_board_in_board_coordinates(self):
+        fake = FakeKicad()
+        board.export_step(self.out, runner=fake)
+        argv = fake.calls[0]
+        self.assertEqual(argv[:4], ['flatpak', 'run', '--sandbox', '--unshare=network'])
+        self.assertIn('--user-origin', argv)
+        self.assertEqual(argv[argv.index('--user-origin') + 1], '0x0mm')
+        self.assertEqual(argv[-1], str(board.BOARD))
+        self.assertNotIn('--component-filter', argv)
+        self.assertNotIn('--no-board-body', argv)
+
+    def test_limits_the_export_to_named_parts_without_the_board(self):
+        fake = FakeKicad()
+        board.export_step(self.out, refs=['SW1', 'SW18'], body=False, runner=fake)
+        argv = fake.calls[0]
+        self.assertEqual(argv[argv.index('--component-filter') + 1], 'SW1,SW18')
+        self.assertIn('--no-board-body', argv)
+
+    def test_a_failed_export_raises_with_kicad_cli_s_message(self):
+        with self.assertRaisesRegex(RuntimeError, 'Failed to load board'):
+            board.export_step(self.out, runner=FakeKicad(code=1))
+
+    def test_an_export_that_writes_nothing_raises(self):
+        with self.assertRaises(RuntimeError):
+            board.export_step(self.out, runner=FakeKicad(write=False))
 
 
 class Text(unittest.TestCase):

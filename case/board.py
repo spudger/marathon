@@ -5,12 +5,18 @@ Coordinates are the board's, in mm, with y down, as KiCad shows them.
 """
 
 import math
+import os
 import re
+import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BOARD = ROOT / 'pcb' / 'marathon.kicad_pcb'
+# tools/render/render.py holds the sandboxed kicad-cli command the board renders use.
+sys.path.insert(0, str(ROOT / 'tools' / 'render'))
+import render
 CASE_HOLE = 'MountingHole:MountingHole_2.2mm_M2'
 
 
@@ -105,3 +111,24 @@ def parse(text):
 
 def read(path=BOARD):
     return parse(Path(path).read_text())
+
+
+def export_step(out, refs=None, body=True, runner=subprocess.run):
+    """Export the board's 3D models as STEP, in board x, -y, and z up from the board's back.
+
+    out must sit in a scratch folder, which the sandbox mounts read-write. refs limits the
+    export to those parts; body=False leaves the board itself out.
+    """
+    out = Path(out)
+    (out.parent / 'config').mkdir(exist_ok=True)
+    args = ['pcb', 'export', 'step', '--force', '--user-origin', '0x0mm']
+    if refs is not None:
+        args += ['--component-filter', ','.join(refs)]
+    if not body:
+        args.append('--no-board-body')
+    argv = render.kicad_cli(out.parent, *args, '--output', str(out), str(BOARD))
+    env = {k: os.environ[k] for k in ('PATH', 'HOME', 'XDG_RUNTIME_DIR', 'LANG') if k in os.environ}
+    result = runner(argv, capture_output=True, text=True, env=env)
+    if result.returncode != 0 or not out.is_file():
+        raise RuntimeError(f'kicad-cli STEP export failed ({result.returncode}): {result.stderr}')
+    return out
