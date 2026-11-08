@@ -4,6 +4,8 @@
 ![phase](https://img.shields.io/badge/phase-4%20of%207-blue)
 ![license](https://img.shields.io/badge/license-CERN--OHL--P%20v2-informational)
 
+![Marathon main board, front, with stand-in models of the LCD and switches](pcb/renders/angle-front.png)
+
 A handheld retro gaming console built around a Raspberry Pi Zero 2 W, designed for long battery life through a custom PCB that places every power, audio, and amplifier IC as a bare chip directly on the board.
 
 ## Status
