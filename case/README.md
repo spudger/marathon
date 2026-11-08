@@ -20,7 +20,8 @@ are assumptions; the spec's "Provisional figures" lists each one and what replac
 | `stl/` | One STL per printed part, standing in its print orientation |
 | `renders/` | The assembled case from the front and back, an exploded view, a section, and a 1280 x 640 social preview |
 
-The case is 164.2 x 79.2 x 20.4 mm: two shells that clamp the board, split at the board's back.
+The case is 164.2 x 79.2 x 18.5 mm: two shells that clamp the board, split at the board's back. The
+first version, 20.4 mm thick, is tagged `case-concept-1`.
 
 ## Build and render
 
@@ -63,23 +64,25 @@ PETG or PLA, 0.4 mm nozzle, 0.2 mm layers, no supports. The STLs already stand t
 
 ## Hardware
 
-- Four M2 x 16 mm socket head screws (DIN 912).
+- Four M2 x 12 mm socket head screws (DIN 912).
 - Four M2 x 3 mm heat-set inserts.
-- A 1 mm clear acrylic or polycarbonate lens, 71.6 x 55.4 mm with 1.9 mm corners.
-- 1 mm closed-cell foam tape for the gasket around the screen, and thin double-sided tape for the
-  lens.
+- A 0.5 mm clear acrylic or polycarbonate lens, 71.6 x 55.4 mm with 1.9 mm corners.
+- 1 mm closed-cell foam tape for the gasket around the screen, thin double-sided tape for the lens,
+  and Kapton tape.
 - The two silicone pads and the two 15 mm speakers in `bom/README.md`.
 
 ## Assembly
 
-1. Press the inserts into the front shell's four bosses, from the open side.
-2. With the front shell face down: tape the lens into its pocket, then lay the gasket on the lens's
+1. On the board, trim the Pi header's pins on the front, under the LCD, to about 0.3 mm, and cover
+   them with Kapton tape. The LCD sits on them.
+2. Press the inserts into the front shell's four bosses, from the open side.
+3. With the front shell face down: tape the lens into its pocket, then lay the gasket on the lens's
    border, outside the window. Make the gasket about twice the gap between the lens and the panel's
-   glass; that is 1 mm at the assumed 1.5 mm panel gap.
-3. Drop the caps into their holes and the shoulder buttons into their slots, then lay the silicone
+   glass; that is 1 mm with the panel on the trimmed pins, a 0.55 mm gap.
+4. Drop the caps into their holes and the shoulder buttons into their slots, then lay the silicone
    pads over the D-pad and ABXY caps.
-4. Glue the speakers into their rings, facing the grilles.
-5. Lower the board in face down, USB-C first into its notch.
-6. Fit the back shell and drive the four screws.
+5. Glue the speakers into their rings, facing the grilles.
+6. Lower the board in face down, USB-C first into its notch.
+7. Fit the back shell and drive the four screws.
 
 The microSD card and the Pi's ports are reached with the back shell off.

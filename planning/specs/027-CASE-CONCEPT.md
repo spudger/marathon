@@ -34,20 +34,30 @@ From the ask round on 2026-11-07 (spudger/marathon#27):
    holes, into brass heat-set inserts in the front shell.
 3. The back is flat, at the battery's 11.3 mm clearance (spec 022) across the whole board. No grips.
 4. The screen gets a window over the LCD's active area and a place for a 1 mm clear lens, added
-   at assembly.
+   at assembly. The lens is 0.5 mm since decision 15.
 5. Every button cap is printed: D-pad, ABXY, Start, Select, power, L, and R. They sit on the board's
    current contact and switch positions.
 6. Two 15 mm speakers fire out the front, through printed grilles, one below the D-pad and one
    below ABXY.
 7. The microSD card is reached only with the back shell off. No hatch.
 8. The case assumes the 1.5 mm LCD gap the renders use, and a foam gasket keeps the panel firm if
-   it sits lower.
+   it sits lower. Replaced by decision 14.
 9. Four renders: the assembled case from the front (the README hero) and from the back, an
    exploded view, and a cross section. Also a 1280 x 640 social preview image, which the owner
    uploads.
 10. KiCad renders first. Blender is pre-approved if KiCad's renders fall short.
 11. The case is black, possibly clear later, with red buttons; gold is the alternative.
 12. One PR: this spec first, then the model, the renders, and the docs on the same branch.
+
+From the owner on 2026-11-08 (spudger/marathon#30), after the first concept merged at 20.4 mm:
+
+13. Make the case as thin as it goes without shaping the back or shrinking the battery space. The
+    20.4 mm design stays at the tag `case-concept-1` so it can be restored.
+14. Trim the Pi header's pins under the LCD to about 0.3 mm and cover them in Kapton tape, the
+    default fix `documentation/PROJECT_PLAN.md` names, so the panel sits 0.5 mm off the board.
+15. A 0.5 mm lens in place of decision 4's 1 mm lens, and a 1.2 mm floor.
+16. Whether a shaped back would help ergonomically is researched after the slimming
+    (`planning/drafts/CASE-BACK-SHAPING.md`).
 
 Artwork on the case is wanted, but what and where is not decided: **experience open**. The flat back
 and the front face stay plain until then.
@@ -95,19 +105,21 @@ Every figure here is a starting value for the code, which owns the final geometr
 
 | Level | z (mm) | Source |
 |---|---|---|
-| Back face of the case | -12.9 | 1.6 mm floor |
+| Back face of the case | -12.5 | 1.2 mm floor |
 | Inside of the back | -11.3 | spec 022's battery clearance |
 | Pi's stack, deepest point | about -10.0 to -10.4 | spec 022, estimate |
 | Board | 0 to 1.0 | board stackup |
-| LCD glass | 5.0 | `tools/render/models.py`, 1.5 mm gap assumed |
-| Inside of the front plate, underside of the lens | 5.5 | 0.5 mm over the glass, filled by the gasket |
-| Top of the lens | 6.5 | 1.0 mm lens |
-| Front face | 7.5 | 1.0 mm over the lens |
-| Tops of the caps | 8.5 to 9.0 | 1.0 to 1.5 mm proud |
+| LCD glass | 3.95 to 4.0 | `tools/render/models.py`: the panel sits 0.5 mm off the board on the trimmed pins |
+| Inside of the front plate, underside of the lens | 4.5 | 0.55 mm over the glass, filled by the gasket |
+| Top of the lens | 5.0 | 0.5 mm lens |
+| Ceiling of the pockets in the plate | 5.2 | over the cap flanges, the speakers, and the mute switch's body |
+| Front face | 6.0 | 1.0 mm over the lens, 0.8 mm over the pockets |
+| Tops of the caps | 7.0 to 7.5 | 1.0 to 1.5 mm proud |
 | Top of the mute switch's actuator | 9.8 | SS12F15-G5 stand-in |
 
-The case body is **20.4 mm** thick and **164.2 x 79.2 mm**, with 8.1 mm corner radii: the board's
-outline plus 0.3 mm of clearance and a 1.8 mm wall.
+The case body is **18.5 mm** thick and **164.2 x 79.2 mm**, with 8.1 mm corner radii: the board's
+outline plus 0.3 mm of clearance and a 1.8 mm wall. It was 20.4 mm until spudger/marathon#30;
+"Slimming" says what changed and what stops it going thinner.
 
 ### Shells and fasteners
 
@@ -121,10 +133,11 @@ At each case hole (25, 25), (175, 25), (25, 90), and (175, 90):
 - **Back shell:** a 5.5 mm boss from the floor to the board, with a 2.4 mm clearance hole and a
   counterbore in the back face for the screw head.
 - **Front shell:** a 5.5 mm boss from the front plate to the board. A 3.2 mm hole for an M2 x 3 mm
-  heat-set insert runs from the boss's end at z = 1.0 to z = 5.0, and the insert is pressed in from
-  the board side. A 2.0 mm bore continues to z = 6.0 for the screw tip.
-- **Screw:** M2 x 16 mm socket head (DIN 912), seated 2.0 mm deep (z = -10.9), so the head sits
-  flush. Its tip reaches z = 5.1, 0.9 mm short of the bore's end.
+  heat-set insert runs from the boss's end at z = 1.0 to z = 4.5, and the insert is pressed in from
+  the board side. A 2.0 mm bore continues to z = 5.2 for the screw tip.
+- **Screw:** M2 x 12 mm socket head (DIN 912), seated 4.5 mm deep (z = -8.0) in a counterbore in
+  the back boss. Its tip reaches z = 4.0, through the whole 3 mm insert and 1.2 mm short of the
+  bore's end.
 
 The board is clamped between the bosses' ends. The 5.5 mm boss leaves about 1.15 mm of wall
 around the insert, and the front boss at (175, 90) clears the mute switch's plate by 0.5 mm.
@@ -134,17 +147,18 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
 - **Screen.**
   - window: the LCD's active area (x 67.6 to 132.4, y 27.7 to 76.3) plus 0.5 mm a side,
     65.8 x 49.6 mm;
-  - lens pocket: the window plus 3 mm a side, 1.0 mm deep, on the inside of the front plate;
-  - lens: 1.0 mm clear acrylic or polycarbonate, 0.1 mm smaller a side than the pocket, held by
+  - lens pocket: the window plus 3 mm a side, 0.5 mm deep, on the inside of the front plate;
+  - lens: 0.5 mm clear acrylic or polycarbonate, 0.1 mm smaller a side than the pocket, held by
     thin double-sided tape;
   - gasket: closed-cell foam on the panel's border, outside the active area, about twice as thick
-    as the gap between the lens and the glass, measured at assembly. At the assumed 1.5 mm LCD gap
-    that gap is 0.5 mm, so 1.0 mm foam. A panel sitting flat on trimmed pins leaves about 2.0 mm,
-    so about 4 mm of stacked foam.
-- **Cap flanges.** Every cap has a flange 1.5 mm wider than its body all round, 1.0 mm thick, at
-  z 4.5 to 5.5. Its top is flat for 0.75 mm out from the body and bears on the inside of the front
-  plate; a 0.75 mm, 45° chamfer runs from there to the flange's edge. The holes clear the bodies by
-  0.25 mm a side and have no chamfer, so each flange bears on 0.5 mm of plate all round.
+    as the gap between the lens and the glass, measured at assembly. With the panel on the trimmed
+    pins that gap is 0.55 mm, so 1.0 mm foam.
+- **Cap flanges.** Every cap has a flange 1.25 mm wider than its body all round, 0.7 mm thick, at
+  z 4.5 to 5.2, resting on its domes or above its switch. Its top is flat for 0.75 mm out from the
+  body and bears on the ceiling of a pocket in the inside of the front plate, which leaves 0.8 mm
+  of plate over it; a 0.5 mm, 45° chamfer runs from there to the flange's edge. The holes clear
+  the bodies by 0.25 mm a side and have no chamfer, so each flange bears on 0.5 mm of plate all
+  round.
 - **D-pad.** One cross cap centered on (43, 53), 29 mm across with 9 mm arms, 1.5 mm proud. The
   pad's domes hold its flange up against the plate. A press on one arm tips the cap about the outer
   edge of the opposite arm's flat bearing face, 15.25 mm from the center. A center nub stops 0.7 mm
@@ -152,17 +166,18 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
   1 mm of travel, the nub, 15.25 mm from it, has come down about 0.56 mm and has not landed. A
   press on the middle sinks the cap 0.7 mm onto the nub, short of the 1 mm a contact needs.
 - **ABXY.** Four 9 mm round caps, on SW14 to SW17's contacts, 1.5 mm proud. At 9 mm, the flange
-  of the cap at x 145 clears the LCD's edge, x 138.7, by 0.3 mm; at 10 mm it would overlap it.
+  of the cap at x 145 clears the LCD's edge, x 138.7, by 0.55 mm; at 10 mm it would overlap it.
 - **Silicone pads.** Both are the same provisional cross (see "Provisional figures"). Four short
   posts from the front plate press each pad's center onto the board, between the caps.
 - **Start and Select.** 8 x 3.5 mm pill caps on SW19 (94, 84) and SW18 (106, 84), 1.0 mm proud,
   each with a stem down to its switch. Their flanges are 1 mm apart.
 - **Power key.** A 5 mm round cap on SW1 (24, 78), flush with the front face, so a pocket does not
   press it. The LTC2954 already needs a 1 s hold to turn on.
-- **Mute switch.** A slot in the front plate over SW2 (162, 91.5) for its actuator and travel. The
-  actuator stands 2.3 mm proud of the face.
-- **Speakers.** Each sits in a ring on the inside of the front plate, face against the plate,
-  glued in. Grilles are 1.2 mm holes on a hex grid inside an 11 mm circle. Left at (48, 82), right at
+- **Mute switch.** A slot in the front plate over SW2 (162, 91.5) for its actuator and travel, in a
+  pocket over the switch's body, which reaches z 4.8. The actuator stands 3.8 mm proud of the face;
+  a shorter actuator than the G5's 5 mm would bring it down.
+- **Speakers.** Each sits in a ring on the inside of the front plate, face against the ceiling of
+  a pocket that leaves 0.8 mm of plate for the grille, glued in. Grilles are 1.2 mm holes on a hex grid inside an 11 mm circle. Left at (48, 82), right at
   (150, 80), both clear of the pads, the caps, and the front-side parts. Their leads run to J5 and J6.
 
 ### Edges
@@ -170,11 +185,12 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
 - **USB-C.** J4's receptacle reaches 0.9 mm past the board's edge (KiCad's STEP export: y 89.0 to
   95.9, z 1.0 to 4.26). A notch in the front shell's bottom wall, open at the split and through the
   skirt, lets it pass as the board drops in. A tab on the back shell fills the notch below the
-  receptacle, leaving a 9.6 x 3.9 mm opening. A 12.5 x 6.5 mm pocket, 0.6 mm deep, around the
+  receptacle, leaving a 9.6 x 3.9 mm opening. A 12.5 x 6.0 mm pocket, 0.6 mm deep, around the
   opening on the outside lets a plug's overmold reach within 0.6 mm of the receptacle's mouth.
 - **L and R.** SW20 and SW21 push toward the top edge; their plungers end at y = 21.0. A printed
   shoulder button slides in a slot in the front shell's top wall. A flange inside the wall holds it
-  in, and the flange's inner face rests on the plunger. The button stands 1.5 mm proud of the edge.
+  in, and the flange's inner face rests on the plunger. The button stands 1.5 mm proud of the edge
+  and runs from z 1.3 to 4.2, under the plate's inside.
 
 ### Back
 
@@ -198,9 +214,9 @@ All are black except the caps and shoulder buttons, which are red.
 
 ### Hardware
 
-Bought, not printed: four M2 x 16 mm DIN 912 screws, four M2 x 3 mm heat-set inserts, the 1 mm lens,
-1 mm closed-cell foam tape for the gasket (stacked for a lower panel), and thin double-sided tape for
-the lens.
+Bought, not printed: four M2 x 12 mm DIN 912 screws, four M2 x 3 mm heat-set inserts, the 0.5 mm
+lens, 1 mm closed-cell foam tape for the gasket, thin double-sided tape for the lens, and Kapton tape
+over the trimmed header pins.
 
 ### Provisional figures
 
@@ -209,11 +225,12 @@ the lens.
 | Silicone pads | a cross 34 mm across, 9 mm arms, a 20 mm center square, 0.8 mm sheet, domes rising to 3.5 mm off the board, 1 mm of travel | the bought pads (`bom/README.md`) |
 | Speakers | 15 mm across, 4.0 mm thick, glued | the bought speakers |
 | Mute switch travel | 3 mm, actuator 2.0 x 1.5 mm | the SS12F15-G5 drawing |
-| LCD gap and panel | 1.5 mm gap, 2.5 mm panel (`tools/render/models.py`) | the real panel, and the Pi header's trimmed pins |
+| LCD gap and panel | 0.5 mm gap on pins trimmed to 0.3 mm under Kapton tape, 2.5 mm panel (`tools/render/models.py`) | the real panel, and the trimmed pins measured after soldering |
+| Mute switch body | 10 x 4.4 mm, reaching z 4.8 | the SS12F15-G5 drawing |
 | Alps switch heights and plunger | the footprints and the stand-in models | the real switches |
 | Pi's stack | 10.0 to 10.4 mm (spec 022) | calipers |
 | Cell | 10.3 mm with tolerance, 11.3 mm installed (spec 022) | the arrival checks in spec 022 |
-| Insert hole | 3.2 mm across, 4.0 mm deep | the insert maker's figure |
+| Insert hole | 3.2 mm across, 3.5 mm deep | the insert maker's figure |
 | Fit clearances | 0.3 mm board to wall, 0.25 mm a side around caps, 0.15 mm in the skirt | a test print |
 
 ## Renders
@@ -257,6 +274,12 @@ written.
   is taller, and U7 is a 0.75 mm package.
 - **The model is only as good as the stand-ins,** which `tools/render/README.md` says not to trust
   to a fraction of a millimeter.
+- **Thin plate over the pockets.** 0.8 mm, four layers at 0.2 mm, over the cap flanges, the
+  speakers, and the mute switch. The caps' flanges bear on it. If a test print shows it too
+  flexible, the front face goes back up by the shortfall.
+- **Trimmed pins.** The panel rests on the header's trimmed stubs. Stubs taller than 0.3 mm with
+  their tape raise the panel and squeeze the gasket; measure them after soldering, before the
+  gasket is cut.
 
 ## Changes
 
@@ -285,7 +308,9 @@ One PR, on this spec's branch, through the build flow:
   or dome's travel. The actuator, plunger, or dome a part presses is left out of this check, since
   the real one moves with it; the switch's body stays in. The mute switch's actuator, modeled on its
   own from the stand-in's figures, is checked against its slot at both ends of its travel.
-- The case body measures 164.2 x 79.2 x 20.4 mm.
+- The case body measures 164.2 x 79.2 x 18.5 mm (20.4 mm before spudger/marathon#30).
+- The front plate keeps at least 0.8 mm over every pocket in its inside, and the gasket bears on
+  the LCD's glass with the lens at least 0.5 mm above it.
 - Every printed part is one valid closed solid, and its STL is written.
 - The renders exist, and each shows what its row in "Renders" says, checked by eye.
 - The existing tests in `tools/render/tests` still pass.
@@ -308,6 +333,26 @@ Searches run on `e38a91c`, leaving out this spec:
   `tools/render/tests/test_render.py:56` name the board's own renders, which stay.
 - `git grep -n "LCD over the Pi header" -- documentation` finds the risk at
   `documentation/PROJECT_PLAN.md:227`. It stays open: decision 8 designs around it.
+
+## Slimming
+
+spudger/marathon#30 took the first concept from 20.4 mm to 18.5 mm, under decisions 13 to 15. The
+tag `case-concept-1` (`26c0c29`) holds the 20.4 mm design.
+
+| Cut | Saves | How |
+|---|---|---|
+| Trimmed header pins under the LCD | 1.0 mm | the panel sits 0.5 mm off the board, not 1.5 mm |
+| Lens | 0.5 mm | 0.5 mm, not 1.0 mm |
+| Floor | 0.4 mm | 1.2 mm, not 1.6 mm |
+
+What it took: pockets in the plate's inside over the cap flanges, the speakers, and the mute
+switch's body; flanges 0.7 mm thick; shoulder buttons 0.5 mm shorter; M2 x 12 mm screws in a
+deeper counterbore; a 6.0 mm tall USB-C pocket, clear of the front edge's fillet.
+
+What stops it going thinner without shaping the back or shrinking the battery space: at the front,
+the LCD stack (glass at 4.0, gasket, lens, 1.0 mm bezel) and the provisional pads' domes (4.5,
+under a 0.7 mm flange and 0.8 mm of plate) both end at 6.0. Lower-profile pads would let the
+bezel go to 0.8 mm. At the back, the battery's 11.3 mm and the 1.2 mm floor.
 
 ## Open questions
 
