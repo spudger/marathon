@@ -32,6 +32,13 @@ Design highlights:
 - **USB-C with spec-compliant CC resistors.** Works with any USB-C cable, not just A-to-C.
 - **Landscape handheld form factor.** A 160 x 75 mm board with the screen in the middle, the D-pad on the left, and the face buttons on the right.
 
+<p>
+  <img src="pcb/renders/angle-front.png" width="49%" alt="The main board's front: the LCD in the middle, the D-pad and face-button pads on either side, and USB-C on the bottom edge">
+  <img src="pcb/renders/angle-back.png" width="49%" alt="The main board's back: the battery beside the Raspberry Pi Zero 2 W on its standoffs">
+</p>
+
+The main board without its case, front and back, rendered from the KiCad layout.
+
 ## System Architecture
 
 Power flow and signal flow across the Marathon hardware:
