@@ -18,7 +18,7 @@ Needs the `org.kicad.KiCad` Flatpak. It runs `kicad-cli` sandboxed, with no netw
 ## Stand-in models
 
 ```bash
-uv run --no-project --with cadquery==2.5.2 python tools/render/models.py
+uv run --no-project --python 3.12 --with cadquery==2.5.2 python tools/render/models.py
 ```
 
 The Raspberry Pi Zero 2 W, the LCD, the Alps switches, the slide switch, and the battery have no 3D models in KiCad's library, so these are simple shapes, not vendor models. Outlines come from the footprints and the specs. The Pi's port positions come from its mechanical drawing. Thicknesses and the other Pi parts are estimates; each function's docstring says which. They're good enough for renders and for fitting the case. Don't use them to check clearances to a fraction of a millimeter.
@@ -32,5 +32,5 @@ A rebuild rewrites every STEP file, even with no change, because OpenCASCADE ord
 ```bash
 python3 -m unittest discover -s tools/render/tests -p 'test_board.py'
 python3 -m unittest discover -s tools/render/tests -p 'test_render.py'
-uv run --no-project --with cadquery==2.5.2 python -m unittest discover -s tools/render/tests -p 'test_models.py'
+uv run --no-project --python 3.12 --with cadquery==2.5.2 python -m unittest discover -s tools/render/tests -p 'test_models.py'
 ```

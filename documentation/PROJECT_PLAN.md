@@ -22,7 +22,7 @@ This is a multi-phase hardware project spanning: component identification, schem
 | **Battery** | 3.7V LiPo, about 4000 mAh target | 105060-class cell, about 10 mm thick, in a 67 x 59 mm space on the back of the PCB, 3-pin JST-PH connector with NTC |
 | **Audio Out** | 2x speakers + mute switch | SPDT switch holds the amp in shutdown. Bluetooth available for private listening |
 | **Buttons** | Silicone membranes + SMD switches | Direct GPIO, no expander IC. Membrane pads press on bare ENIG contacts on the PCB |
-| **Case** | Custom 3D print | Not started yet. Designed around the PCB once the layout is locked |
+| **Case** | Custom 3D print | First concept in CadQuery: two shells, 164.2 x 79.2 x 20.4 mm, clamping the board with four M2 screws (`case/`, spec `planning/specs/027-CASE-CONCEPT.md`) |
 
 ---
 
@@ -163,10 +163,14 @@ Remaining:
 
 ### Phase 5: Case Design
 **Goal**: Design a case for the Marathon PCB
+**Status**: IN PROGRESS. First concept modeled (spec `planning/specs/027-CASE-CONCEPT.md`).
 
-- [ ] Design custom case around the finalized PCB dimensions
-- [ ] Account for component placement (no headphone jack hole, battery fitment, USB-C position). The back must clear about 11.3 mm over the battery, about 1.3 mm more than the Pi's stack (spec 022).
-- [ ] Verify fit with PCB dimensions
+- [x] Design a first case concept around the board -- CadQuery, two shells, printed caps, STLs and renders in `case/` (2026-11-08)
+- [x] Account for component placement (no headphone jack hole, battery fitment, USB-C position). The back clears 11.3 mm over the battery, about 1.3 mm more than the Pi's stack (spec 022).
+- [x] Verify fit with PCB dimensions -- in the model, against KiCad's STEP export of the board (`case/tests/test_case.py`)
+- [ ] Revise the concept once the silicone pads, speakers, mute switch, LCD panel and Alps switches arrive
+- [ ] Choose the case's artwork and where it goes
+- [ ] Test-print the parts and record the fit
 - [ ] 3D print and potentially order final print from PCBWay
 
 ### Phase 6: Software Setup
@@ -199,6 +203,7 @@ Remaining:
 | Tool | Purpose | Status |
 |------|---------|--------|
 | **KiCad 10.0.6** (Flatpak) | Schematic capture + PCB layout | INSTALLED |
+| **CadQuery 2.5.2** (through uv, Python 3.12) | Case model, stand-in 3D models | RUNS THROUGH uv |
 | **RetroPie** | OS image for the Pi | CONFIGURED (GamePi20 image, Buster) |
 | **fbcp-ili9341** | Display driver (SPI framebuffer copy) | COMPILED AND INSTALLED |
 | **mk_arcade_joystick_rpi** | GPIO button driver (kernel module) | CONFIGURED |
@@ -226,7 +231,7 @@ Remaining:
 - **Unverified footprints** -- The LCD tail and Alps switch footprints were built from documentation and have not been checked against physical parts yet.
 - **LCD over the Pi header** -- The LCD's outline covers about 12 pin pairs of the Pi's long-tail header, whose soldered ends stick out on the front at y 30 to 33. Default fix: trim those pins flush after soldering and cover them with Kapton tape, so the panel sits nearly flat. Settle it before the case design. The renders assume a 1.5 mm gap.
 - **Open design review items** -- The B button on the UART TX pin. The power design's checks that need a built board are listed in spec 011's finish condition.
-- **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.
+- **Case design** -- The first concept fits the board as laid out today, but rests on provisional sizes for the silicone pads, speakers, mute switch, LCD panel and Alps switches. It has no vents, so the Pi's temperature needs checking on the prototype. Spec 027's "Risks and known limits" has the rest.
 - **Bluetooth audio latency** -- ~100-300ms, fine for passive games, not ideal for timing-sensitive gameplay. Speakers remain the primary audio output.
 - **Display resolution** -- Currently 640x480 HDMI scaled to 320x240 SPI, looks blurry. Need to set HDMI to native 320x240 for pixel-perfect rendering. Low priority.
 

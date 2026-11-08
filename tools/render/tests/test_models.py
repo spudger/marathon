@@ -1,6 +1,6 @@
 """Tests for models.py. They need CadQuery, so run them through uv:
 
-    uv run --no-project --with cadquery==2.5.2 python -m unittest discover -s tools/render/tests -p 'test_models.py'
+    uv run --no-project --python 3.12 --with cadquery==2.5.2 python -m unittest discover -s tools/render/tests -p 'test_models.py'
 
 Each model is read back from the STEP file it writes, so the tests check the file KiCad loads.
 Expected sizes come from the datasheets, the footprints and the specs, as each test says.
