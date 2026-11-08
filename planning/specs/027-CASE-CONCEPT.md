@@ -141,17 +141,21 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
     as the gap between the lens and the glass, measured at assembly. At the assumed 1.5 mm LCD gap
     that gap is 0.5 mm, so 1.0 mm foam. A panel sitting flat on trimmed pins leaves about 2.0 mm,
     so about 4 mm of stacked foam.
-- **D-pad.** One cross cap centered on (43, 53), 29 mm across with 9 mm arms, 1.5 mm proud. Its
-  flange, 31 mm across, sits under the front plate, and the pad's domes hold it up against the plate.
-  A press on one arm tips the cap about the far end of the opposite arm's flange. A center nub stops
-  0.6 mm above the pad at rest: the dome under the pressed arm, 27.5 mm from that pivot, travels its
-  full 1 mm as the nub, 15.5 mm from it, comes down 0.6 mm and lands. A press on the middle sinks
-  the cap 0.6 mm and closes no contact.
-- **ABXY.** Four 10 mm round caps, on SW14 to SW17's contacts, 1.5 mm proud, each with a flange.
+- **Cap flanges.** Every cap has a flange 1.5 mm wider than its body all round, 1.0 mm thick, at
+  z 4.5 to 5.5. Its top is flat for 0.75 mm out from the body and bears on the inside of the front
+  plate; a 0.75 mm, 45° chamfer runs from there to the flange's edge. The holes clear the bodies by
+  0.25 mm a side and have no chamfer, so each flange bears on 0.5 mm of plate all round.
+- **D-pad.** One cross cap centered on (43, 53), 29 mm across with 9 mm arms, 1.5 mm proud. The
+  pad's domes hold its flange up against the plate. A press on one arm tips the cap about the outer
+  edge of the opposite arm's flat bearing face, 15.25 mm from the center. A center nub stops 0.7 mm
+  above the pad at rest. When the pressed arm's dome, 27.25 mm from the pivot, bottoms out after its
+  1 mm of travel, the nub, 15.25 mm from it, has come down about 0.56 mm and has not landed. A
+  press on the middle sinks the cap 0.7 mm onto the nub, short of the 1 mm a contact needs.
+- **ABXY.** Four 10 mm round caps, on SW14 to SW17's contacts, 1.5 mm proud.
 - **Silicone pads.** Both are the same provisional cross (see "Provisional figures"). Four short
   posts from the front plate press each pad's center onto the board, between the caps.
-- **Start and Select.** Pill caps on SW19 (94, 84) and SW18 (106, 84), 1.0 mm proud, each with a
-  flange and a stem down to its switch.
+- **Start and Select.** 8 x 3.5 mm pill caps on SW19 (94, 84) and SW18 (106, 84), 1.0 mm proud,
+  each with a stem down to its switch. Their flanges are 1 mm apart.
 - **Power key.** A 5 mm round cap on SW1 (24, 78), flush with the front face, so a pocket does not
   press it. The LTC2954 already needs a 1 s hold to turn on.
 - **Mute switch.** A slot in the front plate over SW2 (162, 91.5) for its actuator and travel. The
@@ -186,7 +190,7 @@ PETG or PLA, 0.4 mm nozzle, 0.2 mm layers. Every part prints without supports:
 |---|---|---|
 | Front shell | front face down | the window, grilles, and holes are open at the bed; the lens pocket and bosses face up; the USB-C notch and shoulder slots bridge at most 16 mm |
 | Back shell | back face down | the counterbores open at the bed; the bosses face up |
-| Caps | top face down | the side of each flange that seats against the front plate faces the bed, so it is chamfered 45°, and each cap's hole has a matching chamfer on the inside of the plate |
+| Caps | top face down | the flange's flat bearing face overhangs the body by only 0.75 mm, and its 45° chamfer takes the rest |
 | Shoulder buttons | flat on a side | |
 
 All are black except the caps and shoulder buttons, which are red.
@@ -276,8 +280,10 @@ One PR, on this spec's branch, through the build flow:
 - Each cap comes within 0.2 mm of what it presses: its switch's actuator, or its pad's dome. Each
   shoulder button's flange comes within 0.2 mm of its plunger.
 - The first check also holds through each part's motion: the D-pad tipped about each arm until its
-  dome has traveled 1 mm, each other cap and each shoulder button pressed through its switch's or
-  dome's travel, and the mute actuator at both ends of its slot.
+  dome has traveled 1 mm, and each other cap and each shoulder button pressed through its switch's
+  or dome's travel. The actuator, plunger, or dome a part presses is left out of this check, since
+  the real one moves with it; the switch's body stays in. The mute switch's actuator, modeled on its
+  own from the stand-in's figures, is checked against its slot at both ends of its travel.
 - The case body measures 164.2 x 79.2 x 20.4 mm.
 - Every printed part is one valid closed solid, and its STL is written.
 - The renders exist, and each shows what its row in "Renders" says, checked by eye.
