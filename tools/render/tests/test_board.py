@@ -49,9 +49,16 @@ class Stackup(unittest.TestCase):
         self.assertIsNotNone(m, f'stackup has no {name}')
         return block(self.stackup, m.start())
 
-    def test_both_masks_are_black(self):
+    def test_both_masks_are_opaque_black(self):
+        # KiCad's "Black" preset is translucent enough that the board's tan core shows through and
+        # renders brown, so the masks use a near-black at 95% opacity: #RRGGBBAA, each RGB at most
+        # 0x14 and alpha at least 0xF0.
         for name in ('F.Mask', 'B.Mask'):
-            self.assertIn('(color "Black")', self.layer(name))
+            m = re.search(r'\(color "#([0-9A-Fa-f]{8})"\)', self.layer(name))
+            self.assertIsNotNone(m, f'{name} has no #RRGGBBAA color')
+            r, g, b, a = (int(m.group(1)[i:i + 2], 16) for i in (0, 2, 4, 6))
+            self.assertLessEqual(max(r, g, b), 0x14)
+            self.assertGreaterEqual(a, 0xF0)
 
     def test_finish_is_enig(self):
         # bom/README.md decision log, 2026-09-22: ENIG finish.
