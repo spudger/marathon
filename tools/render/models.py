@@ -93,7 +93,7 @@ def ss12f15():
     parts = [
         (plate, SILVER),
         (box(-5, 5, -2.2, 2.2, 0.3, 3.8), BLACK),
-        (box(-1, 1, -0.75, 0.75, 3.8, 6.8), BLACK),
+        (box(-1, 1, -0.75, 0.75, 3.8, 8.8), BLACK),
     ]
     return assembly('SS12F15_G5_StandIn', parts)
 

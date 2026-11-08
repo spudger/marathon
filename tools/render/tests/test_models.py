@@ -89,6 +89,12 @@ class Switches(unittest.TestCase):
         bb, dims = size('SS12F15_G5_StandIn.step')
         self.assertEqual(dims[:2], (19.5, 5.6))
 
+    def test_slide_switch_actuator_stands_5_mm_above_its_body(self):
+        # G5 is the 5 mm actuator. The body's top is at z 3.8 (an estimate in models.py).
+        sw = shape('SS12F15_G5_StandIn.step')
+        self.assertAlmostEqual(sw.BoundingBox().zmax, 3.8 + 5.0, places=2)
+        self.assertTrue(inside(sw, 0, 0, 8.6))
+
 
 class Lcd(unittest.TestCase):
     def test_body_covers_the_lcd_outline_on_the_board(self):
