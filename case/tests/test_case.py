@@ -155,14 +155,14 @@ class InMotion(unittest.TestCase):
             self.assertLessEqual(overlap(moved, PARTS[pad].sheet), TOLERANCE, f'{name} hits {pad}')
 
     def test_dpad_tipped_about_each_arm(self):
-        # Spec 027: the pivot is the far arm's bearing edge, 15.25 mm out, at the plate's inside
-        # (z 5.5); the pressed arm's dome, 27.25 mm from it, travels 1 mm.
+        # Spec 027: the pivot is the far arm's bearing edge, 15.5 mm out, at the ceiling of the
+        # flange's pocket (z 5.2); the pressed arm's dome, 27.5 mm from it, travels 1 mm.
         cx, cy = 43, 53
-        angle = math.degrees(math.asin(1.0 / 27.25))
+        angle = math.degrees(math.asin(1.0 / 27.5))
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             with self.subTest(arm=(dx, dy)):
-                px, py = cx - 15.25 * dx, cy - 15.25 * dy
-                pivot = cq.Vector(px, -py, 5.5)
+                px, py = cx - 15.5 * dx, cy - 15.5 * dy
+                pivot = cq.Vector(px, -py, 5.2)
                 # The arm points along (dx, -dy) here; z cross that tips it down.
                 axis = cq.Vector(dy, dx, 0)
                 moved = shape('cap-dpad').rotate(pivot, pivot + axis, angle)
@@ -199,18 +199,67 @@ class InMotion(unittest.TestCase):
 
 
 class Size(unittest.TestCase):
-    def test_body_is_164_2_by_79_2_by_20_4_mm(self):
-        # Spec 027: the board plus 0.3 mm and a 1.8 mm wall; 20.4 mm from back face to front face.
+    def test_body_is_164_2_by_79_2_by_18_5_mm(self):
+        # Spec 027: the board plus 0.3 mm and a 1.8 mm wall; 18.5 mm from back face to front face.
         bb = shape('front-shell').fuse(shape('back-shell')).BoundingBox()
         self.assertAlmostEqual(bb.xlen, 164.2, places=2)
         self.assertAlmostEqual(bb.ylen, 79.2, places=2)
-        self.assertAlmostEqual(bb.zmin, -12.9, places=2)
-        self.assertAlmostEqual(bb.zmax, 7.5, places=2)
+        self.assertAlmostEqual(bb.zmin, -12.5, places=2)
+        self.assertAlmostEqual(bb.zmax, 6.0, places=2)
+
+
+class Plate(unittest.TestCase):
+    """Spec 027: pockets in the front plate's inside make room for the cap flanges (to z 5.2), the
+    speakers, and the mute switch's body, and leave at least 0.8 mm of plate over them."""
+
+    def assert_pocket_under_plate(self, x, y):
+        shell = shape('front-shell')
+        self.assertFalse(shell.isInside(cq.Vector(x, -y, 5.1)))   # the pocket
+        for z in (5.3, 5.9):                                      # 0.8 mm of plate
+            self.assertTrue(shell.isInside(cq.Vector(x, -y, z)), z)
+
+    def test_plate_over_the_cap_flanges(self):
+        # A point over each flange's flat: the cap's edge plus 0.5 mm. The D-pad's arms end
+        # 14.5 mm from its center at (43, 53); ABXY caps are 9 mm round; Start and Select are
+        # 8 x 3.5 mm pills; the power cap is 5 mm round.
+        points = {'cap-dpad': (43 + 15.0, 53)}
+        for ref in ('SW14', 'SW15', 'SW16', 'SW17'):
+            x, y = PCB.at(ref)
+            points[f'cap-abxy {ref}'] = (x + 5.0, y)
+        for name, ref in (('cap-start', 'SW18'), ('cap-select', 'SW19')):
+            x, y = PCB.at(ref)
+            points[name] = (x, y + 2.25)
+        x, y = PCB.at('SW1')
+        points['cap-power'] = (x + 3.0, y)
+        for name, (x, y) in points.items():
+            with self.subTest(cap=name):
+                self.assert_pocket_under_plate(x, y)
+
+    def test_plate_over_the_speakers(self):
+        # A point inside each speaker's ring, outside its grille (5.5 mm across its holes).
+        for x, y in ((48, 82), (150, 80)):
+            with self.subTest(speaker=(x, y)):
+                self.assert_pocket_under_plate(x + 6.5, y)
+
+    def test_plate_over_the_mute_switch(self):
+        # The SS12F15-G5 stand-in's body is 10 x 4.4 mm and reaches z 4.8; a point over it,
+        # 4 mm along from the switch's center, outside the actuator's slot.
+        x, y = PCB.at('SW2')
+        self.assert_pocket_under_plate(x + 4.0, y)
+
+    def test_gasket_bears_on_the_lcd_glass_under_the_lens(self):
+        # On the glass outside the active area, at board (135, 53): the gasket starts at the
+        # glass's top, and the lens sits at least 0.5 mm above it.
+        column = box(134.5, 135.5, 52.5, 53.5, -1, 20)
+        glass = max(s.intersect(column).BoundingBox().zmax for s in BOARD_ALL
+                    if overlap(s, column) > 0)
+        self.assertAlmostEqual(shape('gasket').BoundingBox().zmin, glass, places=2)
+        self.assertGreaterEqual(shape('lens').BoundingBox().zmin - glass, 0.5)
 
 
 class Fasteners(unittest.TestCase):
-    """Spec 027: the insert hole runs from z 1.0 to 5.0, a 2 mm bore on to 6.0; the screw head
-    seats 2.0 mm into the back face, at z -10.9."""
+    """Spec 027: the insert hole runs from z 1.0 to 4.5, a 2 mm bore on to 5.2; the M2 x 12 mm
+    screw's head seats 4.5 mm into the back face, at z -8.0, so its tip ends at z 4.0."""
 
     def inside(self, name, x, y, z):
         return shape(name).isInside(cq.Vector(x, -y, z))
@@ -218,27 +267,27 @@ class Fasteners(unittest.TestCase):
     def test_front_boss_is_open_to_the_bore_s_end(self):
         for x, y in PCB.holes:
             with self.subTest(hole=(x, y)):
-                for z in (1.2, 3.0, 4.9, 5.9):
+                for z in (1.2, 3.0, 4.4, 5.1):
                     self.assertFalse(self.inside('front-shell', x, y, z), z)
-                self.assertTrue(self.inside('front-shell', x, y, 6.1))
+                self.assertTrue(self.inside('front-shell', x, y, 5.3))
                 self.assertTrue(self.inside('front-shell', x + 1.9, y, 3.0))  # insert wall
 
     def test_back_boss_has_a_counterbore_and_a_clearance_hole(self):
         for x, y in PCB.holes:
             with self.subTest(hole=(x, y)):
-                self.assertFalse(self.inside('back-shell', x + 1.6, y, -11.0))  # counterbore
-                self.assertTrue(self.inside('back-shell', x + 1.6, y, -10.8))   # seat
-                self.assertFalse(self.inside('back-shell', x, y, -5.0))         # clearance hole
-                self.assertTrue(self.inside('back-shell', x + 2.0, y, -5.0))    # boss wall
+                self.assertFalse(self.inside('back-shell', x + 1.6, y, -8.1))  # counterbore
+                self.assertTrue(self.inside('back-shell', x + 1.6, y, -7.9))   # seat
+                self.assertFalse(self.inside('back-shell', x, y, -5.0))        # clearance hole
+                self.assertTrue(self.inside('back-shell', x + 2.0, y, -5.0))   # boss wall
 
 
 class Printed(unittest.TestCase):
     # Spec 027, "Printing": every printed part, as one STL each, in its print orientation, with
-    # its height on the bed: shells 9.0 mm (front face to skirt) and 13.6 mm (back face to the
-    # USB-C tab), caps from flange to top, shoulder buttons standing on the flange's face.
+    # its height on the bed: shells 7.5 mm (front face to skirt) and 13.2 mm (back face to the
+    # USB-C tab), caps from flange or stem to top, shoulder buttons standing on the flange's face.
     HEIGHTS = {
-        'front-shell': 9.0, 'back-shell': 13.6, 'cap-dpad': 6.5, 'cap-abxy': 4.5,
-        'cap-start-select': 5.6, 'cap-power': 4.6, 'shoulder': 4.5,
+        'front-shell': 7.5, 'back-shell': 13.2, 'cap-dpad': 5.0, 'cap-abxy': 3.0,
+        'cap-start-select': 4.1, 'cap-power': 3.1, 'shoulder': 4.5,
     }
 
     @classmethod
