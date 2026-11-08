@@ -100,7 +100,7 @@ Every figure here is a starting value for the code, which owns the final geometr
 | Pi's stack, deepest point | about -10.0 to -10.4 | spec 022, estimate |
 | Board | 0 to 1.0 | board stackup |
 | LCD glass | 5.0 | `tools/render/models.py`, 1.5 mm gap assumed |
-| Inside of the front plate, underside of the lens | 5.5 | 0.5 mm of compressed gasket |
+| Inside of the front plate, underside of the lens | 5.5 | 0.5 mm over the glass, filled by the gasket |
 | Top of the lens | 6.5 | 1.0 mm lens |
 | Front face | 7.5 | 1.0 mm over the lens |
 | Tops of the caps | 8.5 to 9.0 | 1.0 to 1.5 mm proud |
@@ -120,9 +120,11 @@ At each case hole (25, 25), (175, 25), (25, 90), and (175, 90):
 
 - **Back shell:** a 5.5 mm boss from the floor to the board, with a 2.4 mm clearance hole and a
   counterbore in the back face for the screw head.
-- **Front shell:** a 5.5 mm boss from the front plate to the board, with a hole for an M2 x 3 mm
-  heat-set insert, pressed in from the board side, and a blind hole past it for the screw tip.
-- **Screw:** M2 x 16 mm socket head (DIN 912), seated 2.0 mm deep, so the head sits flush.
+- **Front shell:** a 5.5 mm boss from the front plate to the board. A 3.2 mm hole for an M2 x 3 mm
+  heat-set insert runs from the boss's end at z = 1.0 to z = 5.0, and the insert is pressed in from
+  the board side. A 2.0 mm bore continues to z = 6.0 for the screw tip.
+- **Screw:** M2 x 16 mm socket head (DIN 912), seated 2.0 mm deep (z = -10.9), so the head sits
+  flush. Its tip reaches z = 5.1, 0.9 mm short of the bore's end.
 
 The board is clamped between the bosses' ends. The 5.5 mm boss leaves about 1.15 mm of wall
 around the insert, and the front boss at (175, 90) clears the mute switch's plate by 0.5 mm.
@@ -135,10 +137,16 @@ around the insert, and the front boss at (175, 90) clears the mute switch's plat
   - lens pocket: the window plus 3 mm a side, 1.0 mm deep, on the inside of the front plate;
   - lens: 1.0 mm clear acrylic or polycarbonate, 0.1 mm smaller a side than the pocket, held by
     thin double-sided tape;
-  - gasket: 1.0 mm closed-cell foam on the panel's border, outside the active area, compressed to
-    0.5 mm between the lens and the glass.
-- **D-pad.** One cross cap centered on (43, 53), 29 mm across with 9 mm arms, 1.5 mm proud. A
-  flange under the front plate holds it in, and a center nub rocks on the silicone pad.
+  - gasket: closed-cell foam on the panel's border, outside the active area, about twice as thick
+    as the gap between the lens and the glass, measured at assembly. At the assumed 1.5 mm LCD gap
+    that gap is 0.5 mm, so 1.0 mm foam. A panel sitting flat on trimmed pins leaves about 2.0 mm,
+    so about 4 mm of stacked foam.
+- **D-pad.** One cross cap centered on (43, 53), 29 mm across with 9 mm arms, 1.5 mm proud. Its
+  flange, 31 mm across, sits under the front plate, and the pad's domes hold it up against the plate.
+  A press on one arm tips the cap about the far end of the opposite arm's flange. A center nub stops
+  0.6 mm above the pad at rest: the dome under the pressed arm, 27.5 mm from that pivot, travels its
+  full 1 mm as the nub, 15.5 mm from it, comes down 0.6 mm and lands. A press on the middle sinks
+  the cap 0.6 mm and closes no contact.
 - **ABXY.** Four 10 mm round caps, on SW14 to SW17's contacts, 1.5 mm proud, each with a flange.
 - **Silicone pads.** Both are the same provisional cross (see "Provisional figures"). Four short
   posts from the front plate press each pad's center onto the board, between the caps.
@@ -178,7 +186,7 @@ PETG or PLA, 0.4 mm nozzle, 0.2 mm layers. Every part prints without supports:
 |---|---|---|
 | Front shell | front face down | the window, grilles, and holes are open at the bed; the lens pocket and bosses face up; the USB-C notch and shoulder slots bridge at most 16 mm |
 | Back shell | back face down | the counterbores open at the bed; the bosses face up |
-| Caps | top face down | each flange's underside is chamfered 45° |
+| Caps | top face down | the side of each flange that seats against the front plate faces the bed, so it is chamfered 45°, and each cap's hole has a matching chamfer on the inside of the plate |
 | Shoulder buttons | flat on a side | |
 
 All are black except the caps and shoulder buttons, which are red.
@@ -186,7 +194,8 @@ All are black except the caps and shoulder buttons, which are red.
 ### Hardware
 
 Bought, not printed: four M2 x 16 mm DIN 912 screws, four M2 x 3 mm heat-set inserts, the 1 mm lens,
-1 mm closed-cell foam tape for the gasket, and thin double-sided tape for the lens.
+1 mm closed-cell foam tape for the gasket (stacked for a lower panel), and thin double-sided tape for
+the lens.
 
 ### Provisional figures
 
@@ -266,6 +275,9 @@ One PR, on this spec's branch, through the build flow:
 - No case part enters spec 022's battery space: x 112 to 179, y 28 to 87, z -11.3 to 0.
 - Each cap comes within 0.2 mm of what it presses: its switch's actuator, or its pad's dome. Each
   shoulder button's flange comes within 0.2 mm of its plunger.
+- The first check also holds through each part's motion: the D-pad tipped about each arm until its
+  dome has traveled 1 mm, each other cap and each shoulder button pressed through its switch's or
+  dome's travel, and the mute actuator at both ends of its slot.
 - The case body measures 164.2 x 79.2 x 20.4 mm.
 - Every printed part is one valid closed solid, and its STL is written.
 - The renders exist, and each shows what its row in "Renders" says, checked by eye.
