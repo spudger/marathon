@@ -224,6 +224,7 @@ Remaining:
 - ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
 - **Battery fitment** -- A 67 x 59 mm space is reserved on the back of the PCB for a cell up to 57 x 65 mm, about 10 mm thick. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
 - **Unverified footprints** -- The LCD tail and Alps switch footprints were built from documentation and have not been checked against physical parts yet.
+- **LCD over the Pi header** -- The LCD's outline covers about 12 pin pairs of the Pi's long-tail header, whose soldered ends stick out on the front at y 30 to 33. Default fix: trim those pins flush after soldering and cover them with Kapton tape, so the panel sits nearly flat. Settle it before the case design. The renders assume a 1.5 mm gap.
 - **Open design review items** -- The B button on the UART TX pin. The power design's checks that need a built board are listed in spec 011's finish condition.
 - **Case design** -- No headphone jack hole needed, battery area may change, USB-C position may shift. Case design depends on final PCB layout.
 - **Bluetooth audio latency** -- ~100-300ms, fine for passive games, not ideal for timing-sensitive gameplay. Speakers remain the primary audio output.
