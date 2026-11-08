@@ -51,7 +51,7 @@ SCREW_R, HEAD_R, HEAD_DEPTH = 1.2, 2.0, 4.5   # the head seats at z -8.0
 CAP_TOP_FACE = FRONT + 1.5    # D-pad and ABXY, 1.5 mm proud
 CAP_TOP_PILL = FRONT + 1.0    # Start and Select, 1.0 mm proud
 # Flanges sit on the domes (DOME_TOP) and bear on the ceiling of a pocket in the plate.
-FLANGE_GROW, FLANGE_BOTTOM, FLANGE_TOP, CHAMFER = 1.5, 4.5, RELIEF_TOP, 0.5
+FLANGE_GROW, FLANGE_BOTTOM, FLANGE_TOP, CHAMFER = 1.25, 4.5, RELIEF_TOP, 0.5
 SWITCH_TOP = BOARD_TOP + 1.8   # Alps SKTHACE010, 1.8 mm tall (datasheet, via the footprint)
 STEM_GAP, STEM_R = 0.1, 1.0
 NUB_GAP, NUB_R = 0.7, 1.5
@@ -353,7 +353,7 @@ def build(pcb=None):
         'cap-select': pill_outline(*pcb.at('SW19'), 8.0, 3.5),
         'cap-power': circle_outline(*pcb.at('SW1'), 2.5),
     }
-    # 9 mm caps: the flange of the one at x 145 then clears the LCD's edge (x 138.7) by 0.3 mm.
+    # 9 mm caps: the flange of the one at x 145 then clears the LCD's edge (x 138.7) by 0.55 mm.
     abxy = [circle_outline(x, y, 4.5) for x, y in abxy_pts]
 
     def add(name, shape, color, kind, stl=None, rotate_x=0.0, **extra):

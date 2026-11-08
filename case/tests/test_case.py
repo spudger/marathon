@@ -155,13 +155,13 @@ class InMotion(unittest.TestCase):
             self.assertLessEqual(overlap(moved, PARTS[pad].sheet), TOLERANCE, f'{name} hits {pad}')
 
     def test_dpad_tipped_about_each_arm(self):
-        # Spec 027: the pivot is the far arm's bearing edge, 15.5 mm out, at the ceiling of the
-        # flange's pocket (z 5.2); the pressed arm's dome, 27.5 mm from it, travels 1 mm.
+        # Spec 027: the pivot is the far arm's bearing edge, 15.25 mm out, at the ceiling of the
+        # flange's pocket (z 5.2); the pressed arm's dome, 27.25 mm from it, travels 1 mm.
         cx, cy = 43, 53
-        angle = math.degrees(math.asin(1.0 / 27.5))
+        angle = math.degrees(math.asin(1.0 / 27.25))
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             with self.subTest(arm=(dx, dy)):
-                px, py = cx - 15.5 * dx, cy - 15.5 * dy
+                px, py = cx - 15.25 * dx, cy - 15.25 * dy
                 pivot = cq.Vector(px, -py, 5.2)
                 # The arm points along (dx, -dy) here; z cross that tips it down.
                 axis = cq.Vector(dy, dx, 0)
