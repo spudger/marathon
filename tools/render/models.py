@@ -1,6 +1,6 @@
 """Build the stand-in 3D models for the Marathon board's project footprints.
 
-    uv run --no-project --with cadquery==2.5.2 python tools/render/models.py
+    uv run --no-project --python 3.12 --with cadquery==2.5.2 python tools/render/models.py
 
 Writes one STEP file per part into pcb/Marathon.3dshapes/. These are simple shapes for renders and
 case fitting, not vendor models: outlines come from the footprints and the specs, and heights
