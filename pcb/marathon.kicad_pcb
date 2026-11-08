@@ -24,6 +24,50 @@
 		(33 "B.Fab" user)
 	)
 	(setup
+		(stackup
+			(layer "F.SilkS"
+				(type "Top Silk Screen")
+				(color "White")
+			)
+			(layer "F.Paste"
+				(type "Top Solder Paste")
+			)
+			(layer "F.Mask"
+				(type "Top Solder Mask")
+				(color "#0A0A0AF2")
+				(thickness 0.01)
+			)
+			(layer "F.Cu"
+				(type "copper")
+				(thickness 0.035)
+			)
+			(layer "dielectric 1"
+				(type "core")
+				(color "FR4 natural")
+				(thickness 0.91)
+				(material "FR4")
+				(epsilon_r 4.5)
+				(loss_tangent 0.02)
+			)
+			(layer "B.Cu"
+				(type "copper")
+				(thickness 0.035)
+			)
+			(layer "B.Mask"
+				(type "Bottom Solder Mask")
+				(color "#0A0A0AF2")
+				(thickness 0.01)
+			)
+			(layer "B.Paste"
+				(type "Bottom Solder Paste")
+			)
+			(layer "B.SilkS"
+				(type "Bottom Silk Screen")
+				(color "White")
+			)
+			(copper_finish "ENIG")
+			(dielectric_constraints no)
+		)
 		(pad_to_mask_clearance 0)
 		(allow_soldermask_bridges_in_footprints no)
 		(tenting
@@ -237,6 +281,17 @@
 			(uuid "112c74e5-8747-4bc8-8ece-3a0ce52d6aa5")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/SW_Alps_SKTHACE010_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Marathon:Conductive_Pad_5mm_GameBoyStyle"
 		(layer "F.Cu")
@@ -567,6 +622,17 @@
 			(uuid "99a6fa0b-d4f7-415b-847a-71c45369eb54")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/SW_Alps_SKSCLDE010_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "MountingHole:MountingHole_2.2mm_M2_Pad_Via"
 		(layer "F.Cu")
@@ -1539,6 +1605,17 @@
 			(uuid "a6eb2ea0-4873-4142-a050-eb22e470c8f7")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/SS12F15_G5_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Marathon:SW_Alps_SKTHACE010_PROVISIONAL"
 		(layer "F.Cu")
@@ -1699,6 +1776,17 @@
 			(uuid "3f2ac8f6-7b8d-4a4c-844a-e7e6d16e7d65")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/SW_Alps_SKTHACE010_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Marathon:Conductive_Pad_5mm_GameBoyStyle"
 		(layer "F.Cu")
@@ -2267,6 +2355,17 @@
 			(uuid "dc56bff2-cfbb-4744-ba1a-8595bf96705d")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/LCD_3.2in_ILI9341_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Marathon:Speaker_WirePads_2P_P5.0"
 		(layer "F.Cu")
@@ -2834,6 +2933,17 @@
 			(uuid "bf39a519-88c4-4f97-a65b-ef4ea8327ea2")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/SW_Alps_SKTHACE010_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "MountingHole:MountingHole_2.2mm_M2_Pad_Via"
 		(layer "F.Cu")
@@ -3793,6 +3903,17 @@
 			(uuid "7779612b-a989-41f2-ae1c-445aa436e939")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/SW_Alps_SKSCLDE010_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 		(layer "B.Cu")
@@ -9343,6 +9464,17 @@
 			(uuid "31f406ca-8407-4c92-9917-fb8475925fb6")
 		)
 		(embedded_fonts no)
+			(model "${KIPRJMOD}/Marathon.3dshapes/RaspberryPi_Zero_2W_StandIn.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "B.Cu")
@@ -18402,6 +18534,88 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD10_3DMODEL_DIR}/Package_SO.3dshapes/SOIC-16_3.9x9.9mm_P1.27mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+	)
+	(footprint "Marathon:Battery_LiPo_105063_StandIn"
+		(layer "B.Cu")
+		(uuid "d96c6c2d-8556-4e38-a3b7-24dc9bb4ad37")
+		(at 145.5 57.5)
+		(descr "Stand-in for the 105063 LiPo cell (10 x 50 x 63 mm), for renders and case fitting only. Board only: no pads, not in the BOM or the placement file.")
+		(property "Reference" "BT1"
+			(at 0 -26.5 0)
+			(layer "B.Fab")
+			(uuid "b073a653-e451-479e-a86b-a9b0f71d4e01")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Value" "Battery_LiPo_105063_StandIn"
+			(at 0 26.5 0)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "621ce3f9-a3e9-476b-9b1a-22354f905599")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "43777af3-6ba5-4943-acc8-8b7a238d4352")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(uuid "b0c038e7-d5e7-416f-adfd-6c1aed519fdf")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(attr board_only exclude_from_pos_files exclude_from_bom)
+		(duplicate_pad_numbers_are_jumpers no)
+		(fp_rect
+			(start -31.5 -25)
+			(end 31.5 25)
+			(stroke
+				(width 0.1)
+				(type default)
+			)
+			(fill no)
+			(layer "B.Fab")
+			(uuid "4af78607-fdd4-4d79-94aa-b17095e0bc4b")
+		)
+		(embedded_fonts no)
+		(model "${KIPRJMOD}/Marathon.3dshapes/Battery_LiPo_105063_StandIn.step"
 			(offset
 				(xyz 0 0 0)
 			)

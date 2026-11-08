@@ -18,4 +18,5 @@
   (pad "2" thru_hole circle (at 0 0) (size 2.0 2.0) (drill 1.0) (layers "*.Cu" "*.Mask"))
   (pad "3" thru_hole circle (at 3 0) (size 2.0 2.0) (drill 1.0) (layers "*.Cu" "*.Mask"))
   (embedded_fonts no)
+  (model "${KIPRJMOD}/Marathon.3dshapes/SS12F15_G5_StandIn.step" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )

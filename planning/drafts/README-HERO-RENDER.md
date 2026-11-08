@@ -1,8 +1,6 @@
 # README hero render and social preview
 
-Once the board and case have proper renders, add:
+`README.md` opens with the board's angled front render (`pcb/renders/angle-front.png`). Once the case design has a render worth showing:
 
-- A hero image at the top of `README.md`.
-- A GitHub social preview image for the repo (Settings, General, Social preview; 1280 x 640 px).
-
-Wait until the style pass and the case design produce renders worth showing.
+- Swap the hero image for a render of the board in its case.
+- Add a GitHub social preview image for the repo (Settings, General, Social preview; 1280 x 640 px).

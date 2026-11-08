@@ -14,6 +14,15 @@ KiCad 10 project for the Marathon main board. Open `marathon.kicad_pro`. The sch
 - Footprints named `PROVISIONAL` still need checking against the real parts. The Alps switch footprints follow Alps' published land patterns.
 - `marathon.kicad_dru` allows 0.12 mm clearance inside the U5 (SOT-563) and U6 (TSOT-23-8) courtyards, whose stock land patterns put pads 0.15 mm apart.
 - The BQ25616 uses a project copy of KiCad's RTW footprint with four 0.3 mm vias in the exposed pad, the board's minimum drill.
+- The stackup sets a black solder mask and an ENIG finish on the 1.0 mm board.
+- `Marathon.3dshapes/` holds stand-in 3D models for the project footprints, and BT1 is a board-only stand-in for the battery. `tools/render/` builds them and the renders.
+
+## Renders
+
+![The board from the front](renders/angle-front.png)
+![The board from the back](renders/angle-back.png)
+
+Flat views: [`renders/top.png`](renders/top.png) and [`renders/bottom.png`](renders/bottom.png). To rebuild them, see [`../tools/render/README.md`](../tools/render/README.md).
 
 ## Checks
 
@@ -33,5 +42,4 @@ kicad-cli pcb drc --refill-zones --schematic-parity pcb/marathon.kicad_pcb
 
 ## Planned
 
-- Board renders (top, bottom, 3D).
 - A `fab/` folder with Gerbers, drill files, BOM, and pick-and-place files for JLCPCB.
