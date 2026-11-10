@@ -142,7 +142,7 @@ marathon/
 | Power | BQ25616, TPS61023, LTC2954, MAX17048 (bare ICs) | Charging with temperature cutoff, 5 V boost, power key with clean shutdown, battery level |
 | Battery | 3.7 V LiPo, about 4000 mAh target | 105060-class cell, about 10 mm thick |
 | Input | Silicone membrane pads + tactile switches | Direct GPIO, no expander |
-| Case | Custom 3D print | First concept: two shells, 164.2 x 79.2 x 20.4 mm, held by four M2 screws (`case/`) |
+| Case | Custom 3D print | First concept: two shells, 164.2 x 79.2 x 18.5 mm, held by four M2 screws (`case/`) |
 
 ## License
 

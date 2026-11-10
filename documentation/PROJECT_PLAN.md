@@ -22,7 +22,7 @@ This is a multi-phase hardware project spanning: component identification, schem
 | **Battery** | 3.7V LiPo, about 4000 mAh target | 105060-class cell, about 10 mm thick, in a 67 x 59 mm space on the back of the PCB, 3-pin JST-PH connector with NTC |
 | **Audio Out** | 2x speakers + mute switch | SPDT switch holds the amp in shutdown. Bluetooth available for private listening |
 | **Buttons** | Silicone membranes + SMD switches | Direct GPIO, no expander IC. Membrane pads press on bare ENIG contacts on the PCB |
-| **Case** | Custom 3D print | First concept in CadQuery: two shells, 164.2 x 79.2 x 20.4 mm, clamping the board with four M2 screws (`case/`, spec `planning/specs/027-CASE-CONCEPT.md`) |
+| **Case** | Custom 3D print | First concept in CadQuery: two shells, 164.2 x 79.2 x 18.5 mm, clamping the board with four M2 screws (`case/`, spec `planning/specs/027-CASE-CONCEPT.md`) |
 
 ---
 
@@ -229,7 +229,7 @@ Remaining:
 - ~~**Button driver approach**~~ -- RESOLVED: mk_arcade_joystick_rpi kernel module, NOT retrogame.
 - **Battery fitment** -- A 67 x 59 mm space is reserved on the back of the PCB for a cell up to 57 x 65 mm, about 10 mm thick. The cell must meet the requirements in `bom/README.md`, and its connector pin order must match the board's.
 - **Unverified footprints** -- The LCD tail and Alps switch footprints were built from documentation and have not been checked against physical parts yet.
-- **LCD over the Pi header** -- The LCD's outline covers about 12 pin pairs of the Pi's long-tail header, whose soldered ends stick out on the front at y 30 to 33. Default fix: trim those pins flush after soldering and cover them with Kapton tape, so the panel sits nearly flat. Settle it before the case design. The renders assume a 1.5 mm gap.
+- **LCD over the Pi header** -- The LCD's outline covers about 12 pin pairs of the Pi's long-tail header, whose soldered ends stick out on the front at y 30 to 33. Decided 2026-11-08 (spec 027, decision 14): trim those pins to about 0.3 mm after soldering and cover them with Kapton tape; the panel sits on them, 0.5 mm off the board, and the case and renders assume it. Measure the stubs before cutting the case's gasket.
 - **Open design review items** -- The B button on the UART TX pin. The power design's checks that need a built board are listed in spec 011's finish condition.
 - **Case design** -- The first concept fits the board as laid out today, but rests on provisional sizes for the silicone pads, speakers, mute switch, LCD panel and Alps switches. It has no vents, so the Pi's temperature needs checking on the prototype. Spec 027's "Risks and known limits" has the rest.
 - **Bluetooth audio latency** -- ~100-300ms, fine for passive games, not ideal for timing-sensitive gameplay. Speakers remain the primary audio output.

@@ -105,13 +105,15 @@ class Lcd(unittest.TestCase):
         self.assertAlmostEqual(bb.xmin, -38.7, places=2)
         self.assertAlmostEqual(bb.xmax, 38.7, places=2)
         self.assertAlmostEqual(bb.ymax, 53, places=2)
-        self.assertTrue(inside(lcd, 0, 26, 3))
+        self.assertTrue(inside(lcd, 0, 26, 2))
 
-    def test_sits_above_the_header_pin_tails(self):
+    def test_sits_on_the_trimmed_header_pins(self):
         # The Pi header's pins come through the front at board y 30.2 to 32.8 (J2 model y 45 to
-        # 48); the panel must start above them.
+        # 48). Spec 027: they are trimmed to 0.3 mm and covered in Kapton tape, and the panel
+        # sits 0.5 mm off the board, on them.
         lcd = shape('LCD_3.2in_ILI9341_StandIn.step')
-        self.assertFalse(inside(lcd, -20, 46.5, 1.0))
+        self.assertFalse(inside(lcd, -20, 46.5, 0.45))
+        self.assertTrue(inside(lcd, -20, 46.5, 0.55))
         self.assertGreaterEqual(lcd.BoundingBox().zmin, 0)
 
 
@@ -124,6 +126,11 @@ class Pi(unittest.TestCase):
         bb = self.pi.BoundingBox()
         self.assertGreaterEqual(bb.zmax, 9.7)
         self.assertLessEqual(bb.zmax, 10.4)
+
+    def test_header_pins_are_trimmed_to_0_3_mm_on_the_front(self):
+        # Spec 027: the pins that come through the main board's front are trimmed to 0.3 mm.
+        # The front is model z -1.0 (a 1.0 mm board), so they end at -1.3.
+        self.assertAlmostEqual(self.pi.BoundingBox().zmin, -1.3, places=2)
 
     def test_board_holes_line_up_with_the_footprint_holes(self):
         # Footprint holes at (-1.27, -4.87), (-1.27, 53.13), (21.73, -4.87), (21.73, 53.13) in

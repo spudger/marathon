@@ -23,7 +23,7 @@ uv run --no-project --python 3.12 --with cadquery==2.5.2 python tools/render/mod
 
 The Raspberry Pi Zero 2 W, the LCD, the Alps switches, the slide switch, and the battery have no 3D models in KiCad's library, so these are simple shapes, not vendor models. Outlines come from the footprints and the specs. The Pi's port positions come from its mechanical drawing. Thicknesses and the other Pi parts are estimates; each function's docstring says which. They're good enough for renders and for fitting the case. Don't use them to check clearances to a fraction of a millimeter.
 
-The battery is a board-only footprint, BT1, so it carries a model without entering the schematic, the BOM, or the placement file. The LCD sits 1.5 mm off the board, an assumed gap that clears the Pi header's pin tails on the front.
+The battery is a board-only footprint, BT1, so it carries a model without entering the schematic, the BOM, or the placement file. The LCD sits 0.5 mm off the board, on the Pi header's pins, which are trimmed to about 0.3 mm on the front and covered in Kapton tape (spec 027).
 
 A rebuild rewrites every STEP file, even with no change, because OpenCASCADE orders a file's color records differently on each run. Commit the models only when a shape changes.
 

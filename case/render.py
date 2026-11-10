@@ -103,6 +103,7 @@ def write_models(out):
 def draw_section(parts, scratch, png):
     """Cut the board's STEP export and the case at y = SECTION_Y and draw the faces."""
     import cadquery as cq
+    import case
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -131,15 +132,16 @@ def draw_section(parts, scratch, png):
     for p in parts.values():
         draw(p.shape, '#c41414' if p.color == parts['cap-dpad'].color else colors[p.kind])
 
-    for z, nudge, label in ((7.5, 0.7, 'front face 7.5'), (5.5, -0.5, 'inside of the plate 5.5'),
-                            (1.0, 0, 'board 0 to 1.0'), (-11.3, 0.7, 'inside of the back -11.3'),
-                            (-12.9, -0.9, 'back face -12.9')):
+    for z, nudge, label in ((case.FRONT, 0.7, 'front face'),
+                            (case.PLATE_IN, -0.5, 'inside of the plate'),
+                            (1.0, 0, 'board 0 to'), (case.BACK_IN, 0.7, 'inside of the back'),
+                            (case.BACK, -0.9, 'back face')):
         ax.axhline(z, color='#4a7bd0', lw=0.5, ls='--')
-        ax.text(186, z + nudge, label, va='center', fontsize=8, color='#2a4f8f')
-    ax.annotate('', xy=(13, 7.5), xytext=(13, -12.9),
+        ax.text(186, z + nudge, f'{label} {z:.1f}', va='center', fontsize=8, color='#2a4f8f')
+    ax.annotate('', xy=(13, case.FRONT), xytext=(13, case.BACK),
                 arrowprops=dict(arrowstyle='<->', color='#2a4f8f', lw=0.8))
-    ax.text(11.5, -2.7, '20.4 mm', rotation=90, va='center', ha='right', fontsize=9,
-            color='#2a4f8f')
+    ax.text(11.5, (case.FRONT + case.BACK) / 2, f'{case.FRONT - case.BACK:.1f} mm', rotation=90,
+            va='center', ha='right', fontsize=9, color='#2a4f8f')
     ax.set_xlim(5, 215)
     ax.set_ylim(-15, 11)
     ax.set_aspect('equal')

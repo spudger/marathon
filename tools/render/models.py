@@ -103,14 +103,14 @@ def lcd():
 
     The body and active area are the board's F.Fab outlines: body x 61.3 to 138.7, y 25 to 79;
     active area x 67.6 to 132.4, y 27.7 to 76.3. The panel thickness is an estimate. The panel
-    sits 1.5 mm off the board, an assumed gap, to clear the Pi header's pin tails, which come
-    through the front under its top edge.
+    sits 0.5 mm off the board, on the Pi header's pin tails, which come through the front under
+    its top edge, trimmed to 0.3 mm and covered in Kapton tape (spec 027).
     """
-    z0, z1, z2 = 1.5, 3.6, 3.95
+    z0, z1, z2 = 0.5, 2.6, 2.95
     parts = [
         (box(-38.7, 38.7, -1, 53, z0, z1), PANEL_BACK),
         (box(-38.7, 38.7, -1, 53, z1, z2), GLASS),
-        (box(-32.4, 32.4, 1.7, 50.3, z2, 4.0), SCREEN),
+        (box(-32.4, 32.4, 1.7, 50.3, z2, z2 + 0.05), SCREEN),
         # The flex tail leaves the panel's bottom edge and folds back under it to the pads.
         (box(-7.6, 7.6, -1.5, -1.0, 0.12, z0 + 1.0), FLEX),
         (box(-7.6, 7.6, -1.5, 1.2, 0, 0.12), FLEX),
@@ -155,12 +155,13 @@ def pi():
         (at(60.5, 64.5, 7.0, 23.0, top, 7.4), BLACK),      # camera connector
     ]
     # Long-tail 2x20 header: the plastic spacer sits between the boards; the pins pass through
-    # both, 1.2 mm proud of the main board's front (main board 1.0 mm, so z -2.2) and of the Pi.
+    # both, trimmed to 0.3 mm proud of the main board's front (main board 1.0 mm, so z -1.3),
+    # where the LCD sits on them (spec 027), and 1.5 mm proud of the Pi.
     parts.append((box(-2.54 - 1.27, 1.27, -1.27, 48.26 + 1.27, 0, 2.5), BLACK))
     pins = None
     for row in (0, -2.54):
         for i in range(20):
-            pin = box(row - 0.32, row + 0.32, i * 2.54 - 0.32, i * 2.54 + 0.32, -2.2, top + 1.5)
+            pin = box(row - 0.32, row + 0.32, i * 2.54 - 0.32, i * 2.54 + 0.32, -1.3, top + 1.5)
             pins = pin if pins is None else pins.union(pin)
     parts.append((pins, GOLD))
     return assembly('RaspberryPi_Zero_2W_StandIn', parts)

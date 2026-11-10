@@ -24,12 +24,14 @@ HERE = Path(__file__).resolve().parent
 
 # The stack, z in mm (spec 027, "Stack").
 BOARD_TOP = 1.0          # the board's front
-BACK = -12.9             # back face of the case
+BACK = -12.5             # back face of the case: a 1.2 mm floor
 BACK_IN = -11.3          # inside of the back: spec 022's battery clearance
-PLATE_IN = 5.5           # inside of the front plate, underside of the lens
-LENS = 1.0               # lens thickness; the lens pocket's depth
-FRONT = 7.5              # front face
-GLASS = 4.95             # top of the LCD's glass outside the active area (tools/render/models.py)
+PLATE_IN = 4.5           # inside of the front plate, underside of the lens
+LENS = 0.5               # lens thickness; the lens pocket's depth
+FRONT = 6.0              # front face
+GLASS = 3.95             # top of the LCD's glass outside the active area (tools/render/models.py)
+PLATE_MIN = 0.8          # the plate left over the pockets in its inside
+RELIEF_TOP = FRONT - PLATE_MIN   # ceiling of the pockets over the cap flanges and the speakers
 
 # Walls and fits (spec 027, "Shells and fasteners" and "Provisional figures").
 CLEAR = 0.3              # board edge to the inside of the wall
@@ -41,14 +43,15 @@ CAP_CLEAR = 0.25         # around each cap, a side
 
 # Fasteners.
 BOSS_R = 2.75            # 5.5 mm bosses
-INSERT_R, INSERT_TOP = 1.6, 5.0     # M2 x 3 mm heat-set insert hole, from the boss's end
-BORE_R, BORE_TOP = 1.0, 6.0         # for the M2 x 16 mm screw's tip
-SCREW_R, HEAD_R, HEAD_DEPTH = 1.2, 2.0, 2.0
+INSERT_R, INSERT_TOP = 1.6, 4.5     # M2 x 3 mm heat-set insert hole, from the boss's end
+BORE_R, BORE_TOP = 1.0, RELIEF_TOP  # past the M2 x 12 mm screw's tip, at z 4.0
+SCREW_R, HEAD_R, HEAD_DEPTH = 1.2, 2.0, 4.5   # the head seats at z -8.0
 
 # Caps (spec 027, "Front").
-CAP_TOP_FACE = 9.0       # D-pad and ABXY, 1.5 mm proud
-CAP_TOP_PILL = 8.5       # Start and Select, 1.0 mm proud
-FLANGE_GROW, FLANGE_BOTTOM, CHAMFER = 1.5, 4.5, 0.75
+CAP_TOP_FACE = FRONT + 1.5    # D-pad and ABXY, 1.5 mm proud
+CAP_TOP_PILL = FRONT + 1.0    # Start and Select, 1.0 mm proud
+# Flanges sit on the domes (DOME_TOP) and bear on the ceiling of a pocket in the plate.
+FLANGE_GROW, FLANGE_BOTTOM, FLANGE_TOP, CHAMFER = 1.25, 4.5, RELIEF_TOP, 0.5
 SWITCH_TOP = BOARD_TOP + 1.8   # Alps SKTHACE010, 1.8 mm tall (datasheet, via the footprint)
 STEM_GAP, STEM_R = 0.1, 1.0
 NUB_GAP, NUB_R = 0.7, 1.5
@@ -71,14 +74,17 @@ WINDOW_GROW, POCKET_GROW, LENS_GAP = 0.5, 3.0, 0.1
 
 # Mute switch, provisional: a 2.0 x 1.5 mm actuator with 3 mm of travel.
 MUTE_SLOT = (2.0 + 3.0 + 0.6, 1.5 + 0.6)
+MUTE_BODY = (10.0, 4.4)                  # its body reaches z 4.8, above the plate's inside
 
 # USB-C: J4's receptacle from KiCad's STEP export: 8.94 mm wide, z 1.0 to 4.26.
 USB_HALF_W, USB_TOP, USB_TAB_TOP = 4.47, 4.26, 0.7
-USB_POCKET = (12.5, 6.5, 0.6)            # width, height, depth
+# Width, height, depth. Centered on the receptacle (z 2.63), it ends at z 4.98, under the front
+# edge's 1.0 mm fillet, which starts at z 5.0.
+USB_POCKET = (12.5, 4.7, 0.6)
 
 # Shoulder buttons: the plungers end at board y 21.02 (KiCad's STEP export).
 SHOULDER_W, SHOULDER_FLANGE_W = 14.0, 18.0
-SHOULDER_Z, SHOULDER_FLANGE_Z = (1.3, 4.7), (1.1, 4.9)
+SHOULDER_Z, SHOULDER_FLANGE_Z = (1.3, 4.2), (1.1, 4.4)   # under the plate's inside
 SHOULDER_PROUD, SHOULDER_FLANGE_IN = 1.5, 20.9
 
 
@@ -170,8 +176,8 @@ def cap(outline, top, stem=None, nub=None):
 
     stem is (x, y) of the switch it presses; nub is (x, y) of the D-pad's center.
     """
-    body = prism(outline, 0, PLATE_IN, top).edges('>Z').fillet(0.6 if top > FRONT else 0.4)
-    flange = prism(outline, FLANGE_GROW, FLANGE_BOTTOM, PLATE_IN).edges('>Z').chamfer(CHAMFER)
+    body = prism(outline, 0, FLANGE_BOTTOM, top).edges('>Z').fillet(0.6 if top > FRONT else 0.4)
+    flange = prism(outline, FLANGE_GROW, FLANGE_BOTTOM, FLANGE_TOP).edges('>Z').chamfer(CHAMFER)
     shape = body.union(flange)
     if stem:
         shape = shape.union(cylinder(*stem, STEM_R, SWITCH_TOP + STEM_GAP, FLANGE_BOTTOM))
@@ -265,6 +271,7 @@ def front_shell(pcb, outline, holes):
 
     for outline_fn in holes:
         shell = shell.cut(prism(outline_fn, CAP_CLEAR, PLATE_IN - 1, FRONT + 1))
+        shell = shell.cut(prism(outline_fn, FLANGE_GROW + CAP_CLEAR, PLATE_IN - 1, FLANGE_TOP))
 
     for refs in (('SW10', 'SW11', 'SW12', 'SW13'), ('SW14', 'SW15', 'SW16', 'SW17')):
         shell = shell.union(posts(contacts(pcb, refs)[1]))
@@ -272,12 +279,16 @@ def front_shell(pcb, outline, holes):
     for x, y in SPEAKERS.values():
         ring = (cylinder(x, y, RING_IN + RING_WALL, RING_BOTTOM, PLATE_IN + 0.1)
                 .cut(cylinder(x, y, RING_IN, RING_BOTTOM - 1, PLATE_IN + 1)))
-        shell = shell.union(ring).cut(grille(x, y))
+        shell = shell.union(ring).cut(cylinder(x, y, RING_IN, PLATE_IN - 1, RELIEF_TOP))
+        shell = shell.cut(grille(x, y))
 
     mx, my = pcb.at('SW2')
     length, width = MUTE_SLOT
     shell = shell.cut(rbox(mx - length / 2, mx + length / 2, my - width / 2, my + width / 2,
                            PLATE_IN - 1, FRONT + 1, 0.5))
+    bx, by = MUTE_BODY
+    shell = shell.cut(rbox(mx - bx / 2 - CLEAR, mx + bx / 2 + CLEAR, my - by / 2 - CLEAR,
+                           my + by / 2 + CLEAR, PLATE_IN - 1, RELIEF_TOP))
 
     # USB-C: a notch open at the split, through the skirt, so the receptacle passes as the board
     # drops in; the back shell's tab fills it below the receptacle.
@@ -344,7 +355,7 @@ def build(pcb=None):
         'cap-select': pill_outline(*pcb.at('SW19'), 8.0, 3.5),
         'cap-power': circle_outline(*pcb.at('SW1'), 2.5),
     }
-    # 9 mm caps: the flange of the one at x 145 then clears the LCD's edge (x 138.7) by 0.3 mm.
+    # 9 mm caps: the flange of the one at x 145 then clears the LCD's edge (x 138.7) by 0.55 mm.
     abxy = [circle_outline(x, y, 4.5) for x, y in abxy_pts]
 
     def add(name, shape, color, kind, stl=None, rotate_x=0.0, **extra):
@@ -373,7 +384,7 @@ def build(pcb=None):
         whole, sheet = pad(center, pts)
         add(name, whole, RUBBER, 'bought', sheet=sheet)
     for name, (x, y) in SPEAKERS.items():
-        add(name, solid(cylinder(x, y, SPEAKER_R, PLATE_IN - SPEAKER_T, PLATE_IN)), SPEAKER,
+        add(name, solid(cylinder(x, y, SPEAKER_R, RELIEF_TOP - SPEAKER_T, RELIEF_TOP)), SPEAKER,
             'bought')
 
     window, pocket, glass = lcd(pcb)
